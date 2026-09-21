@@ -1,6 +1,13 @@
 # Progress / Adaptive Engine Rules
 
-本目录记录未来规则层与当前 Progress Model 的边界。Phase 3 只实现事实事件和基础 deterministic replay，不实现规则决策。
+本目录记录规则层与当前 Progress Model 的边界。
+
+```text
+engine/rules/review_policy_v01.py    Phase 4（P4.3 / P4.4）冻结的 Mastery / Review policy kernel
+tests/test_review_policy.py          对应的 policy-level 单元测试
+```
+
+这个 kernel 是**纯函数**：输入为 policy-eligible evidence、显式 `as_of` 和显式 IANA timezone，不读系统时间、不读机器时区、不含隐藏状态。它不是完整 replay（属 P4.5），也不定义 Review Item / Review Evidence 契约（属 P4.1 / P4.2）。
 
 ## 当前可读取的 replay 输出
 
@@ -28,15 +35,44 @@ study.study_minutes
 
 当前没有把 `recent_score` 写成正式 replay 输出：它需要先有明确的 assessment contract（assessment_id、完成时间、总分证据）。
 
+## Phase 4 v0.1 frozen policies
+
+```text
+mastery-policy/spaced-consecutive/v0.1
+review-policy/simple-ladder/v0.1
+```
+
+两条正交轴：
+
+```text
+Mastery State                  new | learning | mastered
+Review Scheduling Projection   not_scheduled | scheduled | due | overdue
+```
+
+冻结要点：
+
+- `due` / `overdue` 是时间投影，不是 mastery 状态；`mastered` 与 `due` 可以同时成立；
+- mastery 由 item 自身的“跨天连续成功数”决定（阈值 3），不读 `topic_accuracy`；
+- interval ladder 为 `1 / 3 / 7 / 15` 天，失败重置为 1 天，mastered 保留 15 天 maintenance；
+- 到期时间锚定本地日历日 00:00，时区必须显式传入，禁止 `datetime.now()`；
+- `as_of` 早于 evidence 时直接拒绝（`future_evidence`），不静默丢弃或泄漏未来事实；
+- `due_count` 是 item 级到期数量，不是事件数。
+
+完整规则、transition table 与 rejected alternatives 见
+[`docs/review/README.md`](../../docs/review/README.md)；依赖 P4.1 / P4.2 的假设见
+[`ASSUMPTIONS_PENDING_P4_1_P4_2.md`](../../docs/review/ASSUMPTIONS_PENDING_P4_1_P4_2.md)。
+
+本目录**不**包含：planner、自适应排序、SM-2、FSRS、forgetting curve、AI 判断、UI、存储。
+
 ## Future inputs
 
-未来 Mastery / Review / Adaptive Planner 可以在单独版本化后读取：
+未来规则层可以读取的输入（当前 Mastery / Review 已有 v0.1 冻结 policy，但 replay 尚未实现）：
 
 ```text
 recent_score                 Future: assessment contract 未冻结
-mastery                      Future: 状态机 / 算法未实现
-review_due                   Future: review policy 未实现
-review_interval              Future
+mastery                      规则已冻结（P4.3）：mastery-policy/spaced-consecutive/v0.1
+review_due                   规则已冻结（P4.4）：review-policy/simple-ladder/v0.1
+review_interval              规则已冻结（P4.4）；replay 未实现（P4.5）
 completion_rate              Future: task execution contract 未实现
 capacity_actual              Future
 essay_progress               Future
@@ -59,4 +95,4 @@ Daily Adaptive Tasks
 - **Rolling 7-Day Plan**：未来根据容量、复习欠债和弱项调整近期配额。
 - **Daily Adaptive Tasks**：未来把当天结果写回并生成下一步任务。
 
-本阶段不实现上述 Planner、Mastery Algorithm、Review Scheduling、数据库、API 或 UI。
+本阶段不实现上述 Planner、数据库、API 或 UI；Mastery / Review 只到达 policy contract 层，未接入 replay。
