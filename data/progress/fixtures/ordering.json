@@ -1,0 +1,35 @@
+{
+  "schema_version": "progress-fixture/v0.1",
+  "fixture_id": "ordering",
+  "description": "Events intentionally appear in a non-chronological input order.",
+  "events": [
+    {
+      "event_id": "evt-order-c",
+      "schema_version": "progress-event/v0.1",
+      "event_type": "comprehensive_attempt",
+      "occurred_at": "2026-01-01T09:00:00Z",
+      "question": {"source_id": "synthetic-bank", "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "source_path": "fixtures/order.json", "source_question_id": "order-c"},
+      "topics": ["DATA.CACHE"],
+      "correct": true
+    },
+    {
+      "event_id": "evt-order-a",
+      "schema_version": "progress-event/v0.1",
+      "event_type": "comprehensive_attempt",
+      "occurred_at": "2026-01-01T08:00:00Z",
+      "question": {"source_id": "synthetic-bank", "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "source_path": "fixtures/order.json", "source_question_id": "order-a"},
+      "topics": ["DATA.CACHE"],
+      "correct": false,
+      "error_cause": "reading_error"
+    },
+    {
+      "event_id": "evt-order-b",
+      "schema_version": "progress-event/v0.1",
+      "event_type": "comprehensive_attempt",
+      "occurred_at": "2026-01-01T09:00:00Z",
+      "question": {"source_id": "synthetic-bank", "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "source_path": "fixtures/order.json", "source_question_id": "order-b"},
+      "topics": ["DATA.CACHE"],
+      "correct": true
+    }
+  ]
+}

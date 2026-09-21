@@ -1,0 +1,26 @@
+{
+  "schema_version": "progress-fixture/v0.1",
+  "fixture_id": "duplicate-event-id",
+  "expected_error": "duplicate_event_id",
+  "events": [
+    {
+      "event_id": "evt-duplicate",
+      "schema_version": "progress-event/v0.1",
+      "event_type": "comprehensive_attempt",
+      "occurred_at": "2026-01-01T09:00:00Z",
+      "question": {"source_id": "synthetic-bank", "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "source_path": "fixtures/invalid.json", "source_question_id": "invalid-duplicate-1"},
+      "topics": ["DATA.DATABASE"],
+      "correct": true
+    },
+    {
+      "event_id": "evt-duplicate",
+      "schema_version": "progress-event/v0.1",
+      "event_type": "comprehensive_attempt",
+      "occurred_at": "2026-01-01T09:01:00Z",
+      "question": {"source_id": "synthetic-bank", "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "source_path": "fixtures/invalid.json", "source_question_id": "invalid-duplicate-2"},
+      "topics": ["DATA.DATABASE"],
+      "correct": false,
+      "error_cause": "reading_error"
+    }
+  ]
+}

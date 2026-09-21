@@ -1,0 +1,21 @@
+{
+  "schema_version": "progress-fixture/v0.1",
+  "fixture_id": "multi-topic",
+  "description": "One comprehensive attempt mapped to two direct topics.",
+  "events": [
+    {
+      "event_id": "evt-multi-topic",
+      "schema_version": "progress-event/v0.1",
+      "event_type": "comprehensive_attempt",
+      "occurred_at": "2026-01-01T09:10:00Z",
+      "question": {
+        "source_id": "synthetic-bank",
+        "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "source_path": "fixtures/comprehensive.json",
+        "source_question_id": "synthetic-q-003"
+      },
+      "topics": ["DATA.CACHE", "DATA.DISTRIBUTED"],
+      "correct": true
+    }
+  ]
+}

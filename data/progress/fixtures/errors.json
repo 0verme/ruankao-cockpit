@@ -1,0 +1,56 @@
+{
+  "schema_version": "progress-fixture/v0.1",
+  "fixture_id": "errors",
+  "description": "All four stable causes plus one unclassified error.",
+  "events": [
+    {
+      "event_id": "evt-error-knowledge",
+      "schema_version": "progress-event/v0.1",
+      "event_type": "comprehensive_attempt",
+      "occurred_at": "2026-01-01T12:00:00Z",
+      "question": {"source_id": "synthetic-bank", "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "source_path": "fixtures/errors.json", "source_question_id": "error-q-1"},
+      "topics": ["SYSTEM.COMPUTER"],
+      "correct": false,
+      "error_cause": "knowledge_gap"
+    },
+    {
+      "event_id": "evt-error-reading",
+      "schema_version": "progress-event/v0.1",
+      "event_type": "comprehensive_attempt",
+      "occurred_at": "2026-01-01T12:01:00Z",
+      "question": {"source_id": "synthetic-bank", "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "source_path": "fixtures/errors.json", "source_question_id": "error-q-2"},
+      "topics": ["SYSTEM.COMPUTER"],
+      "correct": false,
+      "error_cause": "reading_error"
+    },
+    {
+      "event_id": "evt-error-calculation",
+      "schema_version": "progress-event/v0.1",
+      "event_type": "comprehensive_attempt",
+      "occurred_at": "2026-01-01T12:02:00Z",
+      "question": {"source_id": "synthetic-bank", "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "source_path": "fixtures/errors.json", "source_question_id": "error-q-3"},
+      "topics": ["MATH.APPLICATION.PROBABILITY"],
+      "correct": false,
+      "error_cause": "calculation_error"
+    },
+    {
+      "event_id": "evt-error-expression",
+      "schema_version": "progress-event/v0.1",
+      "event_type": "comprehensive_attempt",
+      "occurred_at": "2026-01-01T12:03:00Z",
+      "question": {"source_id": "synthetic-bank", "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "source_path": "fixtures/errors.json", "source_question_id": "error-q-4"},
+      "topics": ["MATH.APPLICATION.PROBABILITY"],
+      "correct": false,
+      "error_cause": "scoring_point_expression"
+    },
+    {
+      "event_id": "evt-error-unclassified",
+      "schema_version": "progress-event/v0.1",
+      "event_type": "comprehensive_attempt",
+      "occurred_at": "2026-01-01T12:04:00Z",
+      "question": {"source_id": "synthetic-bank", "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "source_path": "fixtures/errors.json", "source_question_id": "error-q-5"},
+      "topics": ["SYSTEM.COMPUTER"],
+      "correct": false
+    }
+  ]
+}

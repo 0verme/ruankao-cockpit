@@ -1,38 +1,52 @@
 # 当前架构方向
 
-本阶段只记录方向，不提前设计完整软件架构，也不初始化 UI、数据库或具体服务。
+本阶段记录领域依赖顺序，不提前设计完整软件架构，也不初始化数据库、服务或 UI。
 
 ```text
 Sources
    ↓
 Source Metadata
    ↓
-Normalized Taxonomy
+Normalized Taxonomy          ✅
    ↓
-Golden Set
+Golden Set                   ✅
    ↓
-Progress Model
+Immutable Progress Events    ✅
    ↓
-Adaptive Planner
+Progress Model v0.1          ✅
    ↓
-Cockpit UI
+Deterministic Replay         ✅
+   ↓
+Mastery / Review Policy      ⏳
+   ↓
+Adaptive Planner             ⏳
+   ↓
+Cockpit UI                   ⏳
 ```
 
-这条链路表达项目的依赖顺序：先保留来源与版权边界，再稳定元数据和归一化模型，之后才验证进度规则与自适应计划，最后考虑控制面展示。
+当前仓库的依赖关系是：先保留来源与版权边界，再稳定元数据和归一化模型；学习事实只能以 append-only event 保存；ProgressState 是由事件和版本化 replay rule 计算出的结果，而不是人工维护的事实源。
+
+## 当前阶段
+
+Phase 2 已完成 Golden Set 扩量：100 道综合题、48 道案例子问题；taxonomy coverage 为 L1 13/13、L2 25/27、L3 75/110，Case Capability 为 13/13。
+
+Phase 3 已完成 Progress Model v0.1 的基础契约与 deterministic replay：
+
+- `comprehensive_attempt` 保存正确 / 错误事实、来源引用、topic 和可选错误归因；
+- `case_attempt` 保存可选总分证据及 capability-level score evidence；
+- `study_session` 保存可测量的时长事实；
+- replay 生成 global、topic、case/capability score、error、coverage 和 study 基础聚合；
+- 事件是 source of truth，状态可以删除后重新构建。
+
+## 边界
 
 ```text
-当前阶段：
-Taxonomy v0.1 + Golden Set Design + Small Validation Sample
-
-下一阶段：
-根据 validation report 决定 Golden Set 是否扩量；不进入 Progress Engine 或 UI
+Progress Model
+   != Mastery Algorithm
+   != Review Scheduling
+   != Adaptive Planner
 ```
 
-本轮已落地：
+本阶段没有实现 mastery、mastered、review_due、SM-2、FSRS、1/3/7/15 scheduling、30-Day Plan 实例化、数据库、API 或 UI。`recent_score` 也暂不计算，因为本阶段没有冻结 assessment contract；后续只能从明确的 assessment/session 事实定义它。
 
-- `taxonomy/`：13 个 L1 domain、27 个 L2 topic、110 个 L3 subtopic，以及 alias、provenance、confidence 和 unresolved contract；
-- `taxonomy/capabilities.json`：独立的 Case Capability v0.1；
-- `data/golden-set/`：JSON schema 与 26 道综合知识、11 道案例子问题的小样本；
-- `docs/TAXONOMY_SOURCE_INVENTORY.md` 与 `docs/TAXONOMY_V01_VALIDATION.md`：source schema 盘点和验证结论。
-
-本轮未实现 Progress Engine、Adaptive Planner、30 天计划实例化、数据库或 UI。
+详细契约和验证结果见 [`docs/PROGRESS_MODEL_V01_VALIDATION.md`](../PROGRESS_MODEL_V01_VALIDATION.md) 与 [`data/progress/schema.json`](../../data/progress/schema.json)。

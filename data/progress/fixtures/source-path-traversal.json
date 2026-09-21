@@ -1,0 +1,16 @@
+{
+  "schema_version": "progress-fixture/v0.1",
+  "fixture_id": "source-path-traversal",
+  "expected_error": "forbidden_path",
+  "events": [
+    {
+      "event_id": "evt-absolute-path",
+      "schema_version": "progress-event/v0.1",
+      "event_type": "comprehensive_attempt",
+      "occurred_at": "2026-01-01T09:00:00Z",
+      "question": {"source_id": "synthetic-bank", "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "source_path": "questions/../questions.json", "source_question_id": "invalid-path"},
+      "topics": ["DATA.DATABASE"],
+      "correct": true
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "schema_version": "progress-fixture/v0.1",
+  "fixture_id": "case-score",
+  "description": "Two case scores aggregate as 7/10; capabilities use their own evidence.",
+  "events": [
+    {
+      "event_id": "evt-case-score-1",
+      "schema_version": "progress-event/v0.1",
+      "event_type": "case_attempt",
+      "occurred_at": "2026-01-01T10:00:00Z",
+      "question": {
+        "source_id": "synthetic-case-bank",
+        "source_commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "source_path": "fixtures/case.json",
+        "source_question_id": "synthetic-case-q-001"
+      },
+      "topics": ["DATA.DATABASE.TRANSACTION", "DATA.DISTRIBUTED.CONSISTENCY"],
+      "capabilities": ["CASE.DATA_DESIGN", "CASE.SOLUTION_TRADEOFF"],
+      "score_earned": 2,
+      "score_possible": 4,
+      "capability_scores": [
+        {"capability_id": "CASE.DATA_DESIGN", "score_earned": 2, "score_possible": 4},
+        {"capability_id": "CASE.SOLUTION_TRADEOFF", "score_earned": 1, "score_possible": 2}
+      ]
+    },
+    {
+      "event_id": "evt-case-score-2",
+      "schema_version": "progress-event/v0.1",
+      "event_type": "case_attempt",
+      "occurred_at": "2026-01-01T10:30:00Z",
+      "question": {
+        "source_id": "synthetic-case-bank",
+        "source_commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "source_path": "fixtures/case.json",
+        "source_question_id": "synthetic-case-q-002"
+      },
+      "topics": ["DATA.DATABASE.TRANSACTION"],
+      "capabilities": ["CASE.DATA_DESIGN", "CASE.SOLUTION_TRADEOFF", "CASE.ARCHITECTURE_DESIGN"],
+      "score_earned": 5,
+      "score_possible": 6,
+      "capability_scores": [
+        {"capability_id": "CASE.DATA_DESIGN", "score_earned": 5, "score_possible": 6},
+        {"capability_id": "CASE.SOLUTION_TRADEOFF", "score_earned": 2, "score_possible": 3}
+      ]
+    }
+  ]
+}

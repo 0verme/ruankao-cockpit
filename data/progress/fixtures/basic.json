@@ -1,0 +1,22 @@
+{
+  "schema_version": "progress-fixture/v0.1",
+  "fixture_id": "basic",
+  "description": "One correct comprehensive attempt.",
+  "events": [
+    {
+      "event_id": "evt-basic-correct",
+      "schema_version": "progress-event/v0.1",
+      "event_type": "comprehensive_attempt",
+      "occurred_at": "2026-01-01T09:00:00Z",
+      "question": {
+        "source_id": "synthetic-bank",
+        "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "source_path": "fixtures/comprehensive.json",
+        "source_question_id": "synthetic-q-001",
+        "golden_set_record_id": "gs-comp-2025-h2-q01"
+      },
+      "topics": ["DATA.DATABASE.RELATIONAL"],
+      "correct": true
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "schema_version": "progress-fixture/v0.1",
+  "fixture_id": "case-no-capability-evidence",
+  "description": "Capability references without rubric evidence remain insufficient evidence.",
+  "events": [
+    {
+      "event_id": "evt-case-unscored",
+      "schema_version": "progress-event/v0.1",
+      "event_type": "case_attempt",
+      "occurred_at": "2026-01-01T11:00:00Z",
+      "question": {
+        "source_id": "synthetic-case-bank",
+        "source_commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "source_path": "fixtures/case.json",
+        "source_question_id": "synthetic-case-q-003"
+      },
+      "topics": ["ARCH.FOUNDATION.STYLES"],
+      "capabilities": ["CASE.ARCHITECTURE_SELECTION", "CASE.SOLUTION_TRADEOFF"]
+    }
+  ]
+}

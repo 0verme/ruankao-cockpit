@@ -1,0 +1,121 @@
+{
+  "contract": "progress-model/v0.1",
+  "format": "JSON",
+  "event_schema_version": "progress-event/v0.1",
+  "state_schema_version": "progress-state/v0.1",
+  "fixture_schema_version": "progress-fixture/v0.1",
+  "replay_rule_version": "progress-replay/v0.1",
+  "source_of_truth": "events",
+  "event_types": {
+    "comprehensive_attempt": {
+      "meaning": "One submitted comprehensive-question attempt.",
+      "required": ["event_id", "schema_version", "event_type", "occurred_at", "question", "topics", "correct"],
+      "optional": ["error_cause", "assessment_id", "session_id", "note"],
+      "rules": [
+        "correct is a boolean; true and false are facts, not model judgements.",
+        "error_cause is optional only when correct is false; it is forbidden on a correct attempt.",
+        "topics contains one or more unique canonical Knowledge Topic IDs."
+      ]
+    },
+    "case_attempt": {
+      "meaning": "One submitted case-question attempt with optional aggregate and capability score evidence.",
+      "required": ["event_id", "schema_version", "event_type", "occurred_at", "question", "topics", "capabilities"],
+      "optional": ["score_earned", "score_possible", "capability_scores", "assessment_id", "session_id", "note"],
+      "rules": [
+        "A case is not represented by a boolean correct field.",
+        "score_earned and score_possible are an optional pair; when present, possible is positive and earned is within bounds.",
+        "capabilities contains one or more unique Case Capability IDs.",
+        "capability_scores is optional. Each evidence item must reference a capability in capabilities and has its own earned/possible pair.",
+        "A capability reference without score evidence creates no capability metric."
+      ]
+    },
+    "study_session": {
+      "meaning": "One measured learning session; it does not imply quality, focus, mastery, or completion.",
+      "required": ["event_id", "schema_version", "event_type", "occurred_at", "session_id", "started_at", "activity_type"],
+      "optional": ["ended_at", "duration_minutes", "topics", "note"],
+      "rules": [
+        "occurred_at is the session start instant and must equal started_at.",
+        "At least one of ended_at and duration_minutes is required.",
+        "duration_minutes is a non-negative integer; when both fields are present it must equal the exact elapsed whole minutes.",
+        "topics are optional context only and do not create attempt or coverage evidence."
+      ]
+    }
+  },
+  "common_fields": {
+    "event_id": "Non-empty stable event identity. Duplicate IDs are a validation error; replay never silently deduplicates.",
+    "schema_version": "Must equal progress-event/v0.1.",
+    "event_type": "One of the three event type keys above.",
+    "occurred_at": "Timezone-aware ISO 8601 date-time. Naive timestamps are invalid."
+  },
+  "question_reference": {
+    "required": ["source_id", "source_commit", "source_path", "source_question_id"],
+    "optional": ["golden_set_record_id"],
+    "rules": [
+      "The reference is source-oriented and is not coupled to the Golden Set.",
+      "source_path is repository-relative; absolute paths and parent traversal are forbidden.",
+      "No question stem, options, answer, analysis, OCR or full text may be stored."
+    ]
+  },
+  "error_causes": {
+    "values": [
+      "knowledge_gap",
+      "reading_error",
+      "calculation_error",
+      "scoring_point_expression"
+    ],
+    "rule": "The enum is one cause per incorrect comprehensive attempt. A missing cause is an unclassified error."
+  },
+  "activity_types": [
+    "comprehensive_practice",
+    "case_practice",
+    "review",
+    "reading",
+    "essay_practice",
+    "mock_assessment",
+    "other"
+  ],
+  "replay_semantics": {
+    "ordering": "Sort every event by occurred_at converted to UTC, then event_id using ascending lexical order.",
+    "identity": "event_id is globally unique across all event types; session_id is unique among study_session events.",
+    "immutability": "Facts are append-only. Correction/superseding events are future work; v0.1 has no in-place mutation or correction event.",
+    "topic_metrics": "Comprehensive attempts only. Each directly referenced topic receives one evidence count; parent closure is not copied into topic attempt counts.",
+    "coverage": "Question topics from comprehensive and case attempts contribute distinct coverage. A referenced L3 also covers its L2 and L1 parents.",
+    "case_metrics": "Case attempt_count counts each case event once. Aggregate score sums earned and possible across scored case events. Capability metrics count only capability-level score evidence.",
+    "null_semantics": "accuracy and score_ratio are null when their denominator has no evidence; no evidence is not a zero result.",
+    "precision": "Counts and scores remain integers. Ratios are serialized as numbers rounded to four decimal places using deterministic half-up rounding."
+  },
+  "state_fields": {
+    "schema_version": "progress-state/v0.1",
+    "replay_rule_version": "progress-replay/v0.1",
+    "global": "Comprehensive attempt_count, correct_count, incorrect_count and correct_count / attempt_count accuracy.",
+    "case": "Case attempt_count, scored_attempt_count, summed score_earned, summed score_possible and weighted score_ratio.",
+    "topics": "Every taxonomy topic is present with attempt_count, correct_count, incorrect_count and accuracy; unattempted topics have accuracy null.",
+    "capabilities": "Every capability is present with score evidence counts/sums, score_ratio and evidence_status; unscored references remain insufficient_evidence.",
+    "errors": "error_count, classified_error_count, unclassified_error_count, error_count_by_cause and cause_count / classified_error_count mix.",
+    "coverage": "For L1/L2/L3, covered, total and covered / total ratio.",
+    "study": "session_count and the sum of duration_minutes as study_minutes."
+  },
+  "fixture_schema": {
+    "schema_version": "progress-fixture/v0.1",
+    "required": ["schema_version", "fixture_id", "events"],
+    "optional": ["description", "expected_state", "expected_error"],
+    "rules": [
+      "A fixture with expected_error must fail replay with that validation category.",
+      "A fixture without expected_error must replay successfully."
+    ]
+  },
+  "out_of_scope": [
+    "mastery",
+    "mastered",
+    "review_due",
+    "review_interval",
+    "forgetting_curve",
+    "SM-2",
+    "FSRS",
+    "adaptive_planner",
+    "30-day-plan",
+    "UI",
+    "database",
+    "AI scoring"
+  ]
+}
