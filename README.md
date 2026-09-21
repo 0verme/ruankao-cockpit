@@ -60,6 +60,7 @@ Cockpit UI            ⏳
 - [Phase 2 Golden Set 扩量验证报告](docs/GOLDEN_SET_EXPANSION_VALIDATION.md)
 - [Progress Model v0.1 / Replay 边界](engine/progress/README.md)
 - [Progress Model v0.1 验证报告](docs/PROGRESS_MODEL_V01_VALIDATION.md)
+- [Phase 4 测试矩阵设计稿](docs/PHASE4_TEST_MATRIX.md)
 - [Progress / Adaptive Engine 边界](engine/rules/README.md)
 
 ## 开发边界
