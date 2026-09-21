@@ -17,6 +17,8 @@ Progress Model v0.1          ✅
    ↓
 Deterministic Replay         ✅
    ↓
+Review Item / Evidence v0.1  ✅
+   ↓
 Mastery / Review Policy v0.1 ✅ 规则冻结（P4.3 / P4.4）
    ↓
 Mastery / Review Replay      ⏳ (P4.5)
@@ -32,13 +34,17 @@ Cockpit UI                   ⏳
 
 Phase 2 已完成 Golden Set 扩量：100 道综合题、48 道案例子问题；taxonomy coverage 为 L1 13/13、L2 25/27、L3 75/110，Case Capability 为 13/13。
 
-Phase 3 已完成 Progress Model v0.1 的基础契约与 deterministic replay：
+Phase 3 已完成 Progress Model v0.1 的基础契约与 deterministic replay；Phase 4 P4.1/P4.2 已冻结独立的 Review Item / Review Evidence v0.1：
 
 - `comprehensive_attempt` 保存正确 / 错误事实、来源引用、topic 和可选错误归因；
 - `case_attempt` 保存可选总分证据及 capability-level score evidence；
 - `study_session` 保存可测量的时长事实；
 - replay 生成 global、topic、case/capability score、error、coverage 和 study 基础聚合；
-- 事件是 source of truth，状态可以删除后重新构建。
+- 事件是 source of truth，状态可以删除后重新构建；
+- Review Context Event 显式关联 Progress Attempt 与 `initial_learning` / `review`；没有 context 不猜测 Review Evidence；
+- Review Evidence 只保存 policy-independent facts；不实现 mastery、review_due 或 scheduling。
+
+详见 [`docs/review/REVIEW_MODEL_V01.md`](../review/REVIEW_MODEL_V01.md) 与 [`docs/review/REVIEW_EVIDENCE_V01.md`](../review/REVIEW_EVIDENCE_V01.md)。
 
 ## Phase 4（进行中）
 
@@ -61,29 +67,24 @@ Axis 2  Review Scheduling Projection   not_scheduled / scheduled / due / overdue
 
 本阶段仍然没有实现：
 
-- Review Model / Review Evidence 契约（P4.1 / P4.2，独立窗口）；
 - `MasteryReviewState v0.1` replay（P4.5）与 fixture / validation report（P4.6 / P4.7 / P4.9）；
 - Adaptive Planner、Rolling 7-Day Plan、30-Day Plan 实例化、数据库、API、UI。
 
-`progress-state/v0.1` 的字段与语义不因 Phase 4 改变：mastery / review 是**独立派生层**，
-不是 ProgressState 的新字段。
+`progress-state/v0.1` 的字段与语义不因 Phase 4 改变：mastery / review 是**独立派生层**，不是 ProgressState 的新字段。
 
 ## 边界
 
 ```text
 Progress Model
+   != Review Model / Evidence
    != Mastery Algorithm
    != Review Scheduling
    != Adaptive Planner
 ```
 
-Phase 4 的 mastery / review policy 已冻结为确定性规则，但**不是**自适应复习算法：
-没有 SM-2、FSRS、forgetting curve、难度参数或 AI 判断；replay 仍必须显式接受 `as_of` 与时区。
-Phase 4 没有实现 30-Day Plan 实例化、数据库、API 或 UI。`recent_score` 也暂不计算，因为
-本阶段没有冻结 assessment contract；后续只能从明确的 assessment/session 事实定义它。
+Phase 4 的 mastery / review policy 已冻结为确定性规则，但**不是**自适应复习算法：没有 SM-2、FSRS、forgetting curve、难度参数或 AI 判断；replay 仍必须显式接受 `as_of` 与时区。Phase 4 没有实现 30-Day Plan 实例化、数据库、API 或 UI。`recent_score` 也暂不计算，因为本阶段没有冻结 assessment contract；后续只能从明确的 assessment/session 事实定义它。
 
-详细契约和验证结果见 [`docs/PROGRESS_MODEL_V01_VALIDATION.md`](../PROGRESS_MODEL_V01_VALIDATION.md)、
-[`docs/review/README.md`](../review/README.md) 与 [`data/progress/schema.json`](../../data/progress/schema.json)。
+详细契约和验证结果见 [`docs/PROGRESS_MODEL_V01_VALIDATION.md`](../PROGRESS_MODEL_V01_VALIDATION.md)、[`docs/review/README.md`](../review/README.md)、[`docs/review/REVIEW_MODEL_V01.md`](../review/REVIEW_MODEL_V01.md) 与 [`data/progress/schema.json`](../../data/progress/schema.json)。
 
 ## Cockpit UI（仅规划）
 
@@ -101,29 +102,26 @@ Phase 4 没有实现 30-Day Plan 实例化、数据库、API 或 UI。`recent_sc
 - 这些文档只是**规划**，不改变上图的阶段顺序，也不占用任何 Phase 编号；
 - 仍然**没有**前端工程、API、数据库、账号系统或写路径；
 - UI 不得自行推算 mastery / review_due / plan completion；Today 与 Review 的呈现分别依赖 Adaptive Planner 与 `MasteryReviewState` replay；
-- UI Read Model 可派生、可缓存、可重建，但**不是事实源**。
+- UI Read Model 可派生、可缓存、可重建，但**不是**事实源。
 
-### Review / Mastery 的当前状态（容易误读）
+### Review / Mastery 的当前状态
 
-Phase 4 目前停在**中间态**，UI 文档必须沿用这一分层：
+Phase 4 当前已冻结 P4.1/P4.2 的 Review Model / Evidence、P4.3/P4.4 的 Mastery/Scheduling policy；尚未实现 P4.5 replay：
 
 ```text
-已冻结：Mastery State Machine v0.1 + Review Scheduling Policy v0.1（P4.3 / P4.4）
-        mastery-policy/spaced-consecutive/v0.1 + review-policy/simple-ladder/v0.1
-        状态枚举与 policy 层字段名（见 docs/review/POLICY_SYMBOL_FREEZE_V01.md）
+已冻结：Review Item / Review Evidence（P4.1 / P4.2）
+        review-model/v0.1 + review-event/v0.1 + review-evidence/v0.1
+        stable identity、explicit context、policy-neutral facts
+        Mastery State Machine / Review Scheduling Policy（P4.3 / P4.4）
 
-未冻结：Review Model / `review_item` 身份（P4.1）
-        Review Event / Evidence 契约（P4.2）
-        `MasteryReviewState v0.1` replay 与 `as_of` API（P4.5）
-        fixture expected 值（P4.6）
+未实现：`MasteryReviewState v0.1` replay 与 `as_of` API（P4.5）
+        fixture expected 值与 validation report（P4.6 / P4.7 / P4.9）
+        Adaptive Planner
 ```
 
 因此：
 
 ```text
-规则已冻结 != 可消费
-UI 可消费的前提是 P4.5 的 replay 输出，而不是 policy kernel 本身
+规则/证据契约冻结 != 可消费的 MasteryReviewState replay
+UI 可消费的前提是 P4.5 的 replay 输出，而不是 policy kernel 或 Evidence 单独存在
 ```
-
-`docs/review/ASSUMPTIONS_PENDING_P4_1_P4_2.md` 仍为 `UNRESOLVED`；`scripts/validate_review.py`
-仍输出 `PENDING_CONTRACT_FREEZE`。UI 的 Review / Mastery 部分因此仍只能渲染不可用态。

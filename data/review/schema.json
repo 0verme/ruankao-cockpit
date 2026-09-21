@@ -1,0 +1,151 @@
+{
+  "contract": "review-model/v0.1",
+  "item_schema_version": "review-item/v0.1",
+  "event_schema_version": "review-event/v0.1",
+  "evidence_schema_version": "review-evidence/v0.1",
+  "fixture_schema_version": "review-fixture/v0.1",
+  "source_of_truth": "progress-events-plus-explicit-review-context-events",
+  "identity": {
+    "namespace": "review",
+    "item_id_forms": {
+      "topic": "review/topic/<stable_topic_id>",
+      "question": "review/question/<source_id>/<source_question_id>",
+      "case_capability": "review/case_capability/<stable_capability_id>"
+    },
+    "identity_inputs": ["item_kind", "stable_canonical_reference"],
+    "identity_excludes": [
+      "review-model schema version",
+      "event schema version",
+      "taxonomy version",
+      "policy version",
+      "display name",
+      "question text",
+      "source commit",
+      "source path"
+    ],
+    "one_active_state_per_identity": true
+  },
+  "item_kinds": {
+    "topic": {
+      "canonical_ref_required": ["topic_id", "taxonomy_version"],
+      "source_reference_required": ["source_id", "source_commit", "source_path"],
+      "evidence_sources": ["comprehensive_attempt"],
+      "case_aggregate_score_rule": "unsupported; never copy case total to topic"
+    },
+    "question": {
+      "canonical_ref_required": ["source_id", "source_question_id"],
+      "source_reference_required": [
+        "source_id",
+        "source_commit",
+        "source_path",
+        "source_question_id"
+      ],
+      "evidence_sources": ["comprehensive_attempt", "case_attempt"],
+      "question_text_rule": "text, options, answer, analysis, OCR and PDF are not item fields"
+    },
+    "case_capability": {
+      "canonical_ref_required": ["capability_id", "taxonomy_version"],
+      "source_reference_required": ["source_id", "source_commit", "source_path"],
+      "evidence_sources": ["case_attempt.capability_scores"],
+      "case_aggregate_score_rule": "unsupported; capability score must name the capability"
+    }
+  },
+  "source_reference": {
+    "required": ["source_id", "source_commit", "source_path"],
+    "question_item_required": ["source_question_id"],
+    "optional": ["golden_set_record_id", "source_value"],
+    "source_commit": "40-character lowercase immutable revision",
+    "source_path": "repository-relative POSIX path; absolute paths, backslashes and parent traversal are forbidden",
+    "copyright": "reference/index/provenance only; no third-party question or study text"
+  },
+  "review_event": {
+    "event_type": "review_context",
+    "required": [
+      "schema_version",
+      "event_id",
+      "event_type",
+      "source_event_id",
+      "review_item_id",
+      "attempt_context",
+      "occurred_at"
+    ],
+    "attempt_context_values": ["initial_learning", "review"],
+    "rules": [
+      "source_event_id points to one immutable progress-event/v0.1 attempt",
+      "occurred_at must equal the source progress event occurred_at as an instant",
+      "one source event and one review item may have at most one context event",
+      "absence of a context event is not evidence of either initial learning or review",
+      "study_session.activity_type=review alone cannot create item evidence"
+    ]
+  },
+  "review_evidence": {
+    "required": [
+      "schema_version",
+      "evidence_id",
+      "review_item_id",
+      "item_kind",
+      "source_event_id",
+      "source_event_type",
+      "review_event_id",
+      "occurred_at",
+      "attempt_context",
+      "evidence_kind",
+      "evidence_value",
+      "evidence_status",
+      "source_reference"
+    ],
+    "evidence_id_rule": "evidence/<source_event_id>/<review_item_id>",
+    "status_values": ["supported", "insufficient_evidence", "unsupported"],
+    "evidence_kinds": {
+      "comprehensive_correctness": {
+        "item_kinds": ["topic", "question"],
+        "status": "supported",
+        "value": {"correct": "boolean fact"}
+      },
+      "case_score": {
+        "item_kinds": ["question"],
+        "status": "supported when present",
+        "value": {"score_earned": "integer", "score_possible": "positive integer"}
+      },
+      "case_capability_score": {
+        "item_kinds": ["case_capability"],
+        "status": "supported when the named capability has a score pair",
+        "value": {"score_earned": "integer", "score_possible": "positive integer"}
+      },
+      "case_capability_score_missing": {
+        "item_kinds": ["case_capability"],
+        "status": "insufficient_evidence",
+        "value": null
+      },
+      "case_topic_score_unavailable": {
+        "item_kinds": ["topic"],
+        "status": "unsupported",
+        "value": null
+      }
+    },
+    "policy_boundary": [
+      "evidence_value contains facts, not success/failure judgments",
+      "no evidence record may contain mastery, interval, due or scheduling policy fields",
+      "null or insufficient evidence is not a zero score and not a failure",
+      "case score to success/failure requires a separate versioned outcome adapter; it is a BLOCKING_DECISION for P4.5"
+    ]
+  },
+  "projection": {
+    "input": ["progress-event/v0.1", "review-event/v0.1", "review-item/v0.1"],
+    "ordering": "source occurred_at converted to UTC, then source_event_id, review_item_id, review_event_id",
+    "determinism": "same facts and explicit context produce the same evidence",
+    "no_duplicate_counting": "one source_event_id plus review_item_id produces at most one evidence record",
+    "taxonomy_rule": "taxonomy version validates canonical references but is excluded from item identity"
+  },
+  "out_of_scope": [
+    "mastery state machine",
+    "success/failure thresholds",
+    "review scheduling",
+    "review interval",
+    "review_due",
+    "1/3/7/15 policy",
+    "consecutive-success policy",
+    "AI classification or scoring",
+    "third-party question text redistribution"
+  ]
+}

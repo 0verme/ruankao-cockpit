@@ -1,0 +1,185 @@
+{
+  "schema_version": "review-fixture/v0.1",
+  "fixture_id": "basic-review-projection",
+  "description": "Synthetic facts only: one comprehensive question, one topic projection and one capability score.",
+  "items": [
+    {
+      "schema_version": "review-item/v0.1",
+      "review_item_id": "review/topic/DATA.DATABASE.RELATIONAL",
+      "item_kind": "topic",
+      "canonical_ref": {
+        "topic_id": "DATA.DATABASE.RELATIONAL",
+        "taxonomy_version": "0.1"
+      },
+      "source_reference": {
+        "source_id": "synthetic-catalog",
+        "source_commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "source_path": "fixtures/topic-index.json",
+        "source_value": "DATA.DATABASE.RELATIONAL"
+      },
+      "display_name": "synthetic topic"
+    },
+    {
+      "schema_version": "review-item/v0.1",
+      "review_item_id": "review/question/synthetic-bank/q-001",
+      "item_kind": "question",
+      "canonical_ref": {
+        "source_id": "synthetic-bank",
+        "source_question_id": "q-001"
+      },
+      "source_reference": {
+        "source_id": "synthetic-bank",
+        "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "source_path": "fixtures/question-index.json",
+        "source_question_id": "q-001"
+      },
+      "display_name": "synthetic question"
+    },
+    {
+      "schema_version": "review-item/v0.1",
+      "review_item_id": "review/case_capability/CASE.DATA_DESIGN",
+      "item_kind": "case_capability",
+      "canonical_ref": {
+        "capability_id": "CASE.DATA_DESIGN",
+        "taxonomy_version": "0.1"
+      },
+      "source_reference": {
+        "source_id": "synthetic-catalog",
+        "source_commit": "cccccccccccccccccccccccccccccccccccccccc",
+        "source_path": "fixtures/capability-index.json",
+        "source_value": "CASE.DATA_DESIGN"
+      },
+      "display_name": "synthetic capability"
+    }
+  ],
+  "progress_events": [
+    {
+      "event_id": "attempt-001",
+      "schema_version": "progress-event/v0.1",
+      "event_type": "comprehensive_attempt",
+      "occurred_at": "2026-01-01T10:00:00+08:00",
+      "question": {
+        "source_id": "synthetic-bank",
+        "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "source_path": "fixtures/question-index.json",
+        "source_question_id": "q-001"
+      },
+      "topics": ["DATA.DATABASE.RELATIONAL"],
+      "correct": true
+    },
+    {
+      "event_id": "case-001",
+      "schema_version": "progress-event/v0.1",
+      "event_type": "case_attempt",
+      "occurred_at": "2026-01-02T10:00:00+08:00",
+      "question": {
+        "source_id": "synthetic-bank",
+        "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "source_path": "fixtures/question-index.json",
+        "source_question_id": "q-002"
+      },
+      "topics": ["DATA.DATABASE.RELATIONAL"],
+      "capabilities": ["CASE.DATA_DESIGN"],
+      "score_earned": 7,
+      "score_possible": 10,
+      "capability_scores": [
+        {
+          "capability_id": "CASE.DATA_DESIGN",
+          "score_earned": 4,
+          "score_possible": 6
+        }
+      ]
+    }
+  ],
+  "review_events": [
+    {
+      "schema_version": "review-event/v0.1",
+      "event_id": "ctx-question",
+      "event_type": "review_context",
+      "source_event_id": "attempt-001",
+      "review_item_id": "review/question/synthetic-bank/q-001",
+      "attempt_context": "review",
+      "occurred_at": "2026-01-01T10:00:00+08:00"
+    },
+    {
+      "schema_version": "review-event/v0.1",
+      "event_id": "ctx-topic",
+      "event_type": "review_context",
+      "source_event_id": "attempt-001",
+      "review_item_id": "review/topic/DATA.DATABASE.RELATIONAL",
+      "attempt_context": "initial_learning",
+      "occurred_at": "2026-01-01T10:00:00+08:00"
+    },
+    {
+      "schema_version": "review-event/v0.1",
+      "event_id": "ctx-capability",
+      "event_type": "review_context",
+      "source_event_id": "case-001",
+      "review_item_id": "review/case_capability/CASE.DATA_DESIGN",
+      "attempt_context": "review",
+      "occurred_at": "2026-01-02T10:00:00+08:00"
+    }
+  ],
+  "expected_evidence": [
+    {
+      "schema_version": "review-evidence/v0.1",
+      "evidence_id": "evidence/attempt-001/review/question/synthetic-bank/q-001",
+      "review_item_id": "review/question/synthetic-bank/q-001",
+      "item_kind": "question",
+      "source_event_id": "attempt-001",
+      "source_event_type": "comprehensive_attempt",
+      "review_event_id": "ctx-question",
+      "occurred_at": "2026-01-01T02:00:00Z",
+      "attempt_context": "review",
+      "evidence_kind": "comprehensive_correctness",
+      "evidence_value": {"correct": true},
+      "evidence_status": "supported",
+      "source_reference": {
+        "source_id": "synthetic-bank",
+        "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "source_path": "fixtures/question-index.json",
+        "source_question_id": "q-001"
+      }
+    },
+    {
+      "schema_version": "review-evidence/v0.1",
+      "evidence_id": "evidence/attempt-001/review/topic/DATA.DATABASE.RELATIONAL",
+      "review_item_id": "review/topic/DATA.DATABASE.RELATIONAL",
+      "item_kind": "topic",
+      "source_event_id": "attempt-001",
+      "source_event_type": "comprehensive_attempt",
+      "review_event_id": "ctx-topic",
+      "occurred_at": "2026-01-01T02:00:00Z",
+      "attempt_context": "initial_learning",
+      "evidence_kind": "comprehensive_correctness",
+      "evidence_value": {"correct": true},
+      "evidence_status": "supported",
+      "source_reference": {
+        "source_id": "synthetic-bank",
+        "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "source_path": "fixtures/question-index.json",
+        "source_question_id": "q-001"
+      }
+    },
+    {
+      "schema_version": "review-evidence/v0.1",
+      "evidence_id": "evidence/case-001/review/case_capability/CASE.DATA_DESIGN",
+      "review_item_id": "review/case_capability/CASE.DATA_DESIGN",
+      "item_kind": "case_capability",
+      "source_event_id": "case-001",
+      "source_event_type": "case_attempt",
+      "review_event_id": "ctx-capability",
+      "occurred_at": "2026-01-02T02:00:00Z",
+      "attempt_context": "review",
+      "evidence_kind": "case_capability_score",
+      "evidence_value": {"score_earned": 4, "score_possible": 6},
+      "evidence_status": "supported",
+      "source_reference": {
+        "source_id": "synthetic-bank",
+        "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "source_path": "fixtures/question-index.json",
+        "source_question_id": "q-002"
+      }
+    }
+  ]
+}
