@@ -64,6 +64,8 @@ Gate C 解锁的视图只能显示明确的空态
 Gate D 尚未完成 → 禁止开始正式前端实现
 ```
 
+**Gate 状态以 `main` 为准**：未合并分支上的 policy 冻结、draft schema 或 fixture 骨架都不构成 Gate 通过。
+
 ---
 
 ## 4. 能力可用性分类

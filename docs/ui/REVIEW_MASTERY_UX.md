@@ -50,6 +50,8 @@ scripts/validate_review.py              输出 PENDING_CONTRACT_FREEZE
 不存在：任何 mastery / due / interval 字段
 ```
 
+**关于并行工作**：仓库可能有未合并分支正在推进 P4.1～P4.5。这类分支上的 policy symbol 或 draft 字段**不构成 Gate B 的输入**；只有合并进 `main` 并附带 validation report 后，才能被视为已冻结契约。本文件始终以 `main` 为准。
+
 所以：
 
 ```text
