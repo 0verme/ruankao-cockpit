@@ -44,7 +44,7 @@ Progress Replay      ⏳
 Cockpit UI           ⏳
 ```
 
-当前仓库已完成 Taxonomy v0.1、Case Capability v0.1、Golden Set 数据契约和小样本验证；尚未实现 Progress Engine、Adaptive Planner、30 天计划实例化或 UI。
+当前仓库已完成 Taxonomy v0.1、Case Capability v0.1、Golden Set 数据契约和 Phase 2 扩量验证（100 道综合题、48 道案例子问题）；尚未实现 Progress Engine、Adaptive Planner、30 天计划实例化或 UI。
 
 ## 文档入口
 
@@ -53,6 +53,7 @@ Cockpit UI           ⏳
 - [当前架构方向](docs/architecture/README.md)
 - [Taxonomy 边界](taxonomy/README.md)
 - [Golden Set 策略](data/golden-set/README.md)
+- [Phase 2 Golden Set 扩量验证报告](docs/GOLDEN_SET_EXPANSION_VALIDATION.md)
 - [Progress / Adaptive Engine 边界](engine/rules/README.md)
 
 ## 开发边界

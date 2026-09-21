@@ -2,106 +2,2327 @@
   "schema_version": "golden-set/v0.1",
   "taxonomy_version": "0.1",
   "question_type": "case",
-  "sample_scope": "11 real case sub-questions selected to stress multi-topic and topic/capability separation; source text and answers are not reproduced.",
+  "sample_scope": "Phase 2 reviewed expansion: records retain source references and short recognition summaries; source text, options, answers, analysis, OCR and PDFs are not reproduced.",
   "records": [
     {
-      "id":"gs-case-2024-h1-1-q2",
-      "question_type":"case",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2024年上半年-系统架构设计师-案例分析.md","source_question_id":"2024-h1-case-1-q2","case_id":"2024-h1-case-1","sub_question_id":"q2"},
-      "identification":{"term":"2024年上半年","case_title":"软件架构设计与评估","summary":"质量属性效用树填空"},
-      "topics":[{"topic_id":"QUALITY.EVALUATION.UTILITY_TREE","confidence":"high"},{"topic_id":"QUALITY.ATTRIBUTES","confidence":"high"},{"topic_id":"ARCH.CLOUD_NATIVE.MICROSERVICES","confidence":"medium"}],
-      "capabilities":[{"capability_id":"CASE.QUALITY_ATTRIBUTE_ANALYSIS","confidence":"high"},{"capability_id":"CASE.ARCHITECTURE_SELECTION","confidence":"medium"},{"capability_id":"CASE.SCORING_POINT_EXPRESSION","confidence":"high"}],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"效用树是评估工具，微服务是案例背景中的架构主题；两者不合并。"}
+      "id": "gs-case-2024-h1-1-q2",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2024年上半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2024-h1-case-1-q2",
+        "case_id": "2024-h1-case-1",
+        "sub_question_id": "q2"
+      },
+      "identification": {
+        "term": "2024年上半年",
+        "case_title": "软件架构设计与评估",
+        "summary": "质量属性效用树填空"
+      },
+      "topics": [
+        {
+          "topic_id": "QUALITY.EVALUATION.UTILITY_TREE",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "QUALITY.ATTRIBUTES",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "ARCH.CLOUD_NATIVE.MICROSERVICES",
+          "confidence": "medium"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.QUALITY_ATTRIBUTE_ANALYSIS",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.ARCHITECTURE_SELECTION",
+          "confidence": "medium"
+        },
+        {
+          "capability_id": "CASE.SCORING_POINT_EXPRESSION",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "效用树是评估工具，微服务是案例背景中的架构主题；两者不合并。"
+      }
     },
     {
-      "id":"gs-case-2024-h1-2-q1",
-      "question_type":"case",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2024年上半年-系统架构设计师-案例分析.md","source_question_id":"2024-h1-case-2-q1","case_id":"2024-h1-case-2","sub_question_id":"q1"},
-      "identification":{"term":"2024年上半年","case_title":"系统设计与建模","summary":"UML 时序图消息类型说明"},
-      "topics":[{"topic_id":"SOFTWARE.MODELING.UML","confidence":"high"}],
-      "capabilities":[{"capability_id":"CASE.MODELING","confidence":"high"},{"capability_id":"CASE.SCORING_POINT_EXPRESSION","confidence":"high"}],
-      "annotation":{"status":"reviewed","annotator":"human","reviewed_at":"2026-09-21","note":"公开材料存在物流题面与预约图版本冲突；本条只确认共同的 UML 消息知识，不使用冲突图答案。","issues":[{"kind":"source_conflict","description":"同一考次公开材料保留不同背景/图版本。"}]}
+      "id": "gs-case-2024-h1-2-q1",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2024年上半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2024-h1-case-2-q1",
+        "case_id": "2024-h1-case-2",
+        "sub_question_id": "q1"
+      },
+      "identification": {
+        "term": "2024年上半年",
+        "case_title": "系统设计与建模",
+        "summary": "UML 时序图消息类型说明"
+      },
+      "topics": [
+        {
+          "topic_id": "SOFTWARE.MODELING.UML",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.MODELING",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.SCORING_POINT_EXPRESSION",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "公开材料存在物流题面与预约图版本冲突；本条只确认共同的 UML 消息知识，不使用冲突图答案。",
+        "issues": [
+          {
+            "kind": "source_conflict",
+            "description": "同一考次公开材料保留不同背景/图版本。"
+          }
+        ]
+      }
     },
     {
-      "id":"gs-case-2024-h1-3-q1",
-      "question_type":"case",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2024年上半年-系统架构设计师-案例分析.md","source_question_id":"2024-h1-case-3-q1","case_id":"2024-h1-case-3","sub_question_id":"q1"},
-      "identification":{"term":"2024年上半年","case_title":"分布式锁与 Redis","summary":"数据库锁与 Redis 锁比较"},
-      "topics":[{"topic_id":"DATA.DISTRIBUTED.DISTRIBUTED_LOCK","confidence":"high"},{"topic_id":"DATA.CACHE","confidence":"high"},{"topic_id":"DATA.DATABASE.TRANSACTION","confidence":"medium"}],
-      "capabilities":[{"capability_id":"CASE.DATA_DESIGN","confidence":"high"},{"capability_id":"CASE.DISTRIBUTED_DESIGN","confidence":"high"},{"capability_id":"CASE.SOLUTION_TRADEOFF","confidence":"high"}],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"同一小问同时比较数据库和缓存/协调机制，验证一对多 topic。"}
+      "id": "gs-case-2024-h1-3-q1",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2024年上半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2024-h1-case-3-q1",
+        "case_id": "2024-h1-case-3",
+        "sub_question_id": "q1"
+      },
+      "identification": {
+        "term": "2024年上半年",
+        "case_title": "分布式锁与 Redis",
+        "summary": "数据库锁与 Redis 锁比较"
+      },
+      "topics": [
+        {
+          "topic_id": "DATA.DISTRIBUTED.DISTRIBUTED_LOCK",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "DATA.CACHE",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "DATA.DATABASE.TRANSACTION",
+          "confidence": "medium"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.DATA_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.DISTRIBUTED_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.SOLUTION_TRADEOFF",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "同一小问同时比较数据库和缓存/协调机制，验证一对多 topic。"
+      }
     },
     {
-      "id":"gs-case-2024-h2-1-q2",
-      "question_type":"case",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2024年下半年-系统架构设计师-案例分析.md","source_question_id":"2024-h2-case-1-q2","case_id":"2024-h2-case-1","sub_question_id":"q2"},
-      "identification":{"term":"2024年下半年","case_title":"面向质量属性的软件架构设计","summary":"Ping/Echo 与心跳故障检测比较"},
-      "topics":[{"topic_id":"QUALITY.ATTRIBUTES.AVAILABILITY","confidence":"high"},{"topic_id":"QUALITY.EVALUATION.SCENARIOS","confidence":"high"},{"topic_id":"RELIABILITY.SOFTWARE.FAULT_TOLERANCE","confidence":"medium"}],
-      "capabilities":[{"capability_id":"CASE.QUALITY_ATTRIBUTE_ANALYSIS","confidence":"high"},{"capability_id":"CASE.RELIABILITY_DESIGN","confidence":"high"},{"capability_id":"CASE.SOLUTION_TRADEOFF","confidence":"high"},{"capability_id":"CASE.SCORING_POINT_EXPRESSION","confidence":"high"}],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"检测策略比较同时要求可用性场景和资源权衡。"}
+      "id": "gs-case-2024-h2-1-q2",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2024年下半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2024-h2-case-1-q2",
+        "case_id": "2024-h2-case-1",
+        "sub_question_id": "q2"
+      },
+      "identification": {
+        "term": "2024年下半年",
+        "case_title": "面向质量属性的软件架构设计",
+        "summary": "Ping/Echo 与心跳故障检测比较"
+      },
+      "topics": [
+        {
+          "topic_id": "QUALITY.ATTRIBUTES.AVAILABILITY",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "QUALITY.EVALUATION.SCENARIOS",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "RELIABILITY.SOFTWARE.FAULT_TOLERANCE",
+          "confidence": "medium"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.QUALITY_ATTRIBUTE_ANALYSIS",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.RELIABILITY_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.SOLUTION_TRADEOFF",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.SCORING_POINT_EXPRESSION",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "检测策略比较同时要求可用性场景和资源权衡。"
+      }
     },
     {
-      "id":"gs-case-2024-h2-2-q1",
-      "question_type":"case",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2024年下半年-系统架构设计师-案例分析.md","source_question_id":"2024-h2-case-2-q1","case_id":"2024-h2-case-2","sub_question_id":"q1"},
-      "identification":{"term":"2024年下半年","case_title":"Cache-Aside 缓存架构","summary":"缓存读取流程补全"},
-      "topics":[{"topic_id":"DATA.CACHE.CACHE_ASIDE","confidence":"high"}],
-      "capabilities":[{"capability_id":"CASE.DATA_DESIGN","confidence":"high"},{"capability_id":"CASE.MODELING","confidence":"medium"},{"capability_id":"CASE.SCORING_POINT_EXPRESSION","confidence":"high"}],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"流程图表达属于答题能力，但知识归属仍是 Cache-Aside。"}
+      "id": "gs-case-2024-h2-2-q1",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2024年下半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2024-h2-case-2-q1",
+        "case_id": "2024-h2-case-2",
+        "sub_question_id": "q1"
+      },
+      "identification": {
+        "term": "2024年下半年",
+        "case_title": "Cache-Aside 缓存架构",
+        "summary": "缓存读取流程补全"
+      },
+      "topics": [
+        {
+          "topic_id": "DATA.CACHE.CACHE_ASIDE",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.DATA_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.MODELING",
+          "confidence": "medium"
+        },
+        {
+          "capability_id": "CASE.SCORING_POINT_EXPRESSION",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "流程图表达属于答题能力，但知识归属仍是 Cache-Aside。"
+      }
     },
     {
-      "id":"gs-case-2024-h2-2-q3",
-      "question_type":"case",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2024年下半年-系统架构设计师-案例分析.md","source_question_id":"2024-h2-case-2-q3","case_id":"2024-h2-case-2","sub_question_id":"q3"},
-      "identification":{"term":"2024年下半年","case_title":"Cache-Aside 缓存架构","summary":"缓存与数据库不一致原因及方案"},
-      "topics":[{"topic_id":"DATA.CACHE.CACHE_ASIDE","confidence":"high"},{"topic_id":"DATA.DISTRIBUTED.CONSISTENCY","confidence":"high"},{"topic_id":"DATA.DATABASE.TRANSACTION","confidence":"medium"}],
-      "capabilities":[{"capability_id":"CASE.ROOT_CAUSE_ANALYSIS","confidence":"high"},{"capability_id":"CASE.DATA_DESIGN","confidence":"high"},{"capability_id":"CASE.DISTRIBUTED_DESIGN","confidence":"high"},{"capability_id":"CASE.SOLUTION_TRADEOFF","confidence":"high"}],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"该小问是主动攻击模型的边界样本：问题原因、数据主题和分布式一致性能力并存。"}
+      "id": "gs-case-2024-h2-2-q3",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2024年下半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2024-h2-case-2-q3",
+        "case_id": "2024-h2-case-2",
+        "sub_question_id": "q3"
+      },
+      "identification": {
+        "term": "2024年下半年",
+        "case_title": "Cache-Aside 缓存架构",
+        "summary": "缓存与数据库不一致原因及方案"
+      },
+      "topics": [
+        {
+          "topic_id": "DATA.CACHE.CACHE_ASIDE",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "DATA.DISTRIBUTED.CONSISTENCY",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "DATA.DATABASE.TRANSACTION",
+          "confidence": "medium"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.ROOT_CAUSE_ANALYSIS",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.DATA_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.DISTRIBUTED_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.SOLUTION_TRADEOFF",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "该小问是主动攻击模型的边界样本：问题原因、数据主题和分布式一致性能力并存。"
+      }
     },
     {
-      "id":"gs-case-2024-h2-5-q1",
-      "question_type":"case",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2024年下半年-系统架构设计师-案例分析.md","source_question_id":"2024-h2-case-5-q1","case_id":"2024-h2-case-5","sub_question_id":"q1"},
-      "identification":{"term":"2024年下半年","case_title":"安全关键系统与胰岛素泵","summary":"危险驱动安全分析步骤"},
-      "topics":[{"topic_id":"ARCH.EMBEDDED.SAFETY_CRITICAL","confidence":"high"},{"topic_id":"RELIABILITY.SOFTWARE.FAULT_TOLERANCE","confidence":"medium"}],
-      "capabilities":[{"capability_id":"CASE.ROOT_CAUSE_ANALYSIS","confidence":"high"},{"capability_id":"CASE.RELIABILITY_DESIGN","confidence":"high"},{"capability_id":"CASE.MODELING","confidence":"medium"}],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"安全关键是系统安全属性/风险语境，不将其误标为信息安全架构。"}
+      "id": "gs-case-2024-h2-5-q1",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2024年下半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2024-h2-case-5-q1",
+        "case_id": "2024-h2-case-5",
+        "sub_question_id": "q1"
+      },
+      "identification": {
+        "term": "2024年下半年",
+        "case_title": "安全关键系统与胰岛素泵",
+        "summary": "危险驱动安全分析步骤"
+      },
+      "topics": [
+        {
+          "topic_id": "ARCH.EMBEDDED.SAFETY_CRITICAL",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "RELIABILITY.SOFTWARE.FAULT_TOLERANCE",
+          "confidence": "medium"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.ROOT_CAUSE_ANALYSIS",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.RELIABILITY_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.MODELING",
+          "confidence": "medium"
+        }
+      ],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "安全关键是系统安全属性/风险语境，不将其误标为信息安全架构。"
+      }
     },
     {
-      "id":"gs-case-2025-h1-1-q2",
-      "question_type":"case",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2025年上半年-系统架构设计师-案例分析.md","source_question_id":"2025-h1-case-1-q2","case_id":"2025-h1-case-1","sub_question_id":"q2"},
-      "identification":{"term":"2025年上半年","case_title":"系统架构设计","summary":"解释器风格架构图补全"},
-      "topics":[{"topic_id":"ARCH.FOUNDATION.STYLES","confidence":"high"},{"topic_id":"SOFTWARE.MODELING.FORMAL_MODELING","confidence":"medium"}],
-      "capabilities":[{"capability_id":"CASE.ARCHITECTURE_SELECTION","confidence":"high"},{"capability_id":"CASE.ARCHITECTURE_DESIGN","confidence":"high"},{"capability_id":"CASE.MODELING","confidence":"high"}],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"解释器是架构风格，图中状态/引擎是结构表达；不把“解释器”当作 capability。"}
+      "id": "gs-case-2025-h1-1-q2",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2025-h1-case-1-q2",
+        "case_id": "2025-h1-case-1",
+        "sub_question_id": "q2"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "case_title": "系统架构设计",
+        "summary": "解释器风格架构图补全"
+      },
+      "topics": [
+        {
+          "topic_id": "ARCH.FOUNDATION.STYLES",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "SOFTWARE.MODELING.FORMAL_MODELING",
+          "confidence": "medium"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.ARCHITECTURE_SELECTION",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.ARCHITECTURE_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.MODELING",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "解释器是架构风格，图中状态/引擎是结构表达；不把“解释器”当作 capability。"
+      }
     },
     {
-      "id":"gs-case-2025-h1-2-q3",
-      "question_type":"case",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2025年上半年-系统架构设计师-案例分析.md","source_question_id":"2025-h1-case-2-q3","case_id":"2025-h1-case-2","sub_question_id":"q3"},
-      "identification":{"term":"2025年上半年","case_title":"知识图谱智能问答系统","summary":"知识图谱存储方式与理由"},
-      "topics":[{"topic_id":"DATA.BIGDATA.KNOWLEDGE_GRAPH","confidence":"high"},{"topic_id":"DATA.DATABASE.NOSQL","confidence":"medium"},{"topic_id":"EMERGING.TECHNOLOGY.AI","confidence":"medium"}],
-      "capabilities":[{"capability_id":"CASE.DATA_DESIGN","confidence":"high"},{"capability_id":"CASE.ARCHITECTURE_SELECTION","confidence":"high"},{"capability_id":"CASE.SOLUTION_TRADEOFF","confidence":"medium"}],
-      "annotation":{"status":"reviewed","annotator":"human","reviewed_at":"2026-09-21","note":"公开回忆答案对部分图空存在冲突，但存储方式问题的 topic 边界清晰。","issues":[{"kind":"source_conflict","description":"同一公开材料对问题1部分空位有不同整理；本条不依赖那些空位。"}]}
+      "id": "gs-case-2025-h1-2-q3",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2025-h1-case-2-q3",
+        "case_id": "2025-h1-case-2",
+        "sub_question_id": "q3"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "case_title": "知识图谱智能问答系统",
+        "summary": "知识图谱存储方式与理由"
+      },
+      "topics": [
+        {
+          "topic_id": "DATA.BIGDATA.KNOWLEDGE_GRAPH",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "DATA.DATABASE.NOSQL",
+          "confidence": "medium"
+        },
+        {
+          "topic_id": "EMERGING.TECHNOLOGY.AI",
+          "confidence": "medium"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.DATA_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.ARCHITECTURE_SELECTION",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.SOLUTION_TRADEOFF",
+          "confidence": "medium"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "公开回忆答案对部分图空存在冲突，但存储方式问题的 topic 边界清晰。",
+        "issues": [
+          {
+            "kind": "source_conflict",
+            "description": "同一公开材料对问题1部分空位有不同整理；本条不依赖那些空位。"
+          }
+        ]
+      }
     },
     {
-      "id":"gs-case-2025-h1-4-q3",
-      "question_type":"case",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2025年上半年-系统架构设计师-案例分析.md","source_question_id":"2025-h1-case-4-q3","case_id":"2025-h1-case-4","sub_question_id":"q3"},
-      "identification":{"term":"2025年上半年","case_title":"Redis 主从复制与持久化","summary":"RDB 与 AOF 持久化比较"},
-      "topics":[{"topic_id":"DATA.CACHE.CACHE_PERSISTENCE","confidence":"high"},{"topic_id":"DATA.DISTRIBUTED.REPLICATION_PARTITIONING","confidence":"high"},{"topic_id":"RELIABILITY.SOFTWARE.FAULT_TOLERANCE","confidence":"medium"}],
-      "capabilities":[{"capability_id":"CASE.DATA_DESIGN","confidence":"high"},{"capability_id":"CASE.DISTRIBUTED_DESIGN","confidence":"high"},{"capability_id":"CASE.RELIABILITY_DESIGN","confidence":"medium"},{"capability_id":"CASE.SOLUTION_TRADEOFF","confidence":"high"}],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"持久化比较同时涉及数据存储、复制和故障恢复，验证多 topic 与多 capability。"}
+      "id": "gs-case-2025-h1-4-q3",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2025-h1-case-4-q3",
+        "case_id": "2025-h1-case-4",
+        "sub_question_id": "q3"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "case_title": "Redis 主从复制与持久化",
+        "summary": "RDB 与 AOF 持久化比较"
+      },
+      "topics": [
+        {
+          "topic_id": "DATA.CACHE.CACHE_PERSISTENCE",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "DATA.DISTRIBUTED.REPLICATION_PARTITIONING",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "RELIABILITY.SOFTWARE.FAULT_TOLERANCE",
+          "confidence": "medium"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.DATA_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.DISTRIBUTED_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.RELIABILITY_DESIGN",
+          "confidence": "medium"
+        },
+        {
+          "capability_id": "CASE.SOLUTION_TRADEOFF",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "持久化比较同时涉及数据存储、复制和故障恢复，验证多 topic 与多 capability。"
+      }
     },
     {
-      "id":"gs-case-2025-h2-3-q3",
-      "question_type":"case",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2025年下半年-系统架构设计师-案例分析.md","source_question_id":"2025-h2-case-3-q3","case_id":"2025-h2-case-3","sub_question_id":"q3"},
-      "identification":{"term":"2025年下半年","case_title":"Redis 热点缓存失效处理","summary":"互斥锁与逻辑过期方案比较"},
-      "topics":[{"topic_id":"DATA.CACHE.CACHE_FAILURE","confidence":"high"},{"topic_id":"DATA.CACHE.CACHE_ASIDE","confidence":"medium"},{"topic_id":"DATA.DISTRIBUTED.CONSISTENCY","confidence":"high"},{"topic_id":"QUALITY.ATTRIBUTES.AVAILABILITY","confidence":"high"}],
-      "capabilities":[{"capability_id":"CASE.ROOT_CAUSE_ANALYSIS","confidence":"high"},{"capability_id":"CASE.DATA_DESIGN","confidence":"high"},{"capability_id":"CASE.DISTRIBUTED_DESIGN","confidence":"high"},{"capability_id":"CASE.RELIABILITY_DESIGN","confidence":"medium"},{"capability_id":"CASE.SOLUTION_TRADEOFF","confidence":"high"},{"capability_id":"CASE.SCORING_POINT_EXPRESSION","confidence":"high"}],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"主动选择的难标样本：缓存策略、分布式并发、一致性与可用性不可压成一个 topic。"}
+      "id": "gs-case-2025-h2-3-q3",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年下半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2025-h2-case-3-q3",
+        "case_id": "2025-h2-case-3",
+        "sub_question_id": "q3"
+      },
+      "identification": {
+        "term": "2025年下半年",
+        "case_title": "Redis 热点缓存失效处理",
+        "summary": "互斥锁与逻辑过期方案比较"
+      },
+      "topics": [
+        {
+          "topic_id": "DATA.CACHE.CACHE_FAILURE",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "DATA.CACHE.CACHE_ASIDE",
+          "confidence": "medium"
+        },
+        {
+          "topic_id": "DATA.DISTRIBUTED.CONSISTENCY",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "QUALITY.ATTRIBUTES.AVAILABILITY",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.ROOT_CAUSE_ANALYSIS",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.DATA_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.DISTRIBUTED_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.RELIABILITY_DESIGN",
+          "confidence": "medium"
+        },
+        {
+          "capability_id": "CASE.SOLUTION_TRADEOFF",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.SCORING_POINT_EXPRESSION",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "主动选择的难标样本：缓存策略、分布式并发、一致性与可用性不可压成一个 topic。"
+      }
+    },
+    {
+      "id": "gs-case-2020-h2-1-q1",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2020年下半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2020-h2-case-1-q1",
+        "case_id": "2020-h2-case-1",
+        "sub_question_id": "q1"
+      },
+      "identification": {
+        "term": "2020年下半年",
+        "case_title": "在线开发系统",
+        "summary": "架构风格性能比较"
+      },
+      "topics": [
+        {
+          "topic_id": "ARCH.FOUNDATION.STYLES",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "QUALITY.ATTRIBUTES.PERFORMANCE",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.ARCHITECTURE_SELECTION",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.SOLUTION_TRADEOFF",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.PERFORMANCE_ANALYSIS",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2020-h2-1-q2",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2020年下半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2020-h2-case-1-q2",
+        "case_id": "2020-h2-case-1",
+        "sub_question_id": "q2"
+      },
+      "identification": {
+        "term": "2020年下半年",
+        "case_title": "在线开发系统",
+        "summary": "质量属性效用树"
+      },
+      "topics": [
+        {
+          "topic_id": "QUALITY.ATTRIBUTES",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "QUALITY.EVALUATION.UTILITY_TREE",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.QUALITY_ATTRIBUTE_ANALYSIS",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.PROBLEM_IDENTIFICATION",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2020-h2-4-q1",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2020年下半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2020-h2-case-4-q1",
+        "case_id": "2020-h2-case-4",
+        "sub_question_id": "q1"
+      },
+      "identification": {
+        "term": "2020年下半年",
+        "case_title": "数据库缓存",
+        "summary": "Redis 数据类型映射"
+      },
+      "topics": [
+        {
+          "topic_id": "DATA.CACHE",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.DATA_DESIGN",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2020-h2-4-q2",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2020年下半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2020-h2-case-4-q2",
+        "case_id": "2020-h2-case-4",
+        "sub_question_id": "q2"
+      },
+      "identification": {
+        "term": "2020年下半年",
+        "case_title": "数据库缓存",
+        "summary": "RDB 与 AOF 比较"
+      },
+      "topics": [
+        {
+          "topic_id": "DATA.CACHE.CACHE_PERSISTENCE",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "RELIABILITY.SOFTWARE.FAULT_TOLERANCE",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.DATA_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.RELIABILITY_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.SOLUTION_TRADEOFF",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2020-h2-4-q3",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2020年下半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2020-h2-case-4-q3",
+        "case_id": "2020-h2-case-4",
+        "sub_question_id": "q3"
+      },
+      "identification": {
+        "term": "2020年下半年",
+        "case_title": "数据库缓存",
+        "summary": "过期删除失效"
+      },
+      "topics": [
+        {
+          "topic_id": "DATA.CACHE.CACHE_FAILURE",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "QUALITY.ATTRIBUTES.PERFORMANCE",
+          "confidence": "medium"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.ROOT_CAUSE_ANALYSIS",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.DATA_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.PERFORMANCE_ANALYSIS",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2020-h2-5-q2",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2020年下半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2020-h2-case-5-q2",
+        "case_id": "2020-h2-case-5",
+        "sub_question_id": "q2"
+      },
+      "identification": {
+        "term": "2020年下半年",
+        "case_title": "工业监测系统",
+        "summary": "SSM 分层流程图"
+      },
+      "topics": [
+        {
+          "topic_id": "ARCH.LAYERED.PRESENTATION_MIDDLE",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "ARCH.LAYERED.DATA_ACCESS",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "SOFTWARE.ENGINEERING.COMPONENTS",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.ARCHITECTURE_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.MODELING",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2024-h1-3-q2",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2024年上半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2024-h1-case-3-q2",
+        "case_id": "2024-h1-case-3",
+        "sub_question_id": "q2"
+      },
+      "identification": {
+        "term": "2024年上半年",
+        "case_title": "分布式锁",
+        "summary": "死锁与实现类型比较"
+      },
+      "topics": [
+        {
+          "topic_id": "DATA.DISTRIBUTED.DISTRIBUTED_LOCK",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "DATA.DATABASE.TRANSACTION",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.DATA_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.DISTRIBUTED_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.SOLUTION_TRADEOFF",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2024-h1-4-q2",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2024年上半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2024-h1-case-4-q2",
+        "case_id": "2024-h1-case-4",
+        "sub_question_id": "q2"
+      },
+      "identification": {
+        "term": "2024年上半年",
+        "case_title": "车载通信",
+        "summary": "DDS 与 SOME/IP 协议选择"
+      },
+      "topics": [
+        {
+          "topic_id": "ARCH.COMMUNICATION.NETWORK_ARCHITECTURE",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "SYSTEM.COMPUTER.NETWORKING",
+          "confidence": "medium"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.ARCHITECTURE_SELECTION",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.ARCHITECTURE_DESIGN",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2024-h1-4-q3",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2024年上半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2024-h1-case-4-q3",
+        "case_id": "2024-h1-case-4",
+        "sub_question_id": "q3"
+      },
+      "identification": {
+        "term": "2024年上半年",
+        "case_title": "自动驾驶平台",
+        "summary": "规划控制流程"
+      },
+      "topics": [
+        {
+          "topic_id": "ARCH.EMBEDDED.REAL_TIME",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "ARCH.COMMUNICATION.NETWORK_ARCHITECTURE",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.MODELING",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.ARCHITECTURE_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.PROBLEM_IDENTIFICATION",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2024-h1-5-q2",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2024年上半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2024-h1-case-5-q2",
+        "case_id": "2024-h1-case-5",
+        "sub_question_id": "q2"
+      },
+      "identification": {
+        "term": "2024年上半年",
+        "case_title": "GIS 平台",
+        "summary": "MongoDB 空间矢量存储"
+      },
+      "topics": [
+        {
+          "topic_id": "DATA.DATABASE.NOSQL",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.DATA_DESIGN",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2024-h1-5-q3",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2024年上半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2024-h1-case-5-q3",
+        "case_id": "2024-h1-case-5",
+        "sub_question_id": "q3"
+      },
+      "identification": {
+        "term": "2024年上半年",
+        "case_title": "GIS 平台",
+        "summary": "冷热数据异构存储"
+      },
+      "topics": [
+        {
+          "topic_id": "DATA.BIGDATA.DATA_PIPELINE",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "DATA.DISTRIBUTED.REPLICATION_PARTITIONING",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.DATA_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.SOLUTION_TRADEOFF",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.PERFORMANCE_ANALYSIS",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2024-h2-3-q1",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2024年下半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2024-h2-case-3-q1",
+        "case_id": "2024-h2-case-3",
+        "sub_question_id": "q1"
+      },
+      "identification": {
+        "term": "2024年下半年",
+        "case_title": "分布式锁",
+        "summary": "数据库锁与 Redis 锁比较"
+      },
+      "topics": [
+        {
+          "topic_id": "DATA.DISTRIBUTED.DISTRIBUTED_LOCK",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "DATA.DATABASE.TRANSACTION",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "DATA.CACHE",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.DATA_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.DISTRIBUTED_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.SOLUTION_TRADEOFF",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2024-h2-3-q2",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2024年下半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2024-h2-case-3-q2",
+        "case_id": "2024-h2-case-3",
+        "sub_question_id": "q2"
+      },
+      "identification": {
+        "term": "2024年下半年",
+        "case_title": "分布式锁",
+        "summary": "死锁场景与规避"
+      },
+      "topics": [
+        {
+          "topic_id": "DATA.DISTRIBUTED.DISTRIBUTED_LOCK",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.ROOT_CAUSE_ANALYSIS",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.DISTRIBUTED_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.RELIABILITY_DESIGN",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2024-h2-4-q2",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2024年下半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2024-h2-case-4-q2",
+        "case_id": "2024-h2-case-4",
+        "sub_question_id": "q2"
+      },
+      "identification": {
+        "term": "2024年下半年",
+        "case_title": "ROS 2",
+        "summary": "话题服务动作参数通信"
+      },
+      "topics": [
+        {
+          "topic_id": "ARCH.COMMUNICATION.NETWORK_ARCHITECTURE",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "SYSTEM.COMPUTER.NETWORKING",
+          "confidence": "medium"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.ARCHITECTURE_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.MODELING",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.DISTRIBUTED_DESIGN",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2024-h2-4-q3",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2024年下半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2024-h2-case-4-q3",
+        "case_id": "2024-h2-case-4",
+        "sub_question_id": "q3"
+      },
+      "identification": {
+        "term": "2024年下半年",
+        "case_title": "ROS 2",
+        "summary": "分层软件架构"
+      },
+      "topics": [
+        {
+          "topic_id": "ARCH.COMMUNICATION.NETWORK_ARCHITECTURE",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "ARCH.FOUNDATION.VIEWS",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.ARCHITECTURE_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.MODELING",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2024-h2-5-q3",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2024年下半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2024-h2-case-5-q3",
+        "case_id": "2024-h2-case-5",
+        "sub_question_id": "q3"
+      },
+      "identification": {
+        "term": "2024年下半年",
+        "case_title": "安全关键系统",
+        "summary": "形式化方法与测试"
+      },
+      "topics": [
+        {
+          "topic_id": "ARCH.EMBEDDED.SAFETY_CRITICAL",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "SOFTWARE.ENGINEERING.TESTING",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "RELIABILITY.SOFTWARE.EVALUATION",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.RELIABILITY_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.ARCHITECTURE_DESIGN",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2025-h1-1-q1",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2025-h1-case-1-q1",
+        "case_id": "2025-h1-case-1",
+        "sub_question_id": "q1"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "case_title": "解释器平台",
+        "summary": "质量需求识别"
+      },
+      "topics": [
+        {
+          "topic_id": "QUALITY.ATTRIBUTES.PERFORMANCE",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "QUALITY.ATTRIBUTES.AVAILABILITY",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "QUALITY.ATTRIBUTES.SECURITY",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "QUALITY.ATTRIBUTES.MODIFIABILITY",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "QUALITY.ATTRIBUTES.USABILITY",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.QUALITY_ATTRIBUTE_ANALYSIS",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.PROBLEM_IDENTIFICATION",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.SCORING_POINT_EXPRESSION",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2025-h1-1-q3",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2025-h1-case-1-q3",
+        "case_id": "2025-h1-case-1",
+        "sub_question_id": "q3"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "case_title": "解释器平台",
+        "summary": "风格适用性说明"
+      },
+      "topics": [
+        {
+          "topic_id": "ARCH.FOUNDATION.STYLES",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.ARCHITECTURE_SELECTION",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.ARCHITECTURE_DESIGN",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2025-h1-2-q1",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2025-h1-case-2-q1",
+        "case_id": "2025-h1-case-2",
+        "sub_question_id": "q1"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "case_title": "知识图谱问答",
+        "summary": "分层架构图"
+      },
+      "topics": [
+        {
+          "topic_id": "DATA.BIGDATA.KNOWLEDGE_GRAPH",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "DATA.DATABASE.NOSQL",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "SOFTWARE.MODELING.FORMAL_MODELING",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.DATA_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.MODELING",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.ARCHITECTURE_DESIGN",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2025-h1-2-q2",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2025-h1-case-2-q2",
+        "case_id": "2025-h1-case-2",
+        "sub_question_id": "q2"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "case_title": "知识图谱问答",
+        "summary": "Scrapy 组件流程"
+      },
+      "topics": [
+        {
+          "topic_id": "SOFTWARE.ENGINEERING.COMPONENTS",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "SOFTWARE.MODELING.FORMAL_MODELING",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.ARCHITECTURE_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.MODELING",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2025-h1-3-q2",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2025-h1-case-3-q2",
+        "case_id": "2025-h1-case-3",
+        "sub_question_id": "q2"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "case_title": "端侧 AI",
+        "summary": "资源池设计分类"
+      },
+      "topics": [
+        {
+          "topic_id": "ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "SYSTEM.COMPUTER.PERFORMANCE",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "QUALITY.ATTRIBUTES.SCALABILITY",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.ARCHITECTURE_SELECTION",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.PERFORMANCE_ANALYSIS",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.SOLUTION_TRADEOFF",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2025-h1-4-q1",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2025-h1-case-4-q1",
+        "case_id": "2025-h1-case-4",
+        "sub_question_id": "q1"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "case_title": "Redis 主从复制",
+        "summary": "全量同步流程"
+      },
+      "topics": [
+        {
+          "topic_id": "DATA.CACHE.CACHE_PERSISTENCE",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "DATA.DISTRIBUTED.REPLICATION_PARTITIONING",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.DATA_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.DISTRIBUTED_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.MODELING",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2025-h1-4-q2",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2025-h1-case-4-q2",
+        "case_id": "2025-h1-case-4",
+        "sub_question_id": "q2"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "case_title": "Redis 主从复制",
+        "summary": "增量同步流程"
+      },
+      "topics": [
+        {
+          "topic_id": "DATA.CACHE.CACHE_PERSISTENCE",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "DATA.DISTRIBUTED.REPLICATION_PARTITIONING",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.DATA_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.DISTRIBUTED_DESIGN",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2025-h1-5-q2",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2025-h1-case-5-q2",
+        "case_id": "2025-h1-case-5",
+        "sub_question_id": "q2"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "case_title": "区块链监管",
+        "summary": "多角色上链流程"
+      },
+      "topics": [
+        {
+          "topic_id": "DATA.DISTRIBUTED.CONSISTENCY",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "SEC.INFORMATION.SECURITY_PROPERTIES",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.SECURITY_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.ARCHITECTURE_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.DISTRIBUTED_DESIGN",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2025-h1-5-q3",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2025-h1-case-5-q3",
+        "case_id": "2025-h1-case-5",
+        "sub_question_id": "q3"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "case_title": "区块链监管",
+        "summary": "智能合约作用"
+      },
+      "topics": [
+        {
+          "topic_id": "DATA.DISTRIBUTED.CONSISTENCY",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "SEC.INFORMATION.SECURITY_PROPERTIES",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.SECURITY_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.ARCHITECTURE_DESIGN",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2025-h2-1-q1",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年下半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2025-h2-case-1-q1",
+        "case_id": "2025-h2-case-1",
+        "sub_question_id": "q1"
+      },
+      "identification": {
+        "term": "2025年下半年",
+        "case_title": "充电规划",
+        "summary": "质量属性需求识别"
+      },
+      "topics": [
+        {
+          "topic_id": "QUALITY.ATTRIBUTES.PERFORMANCE",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "QUALITY.ATTRIBUTES.AVAILABILITY",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "QUALITY.ATTRIBUTES.SECURITY",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "QUALITY.ATTRIBUTES.MODIFIABILITY",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "QUALITY.ATTRIBUTES.TESTABILITY",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "QUALITY.ATTRIBUTES.USABILITY",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.QUALITY_ATTRIBUTE_ANALYSIS",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.PROBLEM_IDENTIFICATION",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.SCORING_POINT_EXPRESSION",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2025-h2-1-q2",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年下半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2025-h2-case-1-q2",
+        "case_id": "2025-h2-case-1",
+        "sub_question_id": "q2"
+      },
+      "identification": {
+        "term": "2025年下半年",
+        "case_title": "充电规划",
+        "summary": "质量属性场景六要素"
+      },
+      "topics": [
+        {
+          "topic_id": "QUALITY.EVALUATION.SCENARIOS",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.QUALITY_ATTRIBUTE_ANALYSIS",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.SCORING_POINT_EXPRESSION",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2025-h2-1-q3",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年下半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2025-h2-case-1-q3",
+        "case_id": "2025-h2-case-1",
+        "sub_question_id": "q3"
+      },
+      "identification": {
+        "term": "2025年下半年",
+        "case_title": "充电规划",
+        "summary": "分组密码安全处理"
+      },
+      "topics": [
+        {
+          "topic_id": "SEC.INFORMATION.CRYPTOGRAPHY",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "SEC.INFORMATION.SECURITY_PROPERTIES",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.SECURITY_DESIGN",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2025-h2-2-q3",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年下半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2025-h2-case-2-q3",
+        "case_id": "2025-h2-case-2",
+        "sub_question_id": "q3"
+      },
+      "identification": {
+        "term": "2025年下半年",
+        "case_title": "嵌入式智能系统",
+        "summary": "轻量级内核特点"
+      },
+      "topics": [
+        {
+          "topic_id": "SYSTEM.COMPUTER.OPERATING_SYSTEMS",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "ARCH.EMBEDDED.EMBEDDED_SOFTWARE",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.ARCHITECTURE_DESIGN",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2025-h2-4-q1",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年下半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2025-h2-case-4-q1",
+        "case_id": "2025-h2-case-4",
+        "sub_question_id": "q1"
+      },
+      "identification": {
+        "term": "2025年下半年",
+        "case_title": "混合餐饮系统",
+        "summary": "限界上下文划分"
+      },
+      "topics": [
+        {
+          "topic_id": "ARCH.FOUNDATION.CONCEPTS",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "SOFTWARE.MODELING.FORMAL_MODELING",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.PROBLEM_IDENTIFICATION",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.ARCHITECTURE_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.MODELING",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2025-h2-4-q2",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年下半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2025-h2-case-4-q2",
+        "case_id": "2025-h2-case-4",
+        "sub_question_id": "q2"
+      },
+      "identification": {
+        "term": "2025年下半年",
+        "case_title": "混合餐饮系统",
+        "summary": "分层架构图"
+      },
+      "topics": [
+        {
+          "topic_id": "ARCH.LAYERED.LAYERS",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "ARCH.FOUNDATION.VIEWS",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "DATA.DATABASE.RELATIONAL",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "DATA.CACHE",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.ARCHITECTURE_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.MODELING",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.SCORING_POINT_EXPRESSION",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2025-h2-4-q3",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年下半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2025-h2-case-4-q3",
+        "case_id": "2025-h2-case-4",
+        "sub_question_id": "q3"
+      },
+      "identification": {
+        "term": "2025年下半年",
+        "case_title": "混合餐饮系统",
+        "summary": "弱网同步一致性"
+      },
+      "topics": [
+        {
+          "topic_id": "DATA.DISTRIBUTED.CONSISTENCY",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "DATA.DATABASE.TRANSACTION",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "QUALITY.ATTRIBUTES.AVAILABILITY",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.ROOT_CAUSE_ANALYSIS",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.DATA_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.DISTRIBUTED_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.RELIABILITY_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.SOLUTION_TRADEOFF",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2025-h2-5-q1",
+      "question_type": "case",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年下半年-系统架构设计师-案例分析.md",
+        "source_question_id": "2025-h2-case-5-q1",
+        "case_id": "2025-h2-case-5",
+        "sub_question_id": "q1"
+      },
+      "identification": {
+        "term": "2025年下半年",
+        "case_title": "入库流程",
+        "summary": "Petri 网过程建模"
+      },
+      "topics": [
+        {
+          "topic_id": "SOFTWARE.MODELING.FORMAL_MODELING",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "SOFTWARE.MODELING.BUSINESS_PROCESS",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.MODELING",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.ARCHITECTURE_DESIGN",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2026-h1-3-q2",
+      "question_type": "case",
+      "source": {
+        "source_id": "wujiaming88",
+        "source_commit": "9923d3efdd99729a318ae55a1d2505cf021f3a86",
+        "source_path": "真题/系统架构设计师/2026年上半年/案例分析.md",
+        "source_question_id": "2026-h1-case-3-q2",
+        "case_id": "2026-h1-case-3",
+        "sub_question_id": "q2"
+      },
+      "identification": {
+        "term": "2026年上半年",
+        "case_title": "资源池架构",
+        "summary": "资源调度与隔离分类"
+      },
+      "topics": [
+        {
+          "topic_id": "SYSTEM.COMPUTER.PERFORMANCE",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "QUALITY.ATTRIBUTES.SCALABILITY",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.ARCHITECTURE_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.PERFORMANCE_ANALYSIS",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.SOLUTION_TRADEOFF",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2026-h1-3-q3",
+      "question_type": "case",
+      "source": {
+        "source_id": "wujiaming88",
+        "source_commit": "9923d3efdd99729a318ae55a1d2505cf021f3a86",
+        "source_path": "真题/系统架构设计师/2026年上半年/案例分析.md",
+        "source_question_id": "2026-h1-case-3-q3",
+        "case_id": "2026-h1-case-3",
+        "sub_question_id": "q3"
+      },
+      "identification": {
+        "term": "2026年上半年",
+        "case_title": "资源池架构",
+        "summary": "集中式与分布式比较"
+      },
+      "topics": [
+        {
+          "topic_id": "ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "SYSTEM.COMPUTER.PERFORMANCE",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "QUALITY.ATTRIBUTES.SCALABILITY",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.ARCHITECTURE_SELECTION",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.PERFORMANCE_ANALYSIS",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.SOLUTION_TRADEOFF",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2026-h1-5-q1",
+      "question_type": "case",
+      "source": {
+        "source_id": "wujiaming88",
+        "source_commit": "9923d3efdd99729a318ae55a1d2505cf021f3a86",
+        "source_path": "真题/系统架构设计师/2026年上半年/案例分析.md",
+        "source_question_id": "2026-h1-case-5-q1",
+        "case_id": "2026-h1-case-5",
+        "sub_question_id": "q1"
+      },
+      "identification": {
+        "term": "2026年上半年",
+        "case_title": "入侵检测系统",
+        "summary": "质量需求与安全场景"
+      },
+      "topics": [
+        {
+          "topic_id": "SEC.INFORMATION.ACCESS_CONTROL",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "SEC.INFORMATION.SECURITY_PROPERTIES",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "QUALITY.ATTRIBUTES.SECURITY",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "QUALITY.ATTRIBUTES.PERFORMANCE",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "QUALITY.ATTRIBUTES.AVAILABILITY",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "QUALITY.ATTRIBUTES.MODIFIABILITY",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.SECURITY_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.QUALITY_ATTRIBUTE_ANALYSIS",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.PROBLEM_IDENTIFICATION",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.SCORING_POINT_EXPRESSION",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-case-2026-h1-5-q2",
+      "question_type": "case",
+      "source": {
+        "source_id": "wujiaming88",
+        "source_commit": "9923d3efdd99729a318ae55a1d2505cf021f3a86",
+        "source_path": "真题/系统架构设计师/2026年上半年/案例分析.md",
+        "source_question_id": "2026-h1-case-5-q2",
+        "case_id": "2026-h1-case-5",
+        "sub_question_id": "q2"
+      },
+      "identification": {
+        "term": "2026年上半年",
+        "case_title": "入侵检测系统",
+        "summary": "管道过滤器架构选择"
+      },
+      "topics": [
+        {
+          "topic_id": "ARCH.FOUNDATION.STYLES",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "ARCH.CLOUD_NATIVE.EVENT_DRIVEN",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "QUALITY.ATTRIBUTES.PERFORMANCE",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [
+        {
+          "capability_id": "CASE.ARCHITECTURE_SELECTION",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.ARCHITECTURE_DESIGN",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.PERFORMANCE_ANALYSIS",
+          "confidence": "high"
+        },
+        {
+          "capability_id": "CASE.SOLUTION_TRADEOFF",
+          "confidence": "high"
+        }
+      ],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 case record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
     }
   ]
 }

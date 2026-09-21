@@ -2,241 +2,2851 @@
   "schema_version": "golden-set/v0.1",
   "taxonomy_version": "0.1",
   "question_type": "comprehensive",
-  "sample_scope": "26 reviewed questions selected from recent real examination references; source text is intentionally not reproduced.",
+  "sample_scope": "Phase 2 reviewed expansion: records retain source references and short recognition summaries; source text, options, answers, analysis, OCR and PDFs are not reproduced.",
   "records": [
     {
-      "id":"gs-comp-2025-h2-q01",
-      "question_type":"comprehensive",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2025年下半年-系统架构设计师-综合知识.md","source_question_id":"2025-h2-comprehensive-q01"},
-      "identification":{"term":"2025年下半年","question_no":1,"summary":"多智能体集中式与去中心化架构英语题"},
-      "topics":[{"topic_id":"LANGUAGE.PROFESSIONAL_ENGLISH.READING","confidence":"high"},{"topic_id":"ARCH.FOUNDATION.STYLES","confidence":"medium"}],
-      "capabilities":[],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"英文材料的知识语义为架构组织方式；英语阅读作为独立 Topic 维度保留。"}
+      "id": "gs-comp-2025-h2-q01",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h2-comprehensive-q01"
+      },
+      "identification": {
+        "term": "2025年下半年",
+        "question_no": 1,
+        "summary": "多智能体集中式与去中心化架构英语题"
+      },
+      "topics": [
+        {
+          "topic_id": "LANGUAGE.PROFESSIONAL_ENGLISH.READING",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "ARCH.FOUNDATION.STYLES",
+          "confidence": "medium"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "英文材料的知识语义为架构组织方式；英语阅读作为独立 Topic 维度保留。"
+      }
     },
     {
-      "id":"gs-comp-2025-h2-q06",
-      "question_type":"comprehensive",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2025年下半年-系统架构设计师-综合知识.md","source_question_id":"2025-h2-comprehensive-q06"},
-      "identification":{"term":"2025年下半年","question_no":6,"summary":"均匀分布概率计算"},
-      "topics":[{"topic_id":"MATH.APPLICATION.PROBABILITY","confidence":"high"}],
-      "capabilities":[],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"计算题边界清晰。"}
+      "id": "gs-comp-2025-h2-q06",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h2-comprehensive-q06"
+      },
+      "identification": {
+        "term": "2025年下半年",
+        "question_no": 6,
+        "summary": "均匀分布概率计算"
+      },
+      "topics": [
+        {
+          "topic_id": "MATH.APPLICATION.PROBABILITY",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "计算题边界清晰。"
+      }
     },
     {
-      "id":"gs-comp-2025-h2-q08",
-      "question_type":"comprehensive",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2025年下半年-系统架构设计师-综合知识.md","source_question_id":"2025-h2-comprehensive-q08"},
-      "identification":{"term":"2025年下半年","question_no":8,"summary":"关系查询结果的集合语义"},
-      "topics":[{"topic_id":"DATA.DATABASE.RELATIONAL","confidence":"high"}],
-      "capabilities":[],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"关系数据库基础概念。"}
+      "id": "gs-comp-2025-h2-q08",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h2-comprehensive-q08"
+      },
+      "identification": {
+        "term": "2025年下半年",
+        "question_no": 8,
+        "summary": "关系查询结果的集合语义"
+      },
+      "topics": [
+        {
+          "topic_id": "DATA.DATABASE.RELATIONAL",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "关系数据库基础概念。"
+      }
     },
     {
-      "id":"gs-comp-2025-h2-q24",
-      "question_type":"comprehensive",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2025年下半年-系统架构设计师-综合知识.md","source_question_id":"2025-h2-comprehensive-q24"},
-      "identification":{"term":"2025年下半年","question_no":24,"summary":"系统失效率函数性质"},
-      "topics":[{"topic_id":"RELIABILITY.SOFTWARE.METRICS","confidence":"high"}],
-      "capabilities":[],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"可靠性指标与失效率概念。"}
+      "id": "gs-comp-2025-h2-q24",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h2-comprehensive-q24"
+      },
+      "identification": {
+        "term": "2025年下半年",
+        "question_no": 24,
+        "summary": "系统失效率函数性质"
+      },
+      "topics": [
+        {
+          "topic_id": "RELIABILITY.SOFTWARE.METRICS",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "可靠性指标与失效率概念。"
+      }
     },
     {
-      "id":"gs-comp-2025-h2-q33",
-      "question_type":"comprehensive",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2025年下半年-系统架构设计师-综合知识.md","source_question_id":"2025-h2-comprehensive-q33"},
-      "identification":{"term":"2025年下半年","question_no":33,"summary":"审计回放与不可抵赖服务"},
-      "topics":[{"topic_id":"SEC.INFORMATION.SECURITY_PROPERTIES","confidence":"high"}],
-      "capabilities":[],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"属于信息安全属性，不因案例型安全能力而改变 Topic 归属。"}
+      "id": "gs-comp-2025-h2-q33",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h2-comprehensive-q33"
+      },
+      "identification": {
+        "term": "2025年下半年",
+        "question_no": 33,
+        "summary": "审计回放与不可抵赖服务"
+      },
+      "topics": [
+        {
+          "topic_id": "SEC.INFORMATION.SECURITY_PROPERTIES",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "属于信息安全属性，不因案例型安全能力而改变 Topic 归属。"
+      }
     },
     {
-      "id":"gs-comp-2025-h2-q42",
-      "question_type":"comprehensive",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2025年下半年-系统架构设计师-综合知识.md","source_question_id":"2025-h2-comprehensive-q42"},
-      "identification":{"term":"2025年下半年","question_no":42,"summary":"嵌入式数据流模型表示"},
-      "topics":[{"topic_id":"SYSTEM.COMPUTER.EMBEDDED","confidence":"high"},{"topic_id":"SOFTWARE.MODELING.FORMAL_MODELING","confidence":"medium"}],
-      "capabilities":[],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"题目同时触及嵌入式语境和形式化模型表示，保留一对多。"}
+      "id": "gs-comp-2025-h2-q42",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h2-comprehensive-q42"
+      },
+      "identification": {
+        "term": "2025年下半年",
+        "question_no": 42,
+        "summary": "嵌入式数据流模型表示"
+      },
+      "topics": [
+        {
+          "topic_id": "SYSTEM.COMPUTER.EMBEDDED",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "SOFTWARE.MODELING.FORMAL_MODELING",
+          "confidence": "medium"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "题目同时触及嵌入式语境和形式化模型表示，保留一对多。"
+      }
     },
     {
-      "id":"gs-comp-2025-h2-q50",
-      "question_type":"comprehensive",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2025年下半年-系统架构设计师-综合知识.md","source_question_id":"2025-h2-comprehensive-q50"},
-      "identification":{"term":"2025年下半年","question_no":50,"summary":"创建型设计模式识别"},
-      "topics":[{"topic_id":"ARCH.FOUNDATION.DESIGN_PATTERNS","confidence":"high"}],
-      "capabilities":[],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"设计模式作为 Knowledge Topic，不是 Case Capability。"}
+      "id": "gs-comp-2025-h2-q50",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h2-comprehensive-q50"
+      },
+      "identification": {
+        "term": "2025年下半年",
+        "question_no": 50,
+        "summary": "创建型设计模式识别"
+      },
+      "topics": [
+        {
+          "topic_id": "ARCH.FOUNDATION.DESIGN_PATTERNS",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "设计模式作为 Knowledge Topic，不是 Case Capability。"
+      }
     },
     {
-      "id":"gs-comp-2025-h2-q60",
-      "question_type":"comprehensive",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2025年下半年-系统架构设计师-综合知识.md","source_question_id":"2025-h2-comprehensive-q60"},
-      "identification":{"term":"2025年下半年","question_no":60,"summary":"软件复用方式判断"},
-      "topics":[{"topic_id":"ARCH.FOUNDATION.REUSE","confidence":"high"}],
-      "capabilities":[],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"复用是架构基础主题。"}
+      "id": "gs-comp-2025-h2-q60",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h2-comprehensive-q60"
+      },
+      "identification": {
+        "term": "2025年下半年",
+        "question_no": 60,
+        "summary": "软件复用方式判断"
+      },
+      "topics": [
+        {
+          "topic_id": "ARCH.FOUNDATION.REUSE",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "复用是架构基础主题。"
+      }
     },
     {
-      "id":"gs-comp-2025-h2-q73",
-      "question_type":"comprehensive",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2025年下半年-系统架构设计师-综合知识.md","source_question_id":"2025-h2-comprehensive-q73"},
-      "identification":{"term":"2025年下半年","question_no":73,"summary":"性能设计与评估内容"},
-      "topics":[{"topic_id":"SYSTEM.COMPUTER.PERFORMANCE","confidence":"high"}],
-      "capabilities":[],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"系统性能基础知识，与质量属性中的性能在题目级可并列；本题考查性能工程内容。"}
+      "id": "gs-comp-2025-h2-q73",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h2-comprehensive-q73"
+      },
+      "identification": {
+        "term": "2025年下半年",
+        "question_no": 73,
+        "summary": "性能设计与评估内容"
+      },
+      "topics": [
+        {
+          "topic_id": "SYSTEM.COMPUTER.PERFORMANCE",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "系统性能基础知识，与质量属性中的性能在题目级可并列；本题考查性能工程内容。"
+      }
     },
     {
-      "id":"gs-comp-2024-h2-q03",
-      "question_type":"comprehensive",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2024年下半年-系统架构设计师-综合知识.md","source_question_id":"2024-h2-comprehensive-q03"},
-      "identification":{"term":"2024年下半年","question_no":3,"summary":"路由器在 OSI 模型中的层次"},
-      "topics":[{"topic_id":"SYSTEM.COMPUTER.NETWORKING","confidence":"high"}],
-      "capabilities":[],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"网络基础题。"}
+      "id": "gs-comp-2024-h2-q03",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2024年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2024-h2-comprehensive-q03"
+      },
+      "identification": {
+        "term": "2024年下半年",
+        "question_no": 3,
+        "summary": "路由器在 OSI 模型中的层次"
+      },
+      "topics": [
+        {
+          "topic_id": "SYSTEM.COMPUTER.NETWORKING",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "网络基础题。"
+      }
     },
     {
-      "id":"gs-comp-2024-h2-q20",
-      "question_type":"comprehensive",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2024年下半年-系统架构设计师-综合知识.md","source_question_id":"2024-h2-comprehensive-q20"},
-      "identification":{"term":"2024年下半年","question_no":20,"summary":"RUP 的驱动方式"},
-      "topics":[{"topic_id":"SOFTWARE.ENGINEERING.PROCESS","confidence":"high"}],
-      "capabilities":[],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"软件过程模型。"}
+      "id": "gs-comp-2024-h2-q20",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2024年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2024-h2-comprehensive-q20"
+      },
+      "identification": {
+        "term": "2024年下半年",
+        "question_no": 20,
+        "summary": "RUP 的驱动方式"
+      },
+      "topics": [
+        {
+          "topic_id": "SOFTWARE.ENGINEERING.PROCESS",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "软件过程模型。"
+      }
     },
     {
-      "id":"gs-comp-2024-h2-q29",
-      "question_type":"comprehensive",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2024年下半年-系统架构设计师-综合知识.md","source_question_id":"2024-h2-comprehensive-q29"},
-      "identification":{"term":"2024年下半年","question_no":29,"summary":"UML 用例参与者关系"},
-      "topics":[{"topic_id":"SOFTWARE.MODELING.UML","confidence":"high"}],
-      "capabilities":[],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"UML 语义题。"}
+      "id": "gs-comp-2024-h2-q29",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2024年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2024-h2-comprehensive-q29"
+      },
+      "identification": {
+        "term": "2024年下半年",
+        "question_no": 29,
+        "summary": "UML 用例参与者关系"
+      },
+      "topics": [
+        {
+          "topic_id": "SOFTWARE.MODELING.UML",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "UML 语义题。"
+      }
     },
     {
-      "id":"gs-comp-2024-h2-q37",
-      "question_type":"comprehensive",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2024年下半年-系统架构设计师-综合知识.md","source_question_id":"2024-h2-comprehensive-q37"},
-      "identification":{"term":"2024年下半年","question_no":37,"summary":"独立构件事件驱动的耦合特征"},
-      "topics":[{"topic_id":"ARCH.FOUNDATION.STYLES","confidence":"high"}],
-      "capabilities":[],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"题目讨论一般架构风格，不强行贴云原生事件驱动子主题。"}
+      "id": "gs-comp-2024-h2-q37",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2024年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2024-h2-comprehensive-q37"
+      },
+      "identification": {
+        "term": "2024年下半年",
+        "question_no": 37,
+        "summary": "独立构件事件驱动的耦合特征"
+      },
+      "topics": [
+        {
+          "topic_id": "ARCH.FOUNDATION.STYLES",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "题目讨论一般架构风格，不强行贴云原生事件驱动子主题。"
+      }
     },
     {
-      "id":"gs-comp-2024-h2-q55",
-      "question_type":"comprehensive",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2024年下半年-系统架构设计师-综合知识.md","source_question_id":"2024-h2-comprehensive-q55"},
-      "identification":{"term":"2024年下半年","question_no":55,"summary":"测试覆盖范围关系"},
-      "topics":[{"topic_id":"SOFTWARE.ENGINEERING.TESTING","confidence":"high"}],
-      "capabilities":[],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"软件测试基础。"}
+      "id": "gs-comp-2024-h2-q55",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2024年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2024-h2-comprehensive-q55"
+      },
+      "identification": {
+        "term": "2024年下半年",
+        "question_no": 55,
+        "summary": "测试覆盖范围关系"
+      },
+      "topics": [
+        {
+          "topic_id": "SOFTWARE.ENGINEERING.TESTING",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "软件测试基础。"
+      }
     },
     {
-      "id":"gs-comp-2024-h2-q64",
-      "question_type":"comprehensive",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2024年下半年-系统架构设计师-综合知识.md","source_question_id":"2024-h2-comprehensive-q64"},
-      "identification":{"term":"2024年下半年","question_no":64,"summary":"企业集成层次顺序"},
-      "topics":[{"topic_id":"ARCH.SOA.SERVICE_BUS","confidence":"high"},{"topic_id":"INFO.FOUNDATION.ENTERPRISE","confidence":"medium"}],
-      "capabilities":[],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"企业集成同时属于信息系统场景和服务总线/集成知识，保留跨 topic。"}
+      "id": "gs-comp-2024-h2-q64",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2024年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2024-h2-comprehensive-q64"
+      },
+      "identification": {
+        "term": "2024年下半年",
+        "question_no": 64,
+        "summary": "企业集成层次顺序"
+      },
+      "topics": [
+        {
+          "topic_id": "ARCH.SOA.SERVICE_BUS",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "INFO.FOUNDATION.ENTERPRISE",
+          "confidence": "medium"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "企业集成同时属于信息系统场景和服务总线/集成知识，保留跨 topic。"
+      }
     },
     {
-      "id":"gs-comp-2024-h1-q15",
-      "question_type":"comprehensive",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2024年上半年-系统架构设计师-综合知识.md","source_question_id":"2024-h1-comprehensive-q15"},
-      "identification":{"term":"2024年上半年","question_no":15,"summary":"项目网络计划最短工期"},
-      "topics":[{"topic_id":"SOFTWARE.ENGINEERING.PROJECT_MANAGEMENT","confidence":"high"},{"topic_id":"MATH.APPLICATION.OPTIMIZATION","confidence":"medium"}],
-      "capabilities":[],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"项目进度计算同时使用工程管理语境和优化计算。"}
+      "id": "gs-comp-2024-h1-q15",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2024年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2024-h1-comprehensive-q15"
+      },
+      "identification": {
+        "term": "2024年上半年",
+        "question_no": 15,
+        "summary": "项目网络计划最短工期"
+      },
+      "topics": [
+        {
+          "topic_id": "SOFTWARE.ENGINEERING.PROJECT_MANAGEMENT",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "MATH.APPLICATION.OPTIMIZATION",
+          "confidence": "medium"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "项目进度计算同时使用工程管理语境和优化计算。"
+      }
     },
     {
-      "id":"gs-comp-2024-h1-q25",
-      "question_type":"comprehensive",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2024年上半年-系统架构设计师-综合知识.md","source_question_id":"2024-h1-comprehensive-q25"},
-      "identification":{"term":"2024年上半年","question_no":25,"summary":"生命周期视角下的质量属性"},
-      "topics":[{"topic_id":"QUALITY.ATTRIBUTES","confidence":"high"}],
-      "capabilities":[],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"题干在质量属性上位层讨论生命周期，不强迫选择某一具体属性。"}
+      "id": "gs-comp-2024-h1-q25",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2024年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2024-h1-comprehensive-q25"
+      },
+      "identification": {
+        "term": "2024年上半年",
+        "question_no": 25,
+        "summary": "生命周期视角下的质量属性"
+      },
+      "topics": [
+        {
+          "topic_id": "QUALITY.ATTRIBUTES",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "题干在质量属性上位层讨论生命周期，不强迫选择某一具体属性。"
+      }
     },
     {
-      "id":"gs-comp-2024-h1-q65",
-      "question_type":"comprehensive",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2024年上半年-系统架构设计师-综合知识.md","source_question_id":"2024-h1-comprehensive-q65"},
-      "identification":{"term":"2024年上半年","question_no":65,"summary":"云计算虚拟化技术识别"},
-      "topics":[{"topic_id":"EMERGING.TECHNOLOGY.CLOUD_COMPUTING","confidence":"high"},{"topic_id":"ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS","confidence":"medium"}],
-      "capabilities":[],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"云计算基础和云原生实现技术存在交叉，但题目不等于完整云原生架构。"}
+      "id": "gs-comp-2024-h1-q65",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2024年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2024-h1-comprehensive-q65"
+      },
+      "identification": {
+        "term": "2024年上半年",
+        "question_no": 65,
+        "summary": "云计算虚拟化技术识别"
+      },
+      "topics": [
+        {
+          "topic_id": "EMERGING.TECHNOLOGY.CLOUD_COMPUTING",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS",
+          "confidence": "medium"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "云计算基础和云原生实现技术存在交叉，但题目不等于完整云原生架构。"
+      }
     },
     {
-      "id":"gs-comp-2023-h2-q03",
-      "question_type":"comprehensive",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2023年下半年-系统架构设计师-综合知识.md","source_question_id":"2023-h2-comprehensive-q03"},
-      "identification":{"term":"2023年下半年","question_no":3,"summary":"并发进程死锁资源下界"},
-      "topics":[{"topic_id":"SYSTEM.COMPUTER.OPERATING_SYSTEMS","confidence":"high"}],
-      "capabilities":[],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"操作系统死锁与资源分配。"}
+      "id": "gs-comp-2023-h2-q03",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2023年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2023-h2-comprehensive-q03"
+      },
+      "identification": {
+        "term": "2023年下半年",
+        "question_no": 3,
+        "summary": "并发进程死锁资源下界"
+      },
+      "topics": [
+        {
+          "topic_id": "SYSTEM.COMPUTER.OPERATING_SYSTEMS",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "操作系统死锁与资源分配。"
+      }
     },
     {
-      "id":"gs-comp-2023-h2-q18",
-      "question_type":"comprehensive",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2023年下半年-系统架构设计师-综合知识.md","source_question_id":"2023-h2-comprehensive-q18"},
-      "identification":{"term":"2023年下半年","question_no":18,"summary":"对称密钥加密算法识别"},
-      "topics":[{"topic_id":"SEC.INFORMATION.CRYPTOGRAPHY","confidence":"high"}],
-      "capabilities":[],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"加密算法基础。"}
+      "id": "gs-comp-2023-h2-q18",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2023年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2023-h2-comprehensive-q18"
+      },
+      "identification": {
+        "term": "2023年下半年",
+        "question_no": 18,
+        "summary": "对称密钥加密算法识别"
+      },
+      "topics": [
+        {
+          "topic_id": "SEC.INFORMATION.CRYPTOGRAPHY",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "加密算法基础。"
+      }
     },
     {
-      "id":"gs-comp-2023-h2-q35",
-      "question_type":"comprehensive",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2023年下半年-系统架构设计师-综合知识.md","source_question_id":"2023-h2-comprehensive-q35"},
-      "identification":{"term":"2023年下半年","question_no":35,"summary":"函数依赖与关系模式规范化"},
-      "topics":[{"topic_id":"DATA.DATABASE.NORMALIZATION","confidence":"high"}],
-      "capabilities":[],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"关系模式分解和范式判断。"}
+      "id": "gs-comp-2023-h2-q35",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2023年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2023-h2-comprehensive-q35"
+      },
+      "identification": {
+        "term": "2023年下半年",
+        "question_no": 35,
+        "summary": "函数依赖与关系模式规范化"
+      },
+      "topics": [
+        {
+          "topic_id": "DATA.DATABASE.NORMALIZATION",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "关系模式分解和范式判断。"
+      }
     },
     {
-      "id":"gs-comp-2023-h2-q38",
-      "question_type":"comprehensive",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2023年下半年-系统架构设计师-综合知识.md","source_question_id":"2023-h2-comprehensive-q38"},
-      "identification":{"term":"2023年下半年","question_no":38,"summary":"NoSQL 数据库特征判断"},
-      "topics":[{"topic_id":"DATA.DATABASE.NOSQL","confidence":"high"}],
-      "capabilities":[],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"NoSQL 基础特征。"}
+      "id": "gs-comp-2023-h2-q38",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2023年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2023-h2-comprehensive-q38"
+      },
+      "identification": {
+        "term": "2023年下半年",
+        "question_no": 38,
+        "summary": "NoSQL 数据库特征判断"
+      },
+      "topics": [
+        {
+          "topic_id": "DATA.DATABASE.NOSQL",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "NoSQL 基础特征。"
+      }
     },
     {
-      "id":"gs-comp-2023-h2-q52",
-      "question_type":"comprehensive",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2023年下半年-系统架构设计师-综合知识.md","source_question_id":"2023-h2-comprehensive-q52"},
-      "identification":{"term":"2023年下半年","question_no":52,"summary":"质量属性场景中的刺激源"},
-      "topics":[{"topic_id":"QUALITY.EVALUATION.SCENARIOS","confidence":"high"}],
-      "capabilities":[],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"质量属性场景六要素。"}
+      "id": "gs-comp-2023-h2-q52",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2023年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2023-h2-comprehensive-q52"
+      },
+      "identification": {
+        "term": "2023年下半年",
+        "question_no": 52,
+        "summary": "质量属性场景中的刺激源"
+      },
+      "topics": [
+        {
+          "topic_id": "QUALITY.EVALUATION.SCENARIOS",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "质量属性场景六要素。"
+      }
     },
     {
-      "id":"gs-comp-2023-h2-q58",
-      "question_type":"comprehensive",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2023年下半年-系统架构设计师-综合知识.md","source_question_id":"2023-h2-comprehensive-q58"},
-      "identification":{"term":"2023年下半年","question_no":58,"summary":"加密级别引发的架构权衡"},
-      "topics":[{"topic_id":"QUALITY.EVALUATION.TRADEOFF","confidence":"high"},{"topic_id":"SEC.INFORMATION.CRYPTOGRAPHY","confidence":"high"}],
-      "capabilities":[],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"同一题同时依赖安全机制知识和质量属性权衡，作为跨 topic 边界样本。"}
+      "id": "gs-comp-2023-h2-q58",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2023年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2023-h2-comprehensive-q58"
+      },
+      "identification": {
+        "term": "2023年下半年",
+        "question_no": 58,
+        "summary": "加密级别引发的架构权衡"
+      },
+      "topics": [
+        {
+          "topic_id": "QUALITY.EVALUATION.TRADEOFF",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "SEC.INFORMATION.CRYPTOGRAPHY",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "同一题同时依赖安全机制知识和质量属性权衡，作为跨 topic 边界样本。"
+      }
     },
     {
-      "id":"gs-comp-2023-h2-q64",
-      "question_type":"comprehensive",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2023年下半年-系统架构设计师-综合知识.md","source_question_id":"2023-h2-comprehensive-q64"},
-      "identification":{"term":"2023年下半年","question_no":64,"summary":"5G 网络切片"},
-      "topics":[{"topic_id":"ARCH.COMMUNICATION.5G_SDN","confidence":"high"},{"topic_id":"SYSTEM.COMPUTER.NETWORKING","confidence":"medium"}],
-      "capabilities":[],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"通信架构专题与网络基础存在跨层关系。"}
+      "id": "gs-comp-2023-h2-q64",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2023年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2023-h2-comprehensive-q64"
+      },
+      "identification": {
+        "term": "2023年下半年",
+        "question_no": 64,
+        "summary": "5G 网络切片"
+      },
+      "topics": [
+        {
+          "topic_id": "ARCH.COMMUNICATION.5G_SDN",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "SYSTEM.COMPUTER.NETWORKING",
+          "confidence": "medium"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "通信架构专题与网络基础存在跨层关系。"
+      }
     },
     {
-      "id":"gs-comp-2023-h2-q67",
-      "question_type":"comprehensive",
-      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2023年下半年-系统架构设计师-综合知识.md","source_question_id":"2023-h2-comprehensive-q67"},
-      "identification":{"term":"2023年下半年","question_no":67,"summary":"职务作品著作权归属"},
-      "topics":[{"topic_id":"GOVERNANCE.LAW_IP.COPYRIGHT","confidence":"high"}],
-      "capabilities":[],
-      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"知识产权基础题。"}
+      "id": "gs-comp-2023-h2-q67",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2023年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2023-h2-comprehensive-q67"
+      },
+      "identification": {
+        "term": "2023年下半年",
+        "question_no": 67,
+        "summary": "职务作品著作权归属"
+      },
+      "topics": [
+        {
+          "topic_id": "GOVERNANCE.LAW_IP.COPYRIGHT",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "confirmed",
+        "annotator": "human",
+        "reviewed_at": "2026-09-21",
+        "note": "知识产权基础题。"
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q01",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q01"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 1,
+        "summary": "位示图管理物理页框空间计算"
+      },
+      "topics": [
+        {
+          "topic_id": "SYSTEM.COMPUTER.HARDWARE",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q02",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q02"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 2,
+        "summary": "调制解调与通信信道功能"
+      },
+      "topics": [
+        {
+          "topic_id": "SYSTEM.COMPUTER.NETWORKING",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q03",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q03"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 3,
+        "summary": "CMMI 成熟度等级"
+      },
+      "topics": [
+        {
+          "topic_id": "SOFTWARE.ENGINEERING.PROCESS",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q04",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q04"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 4,
+        "summary": "国家机密保密期限规则"
+      },
+      "topics": [
+        {
+          "topic_id": "GOVERNANCE.STANDARD.PROFESSIONAL_REGULATION",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q05",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q05"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 5,
+        "summary": "半双工通信逻辑通道"
+      },
+      "topics": [
+        {
+          "topic_id": "SYSTEM.COMPUTER.NETWORKING",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q06",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q06"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 6,
+        "summary": "软件模块内聚性排序"
+      },
+      "topics": [
+        {
+          "topic_id": "SOFTWARE.ENGINEERING.ANALYSIS_DESIGN",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q07",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q07"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 7,
+        "summary": "关系代数运算边界"
+      },
+      "topics": [
+        {
+          "topic_id": "DATA.DATABASE.RELATIONAL",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q08",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q08"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 8,
+        "summary": "微服务断路器状态"
+      },
+      "topics": [
+        {
+          "topic_id": "ARCH.CLOUD_NATIVE.MICROSERVICES",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "RELIABILITY.SOFTWARE.FAULT_TOLERANCE",
+          "confidence": "medium"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q09",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q09"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 9,
+        "summary": "并发进程死锁资源下界"
+      },
+      "topics": [
+        {
+          "topic_id": "SYSTEM.COMPUTER.OPERATING_SYSTEMS",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q10",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q10"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 10,
+        "summary": "无噪信道传输速率计算"
+      },
+      "topics": [
+        {
+          "topic_id": "SYSTEM.COMPUTER.NETWORKING",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q12",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q12"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 12,
+        "summary": "嵌入式操作系统类型"
+      },
+      "topics": [
+        {
+          "topic_id": "SYSTEM.COMPUTER.EMBEDDED",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q13",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q13"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 13,
+        "summary": "线程状态转换条件"
+      },
+      "topics": [
+        {
+          "topic_id": "SYSTEM.COMPUTER.OPERATING_SYSTEMS",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q15",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q15"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 15,
+        "summary": "Web 服务器性能评测方法"
+      },
+      "topics": [
+        {
+          "topic_id": "SYSTEM.COMPUTER.PERFORMANCE",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q16",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q16"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 16,
+        "summary": "4+1 视图的物理映射视角"
+      },
+      "topics": [
+        {
+          "topic_id": "ARCH.FOUNDATION.VIEWS",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q17",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q17"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 17,
+        "summary": "4+1 视图的运行特性视角"
+      },
+      "topics": [
+        {
+          "topic_id": "ARCH.FOUNDATION.VIEWS",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q18",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q18"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 18,
+        "summary": "净室软件工程理论基础"
+      },
+      "topics": [
+        {
+          "topic_id": "SOFTWARE.ENGINEERING.PROCESS",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q19",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q19"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 19,
+        "summary": "RUP 架构计划阶段"
+      },
+      "topics": [
+        {
+          "topic_id": "SOFTWARE.ENGINEERING.PROCESS",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q20",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q20"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 20,
+        "summary": "大模型生成代码的 Transformer 架构"
+      },
+      "topics": [
+        {
+          "topic_id": "EMERGING.TECHNOLOGY.AI",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q21",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q21"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 21,
+        "summary": "逆向工程恢复遗留系统信息"
+      },
+      "topics": [
+        {
+          "topic_id": "EVOLUTION.ARCHITECTURE.LEGACY",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q22",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q22"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 22,
+        "summary": "ERP 企业资源管理三流"
+      },
+      "topics": [
+        {
+          "topic_id": "INFO.FOUNDATION.ENTERPRISE",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q23",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q23"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 23,
+        "summary": "黑盒测试方法辨析"
+      },
+      "topics": [
+        {
+          "topic_id": "SOFTWARE.ENGINEERING.TESTING",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q24",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q24"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 24,
+        "summary": "UML 用例关系辨析"
+      },
+      "topics": [
+        {
+          "topic_id": "SOFTWARE.MODELING.UML",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q25",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q25"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 25,
+        "summary": "软件过程模型风险评估"
+      },
+      "topics": [
+        {
+          "topic_id": "SOFTWARE.ENGINEERING.PROCESS",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q26",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q26"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 26,
+        "summary": "调试与测试职责区别"
+      },
+      "topics": [
+        {
+          "topic_id": "SOFTWARE.ENGINEERING.TESTING",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q30",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q30"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 30,
+        "summary": "Web Service 核心技术"
+      },
+      "topics": [
+        {
+          "topic_id": "ARCH.SOA.SERVICE_PROTOCOLS",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q31",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q31"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 31,
+        "summary": "OSI 安全服务类别"
+      },
+      "topics": [
+        {
+          "topic_id": "SEC.INFORMATION.SECURITY_PROPERTIES",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q33",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q33"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 33,
+        "summary": "数据库三级模式语义"
+      },
+      "topics": [
+        {
+          "topic_id": "DATA.DATABASE.RELATIONAL",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q34",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q34"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 34,
+        "summary": "函数依赖候选码判断"
+      },
+      "topics": [
+        {
+          "topic_id": "DATA.DATABASE.NORMALIZATION",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q35",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q35"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 35,
+        "summary": "SOA 服务通信规范"
+      },
+      "topics": [
+        {
+          "topic_id": "ARCH.SOA.SERVICE_MODEL",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q36",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q36"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 36,
+        "summary": "REST 部分更新方法"
+      },
+      "topics": [
+        {
+          "topic_id": "ARCH.SOA.SERVICE_PROTOCOLS",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q38",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q38"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 38,
+        "summary": "数据流图互斥关系符号"
+      },
+      "topics": [
+        {
+          "topic_id": "SOFTWARE.MODELING.BUSINESS_PROCESS",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q39",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q39"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 39,
+        "summary": "数据治理应用场景"
+      },
+      "topics": [
+        {
+          "topic_id": "GOVERNANCE.STANDARD.STANDARDIZATION",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q40",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q40"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 40,
+        "summary": "多集合计数概率计算"
+      },
+      "topics": [
+        {
+          "topic_id": "MATH.APPLICATION.PROBABILITY",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q41",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q41"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 41,
+        "summary": "线性约束下的比值优化"
+      },
+      "topics": [
+        {
+          "topic_id": "MATH.APPLICATION.OPTIMIZATION",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q42",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q42"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 42,
+        "summary": "A/B 测试设计"
+      },
+      "topics": [
+        {
+          "topic_id": "SOFTWARE.ENGINEERING.TESTING",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q43",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q43"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 43,
+        "summary": "项目网络计划工期"
+      },
+      "topics": [
+        {
+          "topic_id": "SOFTWARE.ENGINEERING.PROJECT_MANAGEMENT",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "MATH.APPLICATION.OPTIMIZATION",
+          "confidence": "medium"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q44",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q44"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 44,
+        "summary": "软件著作权公开权利"
+      },
+      "topics": [
+        {
+          "topic_id": "GOVERNANCE.LAW_IP.COPYRIGHT",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q46",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q46"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 46,
+        "summary": "监理过程控制类别"
+      },
+      "topics": [
+        {
+          "topic_id": "GOVERNANCE.STANDARD.PROFESSIONAL_REGULATION",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q47",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q47"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 47,
+        "summary": "工业大模型分层"
+      },
+      "topics": [
+        {
+          "topic_id": "EMERGING.TECHNOLOGY.AI",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q48",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q48"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 48,
+        "summary": "边缘计算特性"
+      },
+      "topics": [
+        {
+          "topic_id": "EMERGING.TECHNOLOGY.EDGE",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q49",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q49"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 49,
+        "summary": "软件回归测试目的"
+      },
+      "topics": [
+        {
+          "topic_id": "SOFTWARE.ENGINEERING.TESTING",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q51",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q51"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 51,
+        "summary": "条件覆盖与判定覆盖关系"
+      },
+      "topics": [
+        {
+          "topic_id": "SOFTWARE.ENGINEERING.TESTING",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q52",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q52"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 52,
+        "summary": "软件可靠性属性辨析"
+      },
+      "topics": [
+        {
+          "topic_id": "RELIABILITY.SOFTWARE.METRICS",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q56",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q56"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 56,
+        "summary": "强实时调度算法"
+      },
+      "topics": [
+        {
+          "topic_id": "SYSTEM.COMPUTER.OPERATING_SYSTEMS",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q57",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q57"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 57,
+        "summary": "黑板架构风格构件"
+      },
+      "topics": [
+        {
+          "topic_id": "ARCH.FOUNDATION.STYLES",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q58",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q58"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 58,
+        "summary": "多重继承语义"
+      },
+      "topics": [
+        {
+          "topic_id": "SOFTWARE.MODELING.UML",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q59",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q59"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 59,
+        "summary": "双生命周期过程模型"
+      },
+      "topics": [
+        {
+          "topic_id": "SOFTWARE.ENGINEERING.PROCESS",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q60",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q60"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 60,
+        "summary": "单元测试依据"
+      },
+      "topics": [
+        {
+          "topic_id": "SOFTWARE.ENGINEERING.TESTING",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q62",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q62"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 62,
+        "summary": "无标注数据聚类算法"
+      },
+      "topics": [
+        {
+          "topic_id": "EMERGING.TECHNOLOGY.AI",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q63",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q63"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 63,
+        "summary": "敏感数据密文处理属性"
+      },
+      "topics": [
+        {
+          "topic_id": "SEC.INFORMATION.SECURITY_PROPERTIES",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q65",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q65"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 65,
+        "summary": "三层 C/S 架构特性"
+      },
+      "topics": [
+        {
+          "topic_id": "ARCH.LAYERED.LAYERS",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q66",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q66"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 66,
+        "summary": "SOA 服务请求解耦"
+      },
+      "topics": [
+        {
+          "topic_id": "ARCH.SOA.SERVICE_MODEL",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q67",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q67"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 67,
+        "summary": "需求跟踪方向"
+      },
+      "topics": [
+        {
+          "topic_id": "SOFTWARE.ENGINEERING.REQUIREMENTS",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q68",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q68"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 68,
+        "summary": "架构脆弱性判断"
+      },
+      "topics": [
+        {
+          "topic_id": "SEC.ARCHITECTURE.VULNERABILITY",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q69",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q69"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 69,
+        "summary": "软件质量影响因素"
+      },
+      "topics": [
+        {
+          "topic_id": "QUALITY.ATTRIBUTES",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q70",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q70"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 70,
+        "summary": "数据流图互斥分支"
+      },
+      "topics": [
+        {
+          "topic_id": "SOFTWARE.MODELING.BUSINESS_PROCESS",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q71",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q71"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 71,
+        "summary": "软件质量属性英文阅读"
+      },
+      "topics": [
+        {
+          "topic_id": "LANGUAGE.PROFESSIONAL_ENGLISH.READING",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q72",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q72"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 72,
+        "summary": "软件质量术语英文阅读"
+      },
+      "topics": [
+        {
+          "topic_id": "LANGUAGE.PROFESSIONAL_ENGLISH.READING",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q73",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q73"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 73,
+        "summary": "软件质量收益英文阅读"
+      },
+      "topics": [
+        {
+          "topic_id": "LANGUAGE.PROFESSIONAL_ENGLISH.READING",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q74",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q74"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 74,
+        "summary": "封装关系英文阅读"
+      },
+      "topics": [
+        {
+          "topic_id": "LANGUAGE.PROFESSIONAL_ENGLISH.READING",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h1-q75",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年上半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h1-comprehensive-q75"
+      },
+      "identification": {
+        "term": "2025年上半年",
+        "question_no": 75,
+        "summary": "架构角色英文阅读"
+      },
+      "topics": [
+        {
+          "topic_id": "LANGUAGE.PROFESSIONAL_ENGLISH.READING",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h2-q65",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h2-comprehensive-q65"
+      },
+      "identification": {
+        "term": "2025年下半年",
+        "question_no": 65,
+        "summary": "软件生命周期演化原则"
+      },
+      "topics": [
+        {
+          "topic_id": "EVOLUTION.ARCHITECTURE.PROCESS",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h2-q09",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h2-comprehensive-q09"
+      },
+      "identification": {
+        "term": "2025年下半年",
+        "question_no": 9,
+        "summary": "加密级别影响性能的敏感点"
+      },
+      "topics": [
+        {
+          "topic_id": "QUALITY.ATTRIBUTES.PERFORMANCE",
+          "confidence": "high"
+        },
+        {
+          "topic_id": "SEC.INFORMATION.SECURITY_PROPERTIES",
+          "confidence": "medium"
+        },
+        {
+          "topic_id": "QUALITY.EVALUATION.TRADEOFF",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h2-q10",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h2-comprehensive-q10"
+      },
+      "identification": {
+        "term": "2025年下半年",
+        "question_no": 10,
+        "summary": "质量属性折中点"
+      },
+      "topics": [
+        {
+          "topic_id": "QUALITY.EVALUATION.TRADEOFF",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h2-q11",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h2-comprehensive-q11"
+      },
+      "identification": {
+        "term": "2025年下半年",
+        "question_no": 11,
+        "summary": "系统加密算法变化类型"
+      },
+      "topics": [
+        {
+          "topic_id": "EVOLUTION.ARCHITECTURE",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h2-q12",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h2-comprehensive-q12"
+      },
+      "identification": {
+        "term": "2025年下半年",
+        "question_no": 12,
+        "summary": "XML 数据表示特性"
+      },
+      "topics": [
+        {
+          "topic_id": "INFO.FOUNDATION.TYPES",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h2-q21",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h2-comprehensive-q21"
+      },
+      "identification": {
+        "term": "2025年下半年",
+        "question_no": 21,
+        "summary": "程序性能评测精度排序"
+      },
+      "topics": [
+        {
+          "topic_id": "SYSTEM.COMPUTER.PERFORMANCE",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h2-q38",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h2-comprehensive-q38"
+      },
+      "identification": {
+        "term": "2025年下半年",
+        "question_no": 38,
+        "summary": "企业电子数据交换模块"
+      },
+      "topics": [
+        {
+          "topic_id": "INFO.FOUNDATION.ENTERPRISE",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2025-h2-q46",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2025年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2025-h2-comprehensive-q46"
+      },
+      "identification": {
+        "term": "2025年下半年",
+        "question_no": 46,
+        "summary": "质量属性增长场景"
+      },
+      "topics": [
+        {
+          "topic_id": "QUALITY.EVALUATION.SCENARIOS",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2022-h2-q39",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2022年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2022-h2-comprehensive-q39"
+      },
+      "identification": {
+        "term": "2022年下半年",
+        "question_no": 39,
+        "summary": "构件演化冲突"
+      },
+      "topics": [
+        {
+          "topic_id": "EVOLUTION.ARCHITECTURE.PROCESS",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2022-h2-q44",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "younghong1992",
+        "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+        "source_path": "02.历年真题-清洗版/2022年下半年-系统架构设计师-综合知识.md",
+        "source_question_id": "2022-h2-comprehensive-q44"
+      },
+      "identification": {
+        "term": "2022年下半年",
+        "question_no": 44,
+        "summary": "遗留系统演化策略"
+      },
+      "topics": [
+        {
+          "topic_id": "EVOLUTION.ARCHITECTURE.LEGACY",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2026-h1-q29",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "wujiaming88",
+        "source_commit": "9923d3efdd99729a318ae55a1d2505cf021f3a86",
+        "source_path": "真题/系统架构设计师/2026年上半年/综合知识.md",
+        "source_question_id": "2026-h1-comprehensive-q29"
+      },
+      "identification": {
+        "term": "2026年上半年",
+        "question_no": 29,
+        "summary": "安全攸关系统失效率计算"
+      },
+      "topics": [
+        {
+          "topic_id": "RELIABILITY.SOFTWARE.METRICS",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2026-h1-q34",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "wujiaming88",
+        "source_commit": "9923d3efdd99729a318ae55a1d2505cf021f3a86",
+        "source_path": "真题/系统架构设计师/2026年上半年/综合知识.md",
+        "source_question_id": "2026-h1-comprehensive-q34"
+      },
+      "identification": {
+        "term": "2026年上半年",
+        "question_no": 34,
+        "summary": "故障注入与系统韧性验证"
+      },
+      "topics": [
+        {
+          "topic_id": "RELIABILITY.SOFTWARE.FAULT_TOLERANCE",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
+    },
+    {
+      "id": "gs-comp-2026-h1-q44",
+      "question_type": "comprehensive",
+      "source": {
+        "source_id": "wujiaming88",
+        "source_commit": "9923d3efdd99729a318ae55a1d2505cf021f3a86",
+        "source_path": "真题/系统架构设计师/2026年上半年/综合知识.md",
+        "source_question_id": "2026-h1-comprehensive-q44"
+      },
+      "identification": {
+        "term": "2026年上半年",
+        "question_no": 44,
+        "summary": "信息检索倒排索引作用"
+      },
+      "topics": [
+        {
+          "topic_id": "INFO.FOUNDATION",
+          "confidence": "high"
+        }
+      ],
+      "capabilities": [],
+      "annotation": {
+        "status": "reviewed",
+        "annotator": "agent-assisted",
+        "reviewed_at": "2026-09-21",
+        "note": "Phase 2 comprehensive record reviewed against the immutable source reference and question context; the source is a non-official recollection or整理, so the mapping remains reviewed pending independent human confirmation."
+      }
     }
   ]
 }

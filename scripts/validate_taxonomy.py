@@ -10,6 +10,7 @@ import argparse
 import json
 import re
 import sys
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
@@ -18,6 +19,7 @@ STATUS = {"candidate", "reviewed", "confirmed", "rejected"}
 ID_RE = re.compile(r"^[A-Z][A-Z0-9_]*(?:\.[A-Z0-9_]+)*$")
 CAPABILITY_ID_RE = re.compile(r"^CASE(?:\.[A-Z0-9_]+)+$")
 COMMIT_RE = re.compile(r"^[0-9a-f]{40}$")
+FORBIDDEN_CANONICAL_SEGMENTS = {"OTHER", "UNKNOWN", "MISC", "UNCLASSIFIED"}
 FORBIDDEN_CONTENT_KEYS = {
     "stem",
     "prompt",
@@ -111,7 +113,10 @@ def validate_taxonomy(root: Path) -> tuple[set[str], dict[str, int]]:
             require(current not in seen, f"taxonomy: cycle detected at {node_id}")
             seen.add(current)
             current = by_id[current].get("parent_id")
-    require("OTHER" not in ids and "UNCLASSIFIED" not in ids, "taxonomy: v0.1 must not hide gaps behind OTHER")
+    require(
+        not any(segment in FORBIDDEN_CANONICAL_SEGMENTS for node_id in ids for segment in node_id.split(".")),
+        "taxonomy: canonical IDs must not use OTHER, UNKNOWN, MISC, or UNCLASSIFIED",
+    )
     counts = {f"L{level}": sum(1 for node in nodes if node["level"] == level) for level in (1, 2, 3)}
     return ids, counts
 
@@ -224,20 +229,19 @@ def validate_sample(root: Path, path: Path, expected_type: str, topic_ids: set[s
     require(data.get("taxonomy_version") == "0.1", f"{label}: wrong taxonomy_version")
     require(data.get("question_type") == expected_type, f"{label}: wrong question_type")
     records = data.get("records")
-    require(isinstance(records, list), f"{label}: records must be a list")
-    require(20 <= len(records) <= 30 if expected_type == "comprehensive" else 8 <= len(records) <= 12, f"{label}: sample count outside requested range")
+    require(isinstance(records, list) and records, f"{label}: records must be a non-empty list")
     multi_topic = 0
     for index, record in enumerate(records):
         record_label = f"{label}.records[{index}]"
         require(isinstance(record, dict), f"{record_label}: record must be an object")
         record_id = record.get("id")
-        require(isinstance(record_id, str) and record_id not in seen_record_ids, f"{record_label}: duplicate/invalid id")
+        require(isinstance(record_id, str) and record_id.strip() and record_id not in seen_record_ids, f"{record_label}: duplicate/invalid id")
         seen_record_ids.add(record_id)
         require(record.get("question_type") == expected_type, f"{record_label}: wrong record question_type")
         source = record.get("source")
         require(isinstance(source, dict), f"{record_label}: source is required")
         check_provenance(source, known_sources, record_label + ".source")
-        require(source.get("source_question_id"), f"{record_label}: source_question_id is required")
+        require(isinstance(source.get("source_question_id"), str) and source["source_question_id"].strip(), f"{record_label}: source_question_id is required")
         if expected_type == "case":
             require(source.get("case_id") and source.get("sub_question_id"), f"{record_label}: case source needs case_id/sub_question_id")
         identification = record.get("identification", {})
@@ -247,7 +251,10 @@ def validate_sample(root: Path, path: Path, expected_type: str, topic_ids: set[s
                 require(isinstance(summary, str) and len(summary) <= 80, f"{record_label}: summary is too long")
         topics = record.get("topics")
         caps = record.get("capabilities")
-        require(isinstance(topics, list) and isinstance(caps, list), f"{record_label}: topics/capabilities must be lists")
+        require(isinstance(topics, list) and topics, f"{record_label}: at least one topic is required")
+        require(isinstance(caps, list), f"{record_label}: topics/capabilities must be lists")
+        if expected_type == "case":
+            require(caps, f"{record_label}: case records require at least one capability")
         if len(topics) > 1:
             multi_topic += 1
         topic_seen: set[str] = set()
@@ -288,6 +295,63 @@ def validate_sample(root: Path, path: Path, expected_type: str, topic_ids: set[s
     return len(records), multi_topic
 
 
+def collect_golden_statistics(root: Path, taxonomy_nodes: list[dict[str, Any]]) -> dict[str, Any]:
+    """Collect diagnostic coverage without turning coverage into a validation gate."""
+    records: list[dict[str, Any]] = []
+    source_counts: Counter[str] = Counter()
+    status_counts: Counter[str] = Counter()
+    confidence_counts: Counter[str] = Counter()
+    multi_topic_count = 0
+    multi_capability_count = 0
+    capability_ids: set[str] = set()
+    nodes = {node["id"]: node for node in taxonomy_nodes}
+    covered_by_level: dict[int, set[str]] = {1: set(), 2: set(), 3: set()}
+
+    def mark_topic(topic_id: str) -> None:
+        current: str | None = topic_id
+        while current is not None:
+            node = nodes[current]
+            covered_by_level[node["level"]].add(current)
+            current = node.get("parent_id")
+
+    for filename in ("comprehensive.sample.json", "case.sample.json"):
+        data = load_json(root / "data/golden-set" / filename)
+        records.extend(data["records"])
+
+    for record in records:
+        source_counts[record["source"]["source_id"]] += 1
+        status_counts[record["annotation"]["status"]] += 1
+        if len(record["topics"]) > 1:
+            multi_topic_count += 1
+        if len(record["capabilities"]) > 1:
+            multi_capability_count += 1
+        for reference in record["topics"]:
+            mark_topic(reference["topic_id"])
+            confidence_counts[reference["confidence"]] += 1
+        for reference in record["capabilities"]:
+            capability_ids.add(reference["capability_id"])
+            confidence_counts[reference["confidence"]] += 1
+
+    return {
+        "total": len(records),
+        "comprehensive": sum(record["question_type"] == "comprehensive" for record in records),
+        "case": sum(record["question_type"] == "case" for record in records),
+        "coverage": {f"L{level}": len(covered_by_level[level]) for level in (1, 2, 3)},
+        "taxonomy_totals": {f"L{level}": sum(node["level"] == level for node in taxonomy_nodes) for level in (1, 2, 3)},
+        "capability_coverage": len(capability_ids),
+        "status": dict(sorted(status_counts.items())),
+        "confidence": dict(sorted(confidence_counts.items())),
+        "sources": dict(sorted(source_counts.items())),
+        "multi_topic": multi_topic_count,
+        "multi_capability": multi_capability_count,
+        "unresolved": len(load_json(root / "taxonomy/unresolved-mappings.json")["unresolved"]),
+    }
+
+
+def format_counter(values: dict[str, int]) -> str:
+    return ", ".join(f"{key}={value}" for key, value in values.items()) or "none"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
@@ -295,12 +359,14 @@ def main() -> int:
     root = args.root.resolve()
     try:
         topic_ids, counts = validate_taxonomy(root)
+        taxonomy_data = load_json(root / "taxonomy/taxonomy.json")
         known_sources, mapping_count, unresolved_count = validate_sources_and_mappings(root, topic_ids)
         alias_count = validate_aliases(root, topic_ids, known_sources)
         capability_ids = validate_capabilities(root, known_sources)
         record_ids: set[str] = set()
         comprehensive_count, comprehensive_multi = validate_sample(root, root / "data/golden-set/comprehensive.sample.json", "comprehensive", topic_ids, capability_ids, known_sources, record_ids)
         case_count, case_multi = validate_sample(root, root / "data/golden-set/case.sample.json", "case", topic_ids, capability_ids, known_sources, record_ids)
+        statistics = collect_golden_statistics(root, taxonomy_data["nodes"])
         walk_strings(load_json(root / "taxonomy/taxonomy.json"), "taxonomy")
         print("PASS taxonomy schema validation")
         print(f"  topics: {len(topic_ids)} ({counts['L1']} L1 / {counts['L2']} L2 / {counts['L3']} L3)")
@@ -310,6 +376,16 @@ def main() -> int:
         print(f"  comprehensive sample: {comprehensive_count}; multi-topic: {comprehensive_multi}")
         print(f"  case sample: {case_count}; multi-topic: {case_multi}")
         print("PASS mapping reference validation")
+        print("Golden Set coverage diagnostics (not a hard gate)")
+        print(f"  total: {statistics['total']}; comprehensive: {statistics['comprehensive']}; case: {statistics['case']}")
+        for level in ("L1", "L2", "L3"):
+            print(f"  {level} coverage: {statistics['coverage'][level]}/{statistics['taxonomy_totals'][level]}")
+        print(f"  capability coverage: {statistics['capability_coverage']}/{len(capability_ids)}")
+        print(f"  review status: {format_counter(statistics['status'])}")
+        print(f"  confidence: {format_counter(statistics['confidence'])}")
+        print(f"  sources: {format_counter(statistics['sources'])}")
+        print(f"  multi-topic records: {statistics['multi_topic']}; multi-capability case records: {statistics['multi_capability']}")
+        print(f"  unresolved mappings: {statistics['unresolved']}")
         print("PASS golden-set sample validation")
         print("PASS duplicate ID validation")
         print("PASS parent relationship validation")

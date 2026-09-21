@@ -1,14 +1,16 @@
 # Taxonomy v0.1 Validation Report
 
-> 验证范围：Canonical Taxonomy v0.1、Case Capability v0.1、Golden Set contract 和小样本。
+> 验证范围：Canonical Taxonomy v0.1、Case Capability v0.1、Golden Set contract 和 Phase 1 baseline sample。
 >
 > 本报告不是 1822 道题的全量清洗报告，也不把第三方回忆版答案升级为官方事实。
+>
+> **历史快照说明**：本文中的 26 道综合题 / 11 道案例是 Phase 1 基线；Phase 2 扩量后的 100 / 48 结果、覆盖率和 validator 变化见 [GOLDEN_SET_EXPANSION_VALIDATION.md](GOLDEN_SET_EXPANSION_VALIDATION.md)。
 
 ## 1. Recommendation
 
 # PASS_WITH_CHANGES
 
-依据：模型已经能在合理粒度下表达官方大纲、现行教材、主要 source schema、26 道综合题和 11 道案例子问题；没有使用 canonical `OTHER`，Topic / Capability 已分离，所有 mapping 和样本都能通过 source commit/path 追溯。
+依据（Phase 1 快照）：模型已经能在合理粒度下表达官方大纲、现行教材、主要 source schema、26 道综合题和 11 道案例子问题；没有使用 canonical `OTHER`，Topic / Capability 已分离，所有 mapping 和样本都能通过 source commit/path 追溯。
 
 `PASS_WITH_CHANGES` 的“changes”是进入下一阶段前需要继续保留和收敛的有限边界：
 
@@ -16,7 +18,7 @@
 2. 对 `QUALITY.ATTRIBUTES`、`DATA.CACHE` 这类上位 topic 保留 parent-level annotation，扩量时只在重复出现稳定边界后再增加 L3；
 3. 对有多版本题面冲突的案例继续使用 `reviewed`，不能因为 Golden Set 要扩量而改写 source provenance。
 
-这些事项不会阻塞当前 contract 和小样本进入下一轮；在扩量前必须继续运行 validator 和人工 review。
+这些事项不会阻塞 Phase 1 contract；Phase 2 已在独立 worktree 完成扩量，后续仍必须继续运行 validator 和人工 review。
 
 ## 2. Inventory / source coverage
 
