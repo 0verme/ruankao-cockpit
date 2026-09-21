@@ -211,7 +211,7 @@ capacity:
 
 # ── 主题（全部使用归一化 ID，不使用中文自由文本）────────
 theme:
-  primary_topic_id: <string>            # 例如 sa.arch.quality-attributes
+  primary_topic_id: <string>            # 例如 QUALITY.ATTRIBUTES
   supporting_topic_ids: [<string>]
   capability_ids: [<string>]            # 案例能力枚举，见审计 4.2
 
@@ -249,7 +249,7 @@ tasks:
 
 # ── 证据（完成判定的唯一依据，见原则 P8）─────────────────
 evidence:
-  - key: <string>                     # 例如 topic_accuracy.sa.db.normalization
+  - key: <string>                     # 例如 topic_accuracy.DATA.DATABASE.NORMALIZATION
     type: <number|boolean|enum|text>
     required: <bool>
     unit: <string | null>
@@ -298,19 +298,19 @@ capacity:
   hard_stop: "23:30"
 
 theme:
-  primary_topic_id: sa.arch.quality-attributes
-  supporting_topic_ids: [sa.arch.styles, sa.db.normalization]
-  capability_ids: [quality-attribute-scenario, architecture-style-discrimination]
+  primary_topic_id: QUALITY.ATTRIBUTES
+  supporting_topic_ids: [ARCH.FOUNDATION.STYLES, DATA.DATABASE.NORMALIZATION]
+  capability_ids: [CASE.QUALITY_ATTRIBUTE_ANALYSIS, CASE.ARCHITECTURE_SELECTION]
 
 targets:
   comprehensive:
     question_count: 40
-    topic_ids: [sa.arch.quality-attributes, sa.arch.styles]
+    topic_ids: [QUALITY.ATTRIBUTES, ARCH.FOUNDATION.STYLES]
     source_filter: real
     time_limit_min: 45
   case:
     case_count: 1
-    capability_ids: [quality-attribute-scenario]
+    capability_ids: [CASE.QUALITY_ATTRIBUTE_ANALYSIS]
     timed: true
   essay:
     material_cards: 1
@@ -329,7 +329,7 @@ tasks:
     required: true
   - id: t2
     type: drill
-    ref: { source_repo: wujiaming88/awesome-ruankao, source_path: "真题/系统架构设计师/2024年下半年/综合知识.md", topic_id: sa.arch.quality-attributes, local_asset: null }
+    ref: { source_repo: wujiaming88/awesome-ruankao, source_path: "真题/系统架构设计师/2024年下半年/综合知识.md", topic_id: QUALITY.ATTRIBUTES, local_asset: null }
     est_minutes: 40
     required: true
   - id: t3
@@ -339,13 +339,13 @@ tasks:
     required: true
   - id: t4
     type: note
-    ref: { source_repo: self, source_path: null, topic_id: sa.arch.quality-attributes, local_asset: essay_material.json }
+    ref: { source_repo: self, source_path: null, topic_id: QUALITY.ATTRIBUTES, local_asset: essay_material.json }
     est_minutes: 25
     required: true
 
 evidence:
-  - { key: "topic_accuracy.sa.arch.quality-attributes", type: number, required: true, unit: ratio }
-  - { key: "case.capability.quality-attribute-scenario.score", type: number, required: true, unit: "0-1" }
+  - { key: "topic_accuracy.QUALITY.ATTRIBUTES", type: number, required: true, unit: ratio }
+  - { key: "case.capability.CASE.QUALITY_ATTRIBUTE_ANALYSIS.score", type: number, required: true, unit: "0-1" }
   - { key: "essay.material_card.count", type: number, required: true, unit: count }
   - { key: "review.due_cleared", type: boolean, required: true, unit: null }
   - { key: "minutes.actual", type: number, required: false, unit: minutes }

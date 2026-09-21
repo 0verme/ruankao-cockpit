@@ -11,7 +11,7 @@
   },
   "capability_reference": {
     "required": ["capability_id", "confidence"],
-    "rules": ["capability_id must exist in taxonomy/capabilities.json", "capabilities are normally used for case records", "one case may reference multiple capabilities", "do not put a knowledge topic ID in capabilities"]
+    "rules": ["capability_id must exist in taxonomy/capabilities.json", "case records require at least one capability", "comprehensive records use an empty capability array in v0.1", "one case may reference multiple capabilities", "do not put a knowledge topic ID in capabilities"]
   },
   "record": {
     "required": ["id", "question_type", "source", "topics", "capabilities", "annotation"],
@@ -21,7 +21,7 @@
       "source": {
         "required": ["source_id", "source_commit", "source_path", "source_question_id"],
         "optional": ["case_id", "sub_question_id"],
-        "rule": "Use repository-relative source_path and an immutable source_commit. Do not include a local absolute path."
+        "rule": "Use non-empty repository-relative source_path and source_question_id with an immutable source_commit. Do not include a local absolute path."
       },
       "identification": {
         "optional": ["term", "question_no", "case_title", "summary"],
@@ -36,6 +36,12 @@
       }
     }
   },
+  "validation_invariants": [
+    "Every record has at least one topic reference.",
+    "Every case record has at least one capability reference; comprehensive records have none.",
+    "Canonical IDs must not introduce OTHER, UNKNOWN, MISC, or UNCLASSIFIED segments.",
+    "Duplicate record IDs are invalid across both sample files."
+  ],
   "copyright_guard": {
     "disallowed_record_keys": ["stem", "prompt", "options", "answer", "analysis", "reference_answer", "ocr_text", "full_text"],
     "summary_max_characters": 80,

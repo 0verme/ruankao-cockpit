@@ -1,12 +1,16 @@
 # Golden Set v0.1
 
-> 当前状态：已定义数据契约，并提交一小批真实综合题 / 案例子问题作为 validation sample。
+> 当前状态：Phase 2 已完成一次真实题目扩量压力测试；样本仍只保存来源索引和标注，不复制第三方正文。
+>
+> - `comprehensive.sample.json`：100 道综合知识样本；
+> - `case.sample.json`：48 道案例子问题样本；
+> - 现有确认记录保持 `confirmed`；本阶段新增记录默认使用 `reviewed`，并明确标注为 agent-assisted，待独立人工确认后才可升级。
 
 ## 文件
 
 - `schema.json`：Golden Set v0.1 契约；
-- `comprehensive.sample.json`：26 道综合知识样本；
-- `case.sample.json`：11 道案例子问题样本。
+- `comprehensive.sample.json`：100 道综合知识样本；
+- `case.sample.json`：48 道案例子问题样本。
 
 所有机器数据统一使用 JSON。样本只保留 source reference、题号 / 子问题号、最短识别摘要和 annotation，不复制第三方题干、选项、答案、解析、OCR 或 PDF。
 
