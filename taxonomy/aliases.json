@@ -1,0 +1,47 @@
+{
+  "taxonomy_version": "0.1",
+  "contract": {
+    "alias_scope": "source-scoped; an alias is not a global synonym unless its source context is unambiguous",
+    "confidence_values": ["high", "medium", "low"],
+    "collision_policy": "When one surface string names more than one concept, keep collision_group_id and require source context instead of silently choosing a topic."
+  },
+  "aliases": [
+    {"alias":"计算机系统","canonical_topic_id":"SYSTEM","source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"00.系统架构设计师考试大纲-清洗版/第03章-考试科目1-综合知识.md","source_value":"计算机系统基本知识","confidence":"high"},
+    {"alias":"操作系统","canonical_topic_id":"SYSTEM.COMPUTER.OPERATING_SYSTEMS","source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"00.系统架构设计师考试大纲-清洗版/第03章-考试科目1-综合知识.md","source_value":"操作系统","confidence":"high"},
+    {"alias":"网络技术","canonical_topic_id":"SYSTEM.COMPUTER.NETWORKING","source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"00.系统架构设计师考试大纲-清洗版/第03章-考试科目1-综合知识.md","source_value":"计算机网络","confidence":"high"},
+    {"alias":"数据库系统","canonical_topic_id":"DATA.DATABASE.RELATIONAL","source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"00.系统架构设计师考试大纲-清洗版/第03章-考试科目1-综合知识.md","source_value":"关系型数据库系统","confidence":"high"},
+    {"alias":"数据库设计","canonical_topic_id":"DATA.DATABASE","source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"01.系统架构设计师教材-清洗版/第06章-数据库设计基础知识.md","source_value":"数据库设计基础知识","confidence":"high"},
+    {"alias":"软件架构设计","canonical_topic_id":"ARCH.FOUNDATION","source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"01.系统架构设计师教材-清洗版/第07章-系统架构设计基础知识.md","source_value":"系统架构设计基础知识","confidence":"high"},
+    {"alias":"架构风格","canonical_topic_id":"ARCH.FOUNDATION.STYLES","source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"01.系统架构设计师教材-清洗版/第07章-系统架构设计基础知识.md","source_value":"架构风格","confidence":"high"},
+    {"alias":"软件质量属性","canonical_topic_id":"QUALITY.ATTRIBUTES","source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"01.系统架构设计师教材-清洗版/第08章-系统质量属性与架构评估.md","source_value":"质量属性","confidence":"high"},
+    {"alias":"架构质量属性","canonical_topic_id":"QUALITY.ATTRIBUTES","source_id":"wujiaming88","source_commit":"9923d3efdd99729a318ae55a1d2505cf021f3a86","source_path":"案例分析/答题模板/系统架构设计师答题模板.md","source_value":"质量属性场景分析","confidence":"medium"},
+    {"alias":"质量特性","canonical_topic_id":"QUALITY.ATTRIBUTES","source_id":"wujiaming88","source_commit":"9923d3efdd99729a318ae55a1d2505cf021f3a86","source_path":"案例分析/答题模板/系统架构设计师答题模板.md","source_value":"质量属性","confidence":"medium"},
+    {"alias":"架构评估","canonical_topic_id":"QUALITY.EVALUATION","source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"01.系统架构设计师教材-清洗版/第08章-系统质量属性与架构评估.md","source_value":"架构评估","confidence":"high"},
+    {"alias":"软件可靠性","canonical_topic_id":"RELIABILITY.SOFTWARE","source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"01.系统架构设计师教材-清洗版/第09章-软件可靠性基础知识.md","source_value":"软件可靠性基础知识","confidence":"high"},
+    {"alias":"架构演化","canonical_topic_id":"EVOLUTION.ARCHITECTURE","source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"01.系统架构设计师教材-清洗版/第10章-软件架构的演化和维护.md","source_value":"软件架构的演化和维护","confidence":"high"},
+    {"alias":"信息安全","canonical_topic_id":"SEC.INFORMATION","source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"01.系统架构设计师教材-清洗版/第04章-信息安全技术基础知识.md","source_value":"信息安全技术基础知识","confidence":"high"},
+    {"alias":"安全架构","canonical_topic_id":"SEC.ARCHITECTURE","source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"01.系统架构设计师教材-清洗版/第18章-安全架构设计理论与实践.md","source_value":"安全架构设计理论与实践","confidence":"high"},
+    {"alias":"云原生","canonical_topic_id":"ARCH.CLOUD_NATIVE","source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"01.系统架构设计师教材-清洗版/第14章-云原生架构设计理论与实践.md","source_value":"云原生架构设计理论与实践","confidence":"high"},
+    {"alias":"面向服务架构","canonical_topic_id":"ARCH.SOA","source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"01.系统架构设计师教材-清洗版/第15章-面向服务架构设计理论与实践.md","source_value":"面向服务架构设计理论与实践","confidence":"high"},
+    {"alias":"大数据架构","canonical_topic_id":"DATA.BIGDATA","source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"01.系统架构设计师教材-清洗版/第19章-大数据架构设计理论与实践.md","source_value":"大数据架构设计理论与实践","confidence":"high"},
+    {"alias":"缓存","canonical_topic_id":"DATA.CACHE","source_id":"wujiaming88","source_commit":"9923d3efdd99729a318ae55a1d2505cf021f3a86","source_path":"案例分析/答题模板/系统架构设计师答题模板.md","source_value":"Redis/缓存架构","confidence":"high"},
+    {"alias":"Redis","canonical_topic_id":"DATA.CACHE","source_id":"wujiaming88","source_commit":"9923d3efdd99729a318ae55a1d2505cf021f3a86","source_path":"案例分析/答题模板/系统架构设计师答题模板.md","source_value":"Redis/缓存架构","confidence":"high"},
+    {"alias":"微服务","canonical_topic_id":"ARCH.CLOUD_NATIVE.MICROSERVICES","source_id":"wujiaming88","source_commit":"9923d3efdd99729a318ae55a1d2505cf021f3a86","source_path":"study-guides/architecture/three-color-cards.md","source_value":"微服务架构","confidence":"high"},
+    {"alias":"事件驱动","canonical_topic_id":"ARCH.CLOUD_NATIVE.EVENT_DRIVEN","source_id":"wujiaming88","source_commit":"9923d3efdd99729a318ae55a1d2505cf021f3a86","source_path":"论文/高频主题汇总.md","source_value":"事件驱动架构","confidence":"high"},
+    {"alias":"分布式一致性","canonical_topic_id":"DATA.DISTRIBUTED.CONSISTENCY","source_id":"wujiaming88","source_commit":"9923d3efdd99729a318ae55a1d2505cf021f3a86","source_path":"study-guides/architecture/three-color-cards.md","source_value":"分布式一致性","confidence":"high"},
+    {"alias":"高可用","canonical_topic_id":"QUALITY.ATTRIBUTES.AVAILABILITY","source_id":"wujiaming88","source_commit":"9923d3efdd99729a318ae55a1d2505cf021f3a86","source_path":"案例分析/答题模板/系统架构设计师答题模板.md","source_value":"可用性","confidence":"medium"},
+    {"alias":"安全","canonical_topic_id":"SEC.INFORMATION","source_id":"wujiaming88","source_commit":"9923d3efdd99729a318ae55a1d2505cf021f3a86","source_path":"study-guides/architecture/three-color-cards.md","source_value":"信息安全","confidence":"medium","collision_group_id":"safety-context"},
+    {"alias":"安全","canonical_topic_id":"SEC.ARCHITECTURE","source_id":"wujiaming88","source_commit":"9923d3efdd99729a318ae55a1d2505cf021f3a86","source_path":"案例分析/答题模板/系统架构设计师答题模板.md","source_value":"安全架构","confidence":"medium","collision_group_id":"safety-context"},
+    {"alias":"系统架构基础与架构风格","canonical_topic_id":"ARCH.FOUNDATION","source_id":"nye-2","source_commit":"03cd3d351786fed8564d963292bffffccd7c50af","source_path":"学习辅助/学情记录.csv","source_value":"M02 系统架构基础与架构风格","confidence":"high"},
+    {"alias":"数据库与数据架构","canonical_topic_id":"DATA.DATABASE","source_id":"nye-2","source_commit":"03cd3d351786fed8564d963292bffffccd7c50af","source_path":"学习辅助/学情记录.csv","source_value":"M06 数据库与数据架构","confidence":"medium"},
+    {"alias":"信息安全与可信系统","canonical_topic_id":"SEC.INFORMATION","source_id":"nye-2","source_commit":"03cd3d351786fed8564d963292bffffccd7c50af","source_path":"学习辅助/学情记录.csv","source_value":"M08 信息安全与可信系统","confidence":"high"},
+    {"alias":"computer_foundation","canonical_topic_id":"SYSTEM.COMPUTER","source_id":"zhang-986","source_commit":"51217a582b93e4266eae8ec745fb308e55259f82","source_path":"data/bank.json","source_value":"computer_foundation","confidence":"high"},
+    {"alias":"software_engineering","canonical_topic_id":"SOFTWARE.ENGINEERING","source_id":"zhang-986","source_commit":"51217a582b93e4266eae8ec745fb308e55259f82","source_path":"data/bank.json","source_value":"software_engineering","confidence":"high"},
+    {"alias":"new_technology","canonical_topic_id":"EMERGING.TECHNOLOGY","source_id":"zhang-986","source_commit":"51217a582b93e4266eae8ec745fb308e55259f82","source_path":"data/bank.json","source_value":"new_technology","confidence":"high"},
+    {"alias":"第3章数据库系统","canonical_topic_id":"DATA.DATABASE","source_id":"altria1979","source_commit":"472e0e3fc3860aa1dffcac9e1d278a943ea5eb59","source_path":"真题 (重点)/章节分类真题及解析/章节版/第3章数据库系统-真题.pdf","source_value":"第3章数据库系统","confidence":"medium"},
+    {"alias":"第9章软件架构设计","canonical_topic_id":"ARCH.FOUNDATION","source_id":"altria1979","source_commit":"472e0e3fc3860aa1dffcac9e1d278a943ea5eb59","source_path":"真题 (重点)/章节分类真题及解析/章节版/第9章软件架构设计-真题.pdf","source_value":"第9章软件架构设计","confidence":"medium"}
+  ],
+  "collision_groups": [
+    {"id":"safety-context","alias":"安全","topic_ids":["SEC.INFORMATION","SEC.ARCHITECTURE"],"resolution":"Do not resolve from the string alone. Use source_path, source_value, and neighboring headings; a question can also carry both topics when it genuinely spans the two."}
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "taxonomy_version": "0.1",
+  "contract": {
+    "purpose": "Record source values that are not safe to normalize yet; unresolved values must not be silently counted as OTHER.",
+    "required_fields": ["source_id", "source_commit", "source_path", "source_value", "reason", "candidate_topics", "evidence"],
+    "allowed_resolution": ["keep_unresolved", "request_source_context", "split_source_value", "review_after_sample"]
+  },
+  "unresolved": [
+    {
+      "source_id":"zhang-986",
+      "source_commit":"51217a582b93e4266eae8ec745fb308e55259f82",
+      "source_path":"data/bank.json",
+      "source_value":"other",
+      "reason":"题库 module 将若干无法归入既有粗分类的选择题合并为 other；仅凭 module 无法判断是系统、信息系统、新技术、法规或其他主题。",
+      "candidate_topics":["SYSTEM","INFO","EMERGING","GOVERNANCE"],
+      "evidence":["data/bank.json:manifest.module_counts", "审计记录指出 module 只有粗粒度值且 knowledge 存在空串/占位"],
+      "resolution":"request_source_context"
+    },
+    {
+      "source_id":"zhang-986",
+      "source_commit":"51217a582b93e4266eae8ec745fb308e55259f82",
+      "source_path":"data/bank.json",
+      "source_value":"PDF自动抽取",
+      "reason":"这是抽取流程占位值而不是知识分类，不能作为 canonical topic alias 或映射依据。",
+      "candidate_topics":[],
+      "evidence":["data/bank.json:choices[].knowledge", "审计记录明确指出该值为占位文本"],
+      "resolution":"keep_unresolved"
+    },
+    {
+      "source_id":"nye-2",
+      "source_commit":"03cd3d351786fed8564d963292bffffccd7c50af",
+      "source_path":"学习辅助/学情记录.csv",
+      "source_value":"M00 考试认知与备考策略",
+      "reason":"这是学习策略模块，不是 Knowledge Topic；强行映射会把学习流程混入内容层。",
+      "candidate_topics":[],
+      "evidence":["学习辅助/学情记录.csv:类别=导学", "学习目标描述考试结构与资料使用方式"],
+      "resolution":"keep_unresolved"
+    },
+    {
+      "source_id":"nye-2",
+      "source_commit":"03cd3d351786fed8564d963292bffffccd7c50af",
+      "source_path":"学习辅助/学情记录.csv",
+      "source_value":"M11 案例分析解题能力",
+      "reason":"这是 Case Capability 维度，不应塞入 Topic hierarchy。",
+      "candidate_topics":[],
+      "evidence":["学习辅助/学情记录.csv:类别=应试", "模块名称直接描述解题能力"],
+      "resolution":"keep_unresolved"
+    },
+    {
+      "source_id":"nye-2",
+      "source_commit":"03cd3d351786fed8564d963292bffffccd7c50af",
+      "source_path":"学习辅助/学情记录.csv",
+      "source_value":"M12 论文写作素材库",
+      "reason":"论文素材库是自产内容/表达能力入口，不是单一知识主题。",
+      "candidate_topics":["ARCH.FOUNDATION","QUALITY"],
+      "evidence":["学习辅助/学情记录.csv:类别=应试", "相关主题横跨架构、质量和系统设计"],
+      "resolution":"request_source_context"
+    },
+    {
+      "source_id":"wujiaming88",
+      "source_commit":"9923d3efdd99729a318ae55a1d2505cf021f3a86",
+      "source_path":"study-guides/architecture/three-color-cards.md",
+      "source_value":"新技术专题",
+      "reason":"来源标题同时覆盖 AI、云原生、边缘、大数据等会随题目变化的主题；未提供题目级边界。",
+      "candidate_topics":["EMERGING.TECHNOLOGY","ARCH.CLOUD_NATIVE","DATA.BIGDATA"],
+      "evidence":["study-guides/architecture/three-color-cards.md:15.新技术专题", "来源说明混合多个外部资料与预测内容"],
+      "resolution":"split_source_value"
+    },
+    {
+      "source_id":"altria1979",
+      "source_commit":"472e0e3fc3860aa1dffcac9e1d278a943ea5eb59",
+      "source_path":"真题 (重点)/章节分类真题及解析/章节版/第16章安全性和保密性-真题.pdf",
+      "source_value":"第16章安全性和保密性",
+      "reason":"旧版分类把基础信息安全、通信安全和安全架构混在一个章节名中，且与现行教材章节号不兼容。",
+      "candidate_topics":["SEC.INFORMATION","SEC.ARCHITECTURE","ARCH.COMMUNICATION.NETWORK_SECURITY"],
+      "evidence":["真题 (重点)/章节分类真题及解析/章节版目录", "审计记录标注该仓库混有旧版教材与机构资料"],
+      "resolution":"request_source_context"
+    },
+    {
+      "source_id":"xiaomabenten",
+      "source_commit":"8bc0a57c6a4b3b5f1ed8e923a13528932f051ccc",
+      "source_path":"03、历年真题+答案解析",
+      "source_value":"历年真题+答案解析",
+      "reason":"目录层只表示资料集合；PDF 内部题目分类未结构化且不能依赖文件名推断题目 topic。",
+      "candidate_topics":[],
+      "evidence":["目录包含按年份和科目排列的 PDF", "审计记录标注该来源几乎没有可解析元数据"],
+      "resolution":"request_source_context"
+    },
+    {
+      "source_id":"xiaomabenten",
+      "source_commit":"8bc0a57c6a4b3b5f1ed8e923a13528932f051ccc",
+      "source_path":"09、备考其他资料/系统架构设计师教程（第4版）-划重点版本.pdf",
+      "source_value":"系统架构设计师教程（第4版）",
+      "reason":"文件名版本与内容版本存在冲突，审计显示 PDF 创建于 2021 年且章节结构为旧版，不能静默映射到现行 20 章。",
+      "candidate_topics":["SYSTEM","ARCH"],
+      "evidence":["PDF 文件名", "审计记录：正文以旧版第1章计算机组成与体系结构开篇"],
+      "resolution":"keep_unresolved"
+    }
+  ]
+}

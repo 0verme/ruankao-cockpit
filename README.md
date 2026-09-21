@@ -37,14 +37,14 @@
 ```text
 Research Audit       ✅
 Repository Bootstrap 🚧
-Taxonomy v0.1        ⏳
-Golden Set           ⏳
+Taxonomy v0.1        ✅
+Golden Set           ✅
 Progress Replay      ⏳
 30-Day Plan          ⏳
 Cockpit UI           ⏳
 ```
 
-当前仓库只完成研究成果固化与正式仓库骨架初始化，尚未实现上述待办能力。
+当前仓库已完成 Taxonomy v0.1、Case Capability v0.1、Golden Set 数据契约和小样本验证；尚未实现 Progress Engine、Adaptive Planner、30 天计划实例化或 UI。
 
 ## 文档入口
 

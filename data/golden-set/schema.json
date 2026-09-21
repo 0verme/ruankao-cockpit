@@ -1,0 +1,44 @@
+{
+  "schema_version": "golden-set/v0.1",
+  "format": "JSON",
+  "purpose": "A reviewed reference set for testing taxonomy and annotation contracts; it is not a redistributable question bank.",
+  "question_types": ["comprehensive", "case"],
+  "review_status": ["candidate", "reviewed", "confirmed", "rejected"],
+  "confidence": ["high", "medium", "low"],
+  "topic_reference": {
+    "required": ["topic_id", "confidence"],
+    "rules": ["topic_id must exist in taxonomy/taxonomy.json", "confidence is an enum", "one record may reference multiple topics", "do not put a CASE.* ID in topics"]
+  },
+  "capability_reference": {
+    "required": ["capability_id", "confidence"],
+    "rules": ["capability_id must exist in taxonomy/capabilities.json", "capabilities are normally used for case records", "one case may reference multiple capabilities", "do not put a knowledge topic ID in capabilities"]
+  },
+  "record": {
+    "required": ["id", "question_type", "source", "topics", "capabilities", "annotation"],
+    "fields": {
+      "id": "Stable local golden-set record ID; it is not a source question ID.",
+      "question_type": "comprehensive or case",
+      "source": {
+        "required": ["source_id", "source_commit", "source_path", "source_question_id"],
+        "optional": ["case_id", "sub_question_id"],
+        "rule": "Use repository-relative source_path and an immutable source_commit. Do not include a local absolute path."
+      },
+      "identification": {
+        "optional": ["term", "question_no", "case_title", "summary"],
+        "rule": "Only the shortest non-substitutive recognition summary is allowed; do not copy the stem, options, answer, analysis, OCR or full case body."
+      },
+      "topics": "Array of topic_reference objects.",
+      "capabilities": "Array of capability_reference objects; comprehensive records use an empty array in v0.1.",
+      "annotation": {
+        "required": ["status", "note"],
+        "optional": ["annotator", "reviewed_at", "issues"],
+        "rule": "AI suggestions may be candidate only; confirmed means a human reviewed the references and mapping."
+      }
+    }
+  },
+  "copyright_guard": {
+    "disallowed_record_keys": ["stem", "prompt", "options", "answer", "analysis", "reference_answer", "ocr_text", "full_text"],
+    "summary_max_characters": 80,
+    "allowed_content": ["source_id", "source_commit", "source_path", "source_question_id", "question number", "short self-authored recognition summary", "taxonomy annotations", "review metadata"]
+  }
+}
