@@ -119,128 +119,221 @@
     "MASTERY_STATE_ENUM": {
       "owner": "P4.3",
       "description": "mastery 状态枚举与互斥语义",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": [
+        "new",
+        "learning",
+        "mastered"
+      ],
+      "frozen_by": "docs/review/MASTERY_POLICY_V01.md (P4.3 contract)"
     },
     "MASTERY_INITIAL_STATE": {
       "owner": "P4.3",
       "description": "无 evidence 时的初始状态",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": "new",
+      "frozen_by": "docs/review/MASTERY_POLICY_V01.md (P4.3 contract)"
     },
     "MASTERY_SUCCESS_STREAK_TO_MASTERED": {
       "owner": "P4.3",
       "description": "进入 mastered 所需的成功次数/条件",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": {
+        "metric": "consecutive_success_day_count",
+        "min_consecutive_successes": 3,
+        "min_distinct_success_local_dates": 3,
+        "reset_on_failure": true,
+        "same_local_date_repeat_does_not_advance": true
+      },
+      "frozen_by": "docs/review/MASTERY_POLICY_V01.md (P4.3 contract)"
     },
     "MASTERY_FAILURE_TRANSITION": {
       "owner": "P4.3",
       "description": "learning/due 失败后的降级规则",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": {
+        "transition": {
+          "new": "learning",
+          "learning": "learning",
+          "mastered": "learning"
+        },
+        "resets_consecutive_success": true
+      },
+      "frozen_by": "docs/review/MASTERY_POLICY_V01.md (P4.3 contract)"
     },
     "MASTERY_MASTERED_PERSISTENCE": {
       "owner": "P4.3",
       "description": "mastered 是否永久",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": "revocable",
+      "frozen_by": "docs/review/MASTERY_POLICY_V01.md (P4.3 contract)"
     },
     "MASTERY_MASTERED_FAILURE_TRANSITION": {
       "owner": "P4.3",
       "description": "mastered 失败后的行为",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": "demote_to_learning",
+      "frozen_by": "docs/review/MASTERY_POLICY_V01.md (P4.3 contract)"
     },
     "MASTERY_INSUFFICIENT_EVIDENCE_STATE": {
       "owner": "P4.3",
       "description": "insufficient evidence 的状态表示",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": {
+        "effect": "no_change",
+        "counter_field": "insufficient_evidence_count",
+        "is_failure": false
+      },
+      "frozen_by": "docs/review/MASTERY_POLICY_V01.md (P4.3 contract)"
     },
     "MASTERY_ILLEGAL_TRANSITION_POLICY": {
       "owner": "P4.3",
       "description": "非法状态跃迁的拒绝/记录方式",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": {
+        "policy": "impossible_by_construction",
+        "reason": "transition function is total over (mastery_state, policy outcome)",
+        "input_validation_categories": [
+          "invalid_timestamp",
+          "future_evidence",
+          "duplicate_evidence_id",
+          "invalid_evidence_outcome",
+          "invalid_timezone",
+          "invalid_policy_input"
+        ]
+      },
+      "frozen_by": "docs/review/MASTERY_POLICY_V01.md (P4.3 contract)"
     },
     "SCHED_INTERVAL_LADDER": {
       "owner": "P4.4",
       "description": "success 后的 interval 序列（候选 1/3/7/15，未冻结）",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": [
+        1,
+        3,
+        7,
+        15
+      ],
+      "frozen_by": "docs/review/REVIEW_SCHEDULING_POLICY_V01.md (P4.4 contract)"
     },
     "SCHED_FIRST_DUE_RULE": {
       "owner": "P4.4",
       "description": "首次 due 的基准事实时间与到期规则",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": {
+        "no_evidence": "not_scheduled",
+        "anchor": "first_evaluated_evidence.occurred_at",
+        "first_interval_days": 1,
+        "due_local_date": "local_date(anchor, tz) + interval_days"
+      },
+      "frozen_by": "docs/review/REVIEW_SCHEDULING_POLICY_V01.md (P4.4 contract)"
     },
     "SCHED_SUCCESS_ADVANCE_RULE": {
       "owner": "P4.4",
       "description": "success 后 interval 推进方式",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": {
+        "applied_interval_days": "INTERVAL_LADDER_DAYS[min(d - 1, 3)]",
+        "d": "distinct local dates of successes in the current run",
+        "same_local_date": "no_advance",
+        "cap_index": 3
+      },
+      "frozen_by": "docs/review/REVIEW_SCHEDULING_POLICY_V01.md (P4.4 contract)"
     },
     "SCHED_FAILURE_RESET_RULE": {
       "owner": "P4.4",
       "description": "failure 后 interval reset / downgrade",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": {
+        "applied_interval_days": 1,
+        "resets": [
+          "consecutive_success_count",
+          "consecutive_success_day_count"
+        ],
+        "demotes_mastered": true
+      },
+      "frozen_by": "docs/review/REVIEW_SCHEDULING_POLICY_V01.md (P4.4 contract)"
     },
     "SCHED_MASTERED_MAINTENANCE_RULE": {
       "owner": "P4.4",
       "description": "mastered 后 maintenance review 策略",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": {
+        "enabled": true,
+        "interval_days": 15,
+        "included_in_due_count": true,
+        "mastery_change_on_success": "none",
+        "mastery_change_on_failure": "demote_to_learning"
+      },
+      "frozen_by": "docs/review/REVIEW_SCHEDULING_POLICY_V01.md (P4.4 contract)"
     },
     "SCHED_OVERDUE_RULE": {
       "owner": "P4.4",
       "description": "overdue 是否改变下一次 interval",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": {
+        "changes_interval": false,
+        "changes_mastery": false,
+        "overdue_starts": "first local midnight after next_due_local_date"
+      },
+      "frozen_by": "docs/review/REVIEW_SCHEDULING_POLICY_V01.md (P4.4 contract)"
     },
     "SCHED_SAME_DAY_REPEAT_RULE": {
       "owner": "P4.4",
       "description": "同一天 / 同一 instant 多次 review 的处理",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": {
+        "counted_as_evidence": true,
+        "advances_interval": false,
+        "changes_due_date": false,
+        "ordering": "(occurred_at_utc, evidence_id) ascending",
+        "duplicate_evidence_id": "reject"
+      },
+      "frozen_by": "docs/review/REVIEW_SCHEDULING_POLICY_V01.md (P4.4 contract)"
     },
     "SCHED_DUE_COUNT_DEFINITION": {
       "owner": "P4.4",
       "description": "due_count 是 item 数还是事件数",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": {
+        "unit": "review_item",
+        "statuses": [
+          "due",
+          "overdue"
+        ],
+        "invariant": "due_count == due_today_count + overdue_count"
+      },
+      "frozen_by": "docs/review/REVIEW_SCHEDULING_POLICY_V01.md (P4.4 contract)"
     },
     "SCHED_DUE_GRANULARITY": {
       "owner": "P4.4",
       "description": "review_due_at 是 instant 还是 local date",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": {
+        "stored": [
+          "next_due_at (UTC instant)",
+          "next_due_local_date (YYYY-MM-DD)"
+        ],
+        "canonical": "instant",
+        "due_boundary": "inclusive",
+        "overdue_boundary": "exclusive"
+      },
+      "frozen_by": "docs/review/REVIEW_SCHEDULING_POLICY_V01.md (P4.4 contract)"
     },
     "SCHED_DATE_BOUNDARY_TIMEZONE": {
       "owner": "P4.4",
       "description": "日期边界使用的 timezone / calendar 语义",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": {
+        "timezone": "explicit IANA schedule_timezone (required, no implicit default)",
+        "implicit_machine_timezone": "forbidden",
+        "recorded_metadata": [
+          "schedule_timezone",
+          "tzdata_version"
+        ],
+        "local_day_start": "earliest instant whose local date >= D"
+      },
+      "frozen_by": "docs/review/REVIEW_SCHEDULING_POLICY_V01.md (P4.4 contract)"
     },
     "REPLAY_AS_OF_PARAMETER": {
       "owner": "P4.5",
@@ -273,16 +366,70 @@
     "STATE_FIELD_NAMES": {
       "owner": "P4.3",
       "description": "MasteryReviewState 的字段名与 nesting",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": {
+        "nesting": "projection.items[review_item_id] = flat item object",
+        "item_fields": [
+          "review_item_id",
+          "mastery_state",
+          "mastery_reason",
+          "evaluated_evidence_count",
+          "successful_review_count",
+          "failure_count",
+          "insufficient_evidence_count",
+          "consecutive_success_count",
+          "consecutive_success_day_count",
+          "last_review_at",
+          "last_evidence_id",
+          "review_interval_days",
+          "next_due_at",
+          "next_due_local_date",
+          "review_status",
+          "review_status_reason",
+          "scheduling_reason"
+        ],
+        "aggregate": {
+          "review": [
+            "total_items",
+            "not_scheduled_count",
+            "scheduled_count",
+            "due_today_count",
+            "overdue_count",
+            "due_count"
+          ],
+          "mastery": [
+            "new_count",
+            "learning_count",
+            "mastered_count"
+          ]
+        },
+        "metadata": [
+          "schema_version",
+          "policy",
+          "as_of",
+          "schedule_timezone",
+          "tzdata_version"
+        ],
+        "not_frozen_here": "MasteryReviewState v0.1 的 schema_version 字符串、顶层对象名与额外 replay metadata 由 P4.5 / P4.6 命名；不得重命名上述 policy 字段（重命名需要新 policy version）"
+      },
+      "frozen_by": "docs/review/POLICY_SYMBOL_FREEZE_V01.md (P4.3 / P4.4 contract)"
     },
     "STATE_DUE_PROJECTION_NAMES": {
       "owner": "P4.4",
       "description": "due / overdue projection 的状态名与字段名",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": {
+        "field": "review_status",
+        "values": [
+          "not_scheduled",
+          "scheduled",
+          "due",
+          "overdue"
+        ],
+        "reason_field": "review_status_reason",
+        "interval_field": "review_interval_days"
+      },
+      "frozen_by": "docs/review/REVIEW_SCHEDULING_POLICY_V01.md (P4.4 contract)"
     },
     "STATE_ERROR_CATEGORIES": {
       "owner": "P4.5",
