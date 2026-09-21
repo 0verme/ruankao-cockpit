@@ -1,0 +1,33 @@
+# Local research evidence
+research/
+*_base/
+
+# Third-party repositories / documents
+*.pdf
+
+# Local databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment
+.env
+.env.*
+
+# Node
+node_modules/
+dist/
+build/
+coverage/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
