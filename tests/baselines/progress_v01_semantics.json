@@ -1,0 +1,701 @@
+{
+  "baseline_version": "progress-v01-semantics-baseline/v0.1",
+  "progress_model_contract": "progress-model/v0.1",
+  "recorded_from_commit": "38e3ef61150ead9dc4e7b54cc83be2f35738f88a",
+  "instructions": "Phase 4（Review / Mastery）不得改变 Progress Replay v0.1 语义。若本基线必须变更，说明 ProgressState 语义发生了有意变更，需要独立评审与版本升级。",
+  "fixtures": {
+    "basic": {
+      "kind": "state",
+      "digest": "sha256:e08bd2738bff775f9e83f203b759cc9f554f4d4615c3924b31b2dbdf79c58a62",
+      "projection": {
+        "schema_version": "progress-state/v0.1",
+        "replay_rule_version": "progress-replay/v0.1",
+        "event_schema_version": "progress-event/v0.1",
+        "taxonomy_version": "0.1",
+        "capability_version": "0.1",
+        "replayed_event_count": 1,
+        "global": {
+          "attempt_count": 1,
+          "correct_count": 1,
+          "incorrect_count": 0,
+          "accuracy": 1.0
+        },
+        "case": {
+          "attempt_count": 0,
+          "scored_attempt_count": 0,
+          "score_earned": 0,
+          "score_possible": 0,
+          "score_ratio": null
+        },
+        "errors": {
+          "error_count": 0,
+          "classified_error_count": 0,
+          "unclassified_error_count": 0,
+          "error_count_by_cause": {
+            "knowledge_gap": 0,
+            "reading_error": 0,
+            "calculation_error": 0,
+            "scoring_point_expression": 0
+          },
+          "error_cause_mix": {
+            "knowledge_gap": null,
+            "reading_error": null,
+            "calculation_error": null,
+            "scoring_point_expression": null
+          }
+        },
+        "coverage": {
+          "l1": {
+            "covered": 1,
+            "total": 13,
+            "ratio": 0.0769
+          },
+          "l2": {
+            "covered": 1,
+            "total": 27,
+            "ratio": 0.037
+          },
+          "l3": {
+            "covered": 1,
+            "total": 110,
+            "ratio": 0.0091
+          }
+        },
+        "study": {
+          "session_count": 0,
+          "study_minutes": 0
+        },
+        "topics": {
+          "DATA.DATABASE.RELATIONAL": {
+            "attempt_count": 1,
+            "correct_count": 1,
+            "incorrect_count": 0,
+            "accuracy": 1.0
+          }
+        },
+        "capabilities": {},
+        "default_topic_count": 149,
+        "default_capability_count": 13
+      }
+    },
+    "case-no-capability-evidence": {
+      "kind": "state",
+      "digest": "sha256:6787a81d02cc9a1d3a056c702b1e0ac03d72f7e9c746880046f4b5b1d326e3bf",
+      "projection": {
+        "schema_version": "progress-state/v0.1",
+        "replay_rule_version": "progress-replay/v0.1",
+        "event_schema_version": "progress-event/v0.1",
+        "taxonomy_version": "0.1",
+        "capability_version": "0.1",
+        "replayed_event_count": 1,
+        "global": {
+          "attempt_count": 0,
+          "correct_count": 0,
+          "incorrect_count": 0,
+          "accuracy": null
+        },
+        "case": {
+          "attempt_count": 1,
+          "scored_attempt_count": 0,
+          "score_earned": 0,
+          "score_possible": 0,
+          "score_ratio": null
+        },
+        "errors": {
+          "error_count": 0,
+          "classified_error_count": 0,
+          "unclassified_error_count": 0,
+          "error_count_by_cause": {
+            "knowledge_gap": 0,
+            "reading_error": 0,
+            "calculation_error": 0,
+            "scoring_point_expression": 0
+          },
+          "error_cause_mix": {
+            "knowledge_gap": null,
+            "reading_error": null,
+            "calculation_error": null,
+            "scoring_point_expression": null
+          }
+        },
+        "coverage": {
+          "l1": {
+            "covered": 1,
+            "total": 13,
+            "ratio": 0.0769
+          },
+          "l2": {
+            "covered": 1,
+            "total": 27,
+            "ratio": 0.037
+          },
+          "l3": {
+            "covered": 1,
+            "total": 110,
+            "ratio": 0.0091
+          }
+        },
+        "study": {
+          "session_count": 0,
+          "study_minutes": 0
+        },
+        "topics": {},
+        "capabilities": {},
+        "default_topic_count": 150,
+        "default_capability_count": 13
+      }
+    },
+    "case-score": {
+      "kind": "state",
+      "digest": "sha256:903b8e4a76663e6c906b525dae51db89c0006ca2be31fc34f41f9bfbc00faefa",
+      "projection": {
+        "schema_version": "progress-state/v0.1",
+        "replay_rule_version": "progress-replay/v0.1",
+        "event_schema_version": "progress-event/v0.1",
+        "taxonomy_version": "0.1",
+        "capability_version": "0.1",
+        "replayed_event_count": 2,
+        "global": {
+          "attempt_count": 0,
+          "correct_count": 0,
+          "incorrect_count": 0,
+          "accuracy": null
+        },
+        "case": {
+          "attempt_count": 2,
+          "scored_attempt_count": 2,
+          "score_earned": 7,
+          "score_possible": 10,
+          "score_ratio": 0.7
+        },
+        "errors": {
+          "error_count": 0,
+          "classified_error_count": 0,
+          "unclassified_error_count": 0,
+          "error_count_by_cause": {
+            "knowledge_gap": 0,
+            "reading_error": 0,
+            "calculation_error": 0,
+            "scoring_point_expression": 0
+          },
+          "error_cause_mix": {
+            "knowledge_gap": null,
+            "reading_error": null,
+            "calculation_error": null,
+            "scoring_point_expression": null
+          }
+        },
+        "coverage": {
+          "l1": {
+            "covered": 1,
+            "total": 13,
+            "ratio": 0.0769
+          },
+          "l2": {
+            "covered": 2,
+            "total": 27,
+            "ratio": 0.0741
+          },
+          "l3": {
+            "covered": 2,
+            "total": 110,
+            "ratio": 0.0182
+          }
+        },
+        "study": {
+          "session_count": 0,
+          "study_minutes": 0
+        },
+        "topics": {},
+        "capabilities": {
+          "CASE.DATA_DESIGN": {
+            "attempt_count": 2,
+            "score_earned": 7,
+            "score_possible": 10,
+            "score_ratio": 0.7,
+            "evidence_status": "sufficient"
+          },
+          "CASE.SOLUTION_TRADEOFF": {
+            "attempt_count": 2,
+            "score_earned": 3,
+            "score_possible": 5,
+            "score_ratio": 0.6,
+            "evidence_status": "sufficient"
+          }
+        },
+        "default_topic_count": 150,
+        "default_capability_count": 11
+      }
+    },
+    "errors": {
+      "kind": "state",
+      "digest": "sha256:f11c407ea6a7fe6adadedac4167664727f5bac6c4fa342b3c88366432685988f",
+      "projection": {
+        "schema_version": "progress-state/v0.1",
+        "replay_rule_version": "progress-replay/v0.1",
+        "event_schema_version": "progress-event/v0.1",
+        "taxonomy_version": "0.1",
+        "capability_version": "0.1",
+        "replayed_event_count": 5,
+        "global": {
+          "attempt_count": 5,
+          "correct_count": 0,
+          "incorrect_count": 5,
+          "accuracy": 0.0
+        },
+        "case": {
+          "attempt_count": 0,
+          "scored_attempt_count": 0,
+          "score_earned": 0,
+          "score_possible": 0,
+          "score_ratio": null
+        },
+        "errors": {
+          "error_count": 5,
+          "classified_error_count": 4,
+          "unclassified_error_count": 1,
+          "error_count_by_cause": {
+            "knowledge_gap": 1,
+            "reading_error": 1,
+            "calculation_error": 1,
+            "scoring_point_expression": 1
+          },
+          "error_cause_mix": {
+            "knowledge_gap": 0.25,
+            "reading_error": 0.25,
+            "calculation_error": 0.25,
+            "scoring_point_expression": 0.25
+          }
+        },
+        "coverage": {
+          "l1": {
+            "covered": 2,
+            "total": 13,
+            "ratio": 0.1538
+          },
+          "l2": {
+            "covered": 2,
+            "total": 27,
+            "ratio": 0.0741
+          },
+          "l3": {
+            "covered": 1,
+            "total": 110,
+            "ratio": 0.0091
+          }
+        },
+        "study": {
+          "session_count": 0,
+          "study_minutes": 0
+        },
+        "topics": {
+          "MATH.APPLICATION.PROBABILITY": {
+            "attempt_count": 2,
+            "correct_count": 0,
+            "incorrect_count": 2,
+            "accuracy": 0.0
+          },
+          "SYSTEM.COMPUTER": {
+            "attempt_count": 3,
+            "correct_count": 0,
+            "incorrect_count": 3,
+            "accuracy": 0.0
+          }
+        },
+        "capabilities": {},
+        "default_topic_count": 148,
+        "default_capability_count": 13
+      }
+    },
+    "incorrect": {
+      "kind": "state",
+      "digest": "sha256:2708831b704b92e917faee2be8ce904e95cafc25e35414890cf42ec785af4e37",
+      "projection": {
+        "schema_version": "progress-state/v0.1",
+        "replay_rule_version": "progress-replay/v0.1",
+        "event_schema_version": "progress-event/v0.1",
+        "taxonomy_version": "0.1",
+        "capability_version": "0.1",
+        "replayed_event_count": 1,
+        "global": {
+          "attempt_count": 1,
+          "correct_count": 0,
+          "incorrect_count": 1,
+          "accuracy": 0.0
+        },
+        "case": {
+          "attempt_count": 0,
+          "scored_attempt_count": 0,
+          "score_earned": 0,
+          "score_possible": 0,
+          "score_ratio": null
+        },
+        "errors": {
+          "error_count": 1,
+          "classified_error_count": 1,
+          "unclassified_error_count": 0,
+          "error_count_by_cause": {
+            "knowledge_gap": 1,
+            "reading_error": 0,
+            "calculation_error": 0,
+            "scoring_point_expression": 0
+          },
+          "error_cause_mix": {
+            "knowledge_gap": 1.0,
+            "reading_error": 0.0,
+            "calculation_error": 0.0,
+            "scoring_point_expression": 0.0
+          }
+        },
+        "coverage": {
+          "l1": {
+            "covered": 1,
+            "total": 13,
+            "ratio": 0.0769
+          },
+          "l2": {
+            "covered": 1,
+            "total": 27,
+            "ratio": 0.037
+          },
+          "l3": {
+            "covered": 1,
+            "total": 110,
+            "ratio": 0.0091
+          }
+        },
+        "study": {
+          "session_count": 0,
+          "study_minutes": 0
+        },
+        "topics": {
+          "DATA.DATABASE.NORMALIZATION": {
+            "attempt_count": 1,
+            "correct_count": 0,
+            "incorrect_count": 1,
+            "accuracy": 0.0
+          }
+        },
+        "capabilities": {},
+        "default_topic_count": 149,
+        "default_capability_count": 13
+      }
+    },
+    "multi-topic": {
+      "kind": "state",
+      "digest": "sha256:a2d02fe597078d1f29d2fd6f11271c1d595acb75b62f6abd1393baccf8e3c9e4",
+      "projection": {
+        "schema_version": "progress-state/v0.1",
+        "replay_rule_version": "progress-replay/v0.1",
+        "event_schema_version": "progress-event/v0.1",
+        "taxonomy_version": "0.1",
+        "capability_version": "0.1",
+        "replayed_event_count": 1,
+        "global": {
+          "attempt_count": 1,
+          "correct_count": 1,
+          "incorrect_count": 0,
+          "accuracy": 1.0
+        },
+        "case": {
+          "attempt_count": 0,
+          "scored_attempt_count": 0,
+          "score_earned": 0,
+          "score_possible": 0,
+          "score_ratio": null
+        },
+        "errors": {
+          "error_count": 0,
+          "classified_error_count": 0,
+          "unclassified_error_count": 0,
+          "error_count_by_cause": {
+            "knowledge_gap": 0,
+            "reading_error": 0,
+            "calculation_error": 0,
+            "scoring_point_expression": 0
+          },
+          "error_cause_mix": {
+            "knowledge_gap": null,
+            "reading_error": null,
+            "calculation_error": null,
+            "scoring_point_expression": null
+          }
+        },
+        "coverage": {
+          "l1": {
+            "covered": 1,
+            "total": 13,
+            "ratio": 0.0769
+          },
+          "l2": {
+            "covered": 2,
+            "total": 27,
+            "ratio": 0.0741
+          },
+          "l3": {
+            "covered": 0,
+            "total": 110,
+            "ratio": 0.0
+          }
+        },
+        "study": {
+          "session_count": 0,
+          "study_minutes": 0
+        },
+        "topics": {
+          "DATA.CACHE": {
+            "attempt_count": 1,
+            "correct_count": 1,
+            "incorrect_count": 0,
+            "accuracy": 1.0
+          },
+          "DATA.DISTRIBUTED": {
+            "attempt_count": 1,
+            "correct_count": 1,
+            "incorrect_count": 0,
+            "accuracy": 1.0
+          }
+        },
+        "capabilities": {},
+        "default_topic_count": 148,
+        "default_capability_count": 13
+      }
+    },
+    "ordering": {
+      "kind": "state",
+      "digest": "sha256:c74ed597bc386e8c5cc933c10d2e91aaf5bad71f27d7cb0e7815840a995e050d",
+      "projection": {
+        "schema_version": "progress-state/v0.1",
+        "replay_rule_version": "progress-replay/v0.1",
+        "event_schema_version": "progress-event/v0.1",
+        "taxonomy_version": "0.1",
+        "capability_version": "0.1",
+        "replayed_event_count": 3,
+        "global": {
+          "attempt_count": 3,
+          "correct_count": 2,
+          "incorrect_count": 1,
+          "accuracy": 0.6667
+        },
+        "case": {
+          "attempt_count": 0,
+          "scored_attempt_count": 0,
+          "score_earned": 0,
+          "score_possible": 0,
+          "score_ratio": null
+        },
+        "errors": {
+          "error_count": 1,
+          "classified_error_count": 1,
+          "unclassified_error_count": 0,
+          "error_count_by_cause": {
+            "knowledge_gap": 0,
+            "reading_error": 1,
+            "calculation_error": 0,
+            "scoring_point_expression": 0
+          },
+          "error_cause_mix": {
+            "knowledge_gap": 0.0,
+            "reading_error": 1.0,
+            "calculation_error": 0.0,
+            "scoring_point_expression": 0.0
+          }
+        },
+        "coverage": {
+          "l1": {
+            "covered": 1,
+            "total": 13,
+            "ratio": 0.0769
+          },
+          "l2": {
+            "covered": 1,
+            "total": 27,
+            "ratio": 0.037
+          },
+          "l3": {
+            "covered": 0,
+            "total": 110,
+            "ratio": 0.0
+          }
+        },
+        "study": {
+          "session_count": 0,
+          "study_minutes": 0
+        },
+        "topics": {
+          "DATA.CACHE": {
+            "attempt_count": 3,
+            "correct_count": 2,
+            "incorrect_count": 1,
+            "accuracy": 0.6667
+          }
+        },
+        "capabilities": {},
+        "default_topic_count": 149,
+        "default_capability_count": 13
+      }
+    },
+    "study": {
+      "kind": "state",
+      "digest": "sha256:d6ac5e06989171e68bad8a542012cc798732e59bf1be7722e9d794766e5c514d",
+      "projection": {
+        "schema_version": "progress-state/v0.1",
+        "replay_rule_version": "progress-replay/v0.1",
+        "event_schema_version": "progress-event/v0.1",
+        "taxonomy_version": "0.1",
+        "capability_version": "0.1",
+        "replayed_event_count": 2,
+        "global": {
+          "attempt_count": 0,
+          "correct_count": 0,
+          "incorrect_count": 0,
+          "accuracy": null
+        },
+        "case": {
+          "attempt_count": 0,
+          "scored_attempt_count": 0,
+          "score_earned": 0,
+          "score_possible": 0,
+          "score_ratio": null
+        },
+        "errors": {
+          "error_count": 0,
+          "classified_error_count": 0,
+          "unclassified_error_count": 0,
+          "error_count_by_cause": {
+            "knowledge_gap": 0,
+            "reading_error": 0,
+            "calculation_error": 0,
+            "scoring_point_expression": 0
+          },
+          "error_cause_mix": {
+            "knowledge_gap": null,
+            "reading_error": null,
+            "calculation_error": null,
+            "scoring_point_expression": null
+          }
+        },
+        "coverage": {
+          "l1": {
+            "covered": 0,
+            "total": 13,
+            "ratio": 0.0
+          },
+          "l2": {
+            "covered": 0,
+            "total": 27,
+            "ratio": 0.0
+          },
+          "l3": {
+            "covered": 0,
+            "total": 110,
+            "ratio": 0.0
+          }
+        },
+        "study": {
+          "session_count": 2,
+          "study_minutes": 75
+        },
+        "topics": {},
+        "capabilities": {},
+        "default_topic_count": 150,
+        "default_capability_count": 13
+      }
+    },
+    "zero": {
+      "kind": "state",
+      "digest": "sha256:849e3c4fd2b85ee77d05410ef8e06ebc254d425e8a1c4178f0e3a47af61b7cdb",
+      "projection": {
+        "schema_version": "progress-state/v0.1",
+        "replay_rule_version": "progress-replay/v0.1",
+        "event_schema_version": "progress-event/v0.1",
+        "taxonomy_version": "0.1",
+        "capability_version": "0.1",
+        "replayed_event_count": 0,
+        "global": {
+          "attempt_count": 0,
+          "correct_count": 0,
+          "incorrect_count": 0,
+          "accuracy": null
+        },
+        "case": {
+          "attempt_count": 0,
+          "scored_attempt_count": 0,
+          "score_earned": 0,
+          "score_possible": 0,
+          "score_ratio": null
+        },
+        "errors": {
+          "error_count": 0,
+          "classified_error_count": 0,
+          "unclassified_error_count": 0,
+          "error_count_by_cause": {
+            "knowledge_gap": 0,
+            "reading_error": 0,
+            "calculation_error": 0,
+            "scoring_point_expression": 0
+          },
+          "error_cause_mix": {
+            "knowledge_gap": null,
+            "reading_error": null,
+            "calculation_error": null,
+            "scoring_point_expression": null
+          }
+        },
+        "coverage": {
+          "l1": {
+            "covered": 0,
+            "total": 13,
+            "ratio": 0.0
+          },
+          "l2": {
+            "covered": 0,
+            "total": 27,
+            "ratio": 0.0
+          },
+          "l3": {
+            "covered": 0,
+            "total": 110,
+            "ratio": 0.0
+          }
+        },
+        "study": {
+          "session_count": 0,
+          "study_minutes": 0
+        },
+        "topics": {},
+        "capabilities": {},
+        "default_topic_count": 150,
+        "default_capability_count": 13
+      }
+    },
+    "duplicate-event-id": {
+      "kind": "error",
+      "category": "duplicate_event_id"
+    },
+    "invalid-error-cause": {
+      "kind": "error",
+      "category": "invalid_event"
+    },
+    "invalid-score": {
+      "kind": "error",
+      "category": "invalid_score"
+    },
+    "naive-timestamp": {
+      "kind": "error",
+      "category": "invalid_timestamp"
+    },
+    "source-path-traversal": {
+      "kind": "error",
+      "category": "forbidden_path"
+    },
+    "unknown-capability": {
+      "kind": "error",
+      "category": "unknown_capability_id"
+    },
+    "unknown-topic": {
+      "kind": "error",
+      "category": "unknown_topic_id"
+    }
+  }
+}

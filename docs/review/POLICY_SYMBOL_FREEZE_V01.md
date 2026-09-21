@@ -1,12 +1,12 @@
 # P4.3 / P4.4 Policy Symbol Freeze Record v0.1
 
-> 本文件是 **P4.3 / P4.4 窗口**对并行测试设计窗口（`test/p4-review-matrix`，
-> `data/review/fixture-plan.json` + `docs/PHASE4_TEST_MATRIX.md`）中
+> 本文件是 **P4.3 / P4.4 窗口**对并行测试设计窗口（`test/p4-review-matrix`，已由 PR #6 合并）中
 > **owner 为 P4.3 / P4.4 的 policy symbol** 与 **CONTRACT GAP** 的冻结记录。
 >
-> 本窗口**不修改** `fixture-plan.json`（该文件属于 P4.6 窗口）。
-> P4.6 按本文件把对应 symbol 从 `status: unfrozen` 更新为 `status: frozen`，
-> 并写入 `value` 与 `frozen_by`。
+> PR #6 合并后，`data/review/fixture-plan.json` 已在 main 上。本窗口按该 manifest 自己的
+> freeze 机制，只把 **owner 为 P4.3 / P4.4 的 20 个 symbol** 从 `status: unfrozen` 更新为
+> `status: frozen`（写入 `value` 与 `frozen_by`）；其余 16 个 symbol（P4.1 / P4.2 / P4.5）
+> 保持 `unfrozen`，由对应窗口填写。
 
 ## 0. Policy identity
 
@@ -113,7 +113,7 @@
 
 ## 5. 与测试设计窗口的一致性检查
 
-P4.6 收口时可以用以下断言验证本冻结记录与实现一致：
+`fixture-plan.json` 中这 20 个 symbol 已按本文件更新；仍可通过以下断言验证冻结记录与实现一致：
 
 ```text
 fixture-plan.json policy_symbols[MASTERY_STATE_ENUM].value        == engine.rules.MASTERY_STATES

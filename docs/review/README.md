@@ -18,7 +18,7 @@
 | 窗口 | 关系 |
 | --- | --- |
 | P4.1 / P4.2（Review Model / Evidence） | 本窗口的输入假设记录在 [`ASSUMPTIONS_PENDING_P4_1_P4_2.md`](ASSUMPTIONS_PENDING_P4_1_P4_2.md)；本窗口不反向替其拍板 |
-| `test/p4-review-matrix`（P4.6 / P4.7 测试设计，另一窗口） | 本窗口提供 [`POLICY_SYMBOL_FREEZE_V01.md`](POLICY_SYMBOL_FREEZE_V01.md)，由该窗口把 symbol 从 `unfrozen` 更新为 `frozen`；本窗口不改其文件 |
+| `test/p4-review-matrix`（P4.6 / P4.7 测试设计，已由 PR #6 合并） | 本窗口提供 [`POLICY_SYMBOL_FREEZE_V01.md`](POLICY_SYMBOL_FREEZE_V01.md)，并按该 manifest 自身的 freeze 机制只填 owner 为 P4.3 / P4.4 的 20 个 symbol；其余 16 个保持 `unfrozen` |
 | P4.5（Mastery / Review replay） | 消费本窗口的 policy kernel 与字段名；`as_of` / version metadata / error category 命名空间由 P4.5 收口 |
 
 ---
@@ -28,6 +28,7 @@
 ```text
 engine/rules/review_policy_v01.py     policy kernel + 冻结常量
 tests/test_review_policy.py           policy-level 单元测试
+data/review/fixture-plan.json         P4.3 / P4.4 的 20 个 policy symbol 已冻结（其余 16 个待 P4.1 / P4.2 / P4.5）
 ```
 
 ## 边界

@@ -20,6 +20,7 @@ from engine.rules import (
     MASTERY_REASONS,
     MASTERY_STATES,
     REVIEW_STATUS_REASONS,
+    REVIEW_STATUSES,
     SCHEDULING_REASONS,
     PolicyEvidence,
     ReviewPolicyError,
@@ -596,6 +597,58 @@ class FrozenContractTests(unittest.TestCase):
 
     def test_tzdata_version_is_reported(self) -> None:
         self.assertIsInstance(tzdata_version(), str)
+
+
+class FixturePlanSymbolTests(unittest.TestCase):
+    """The merged P4.6 manifest must agree with this kernel for the symbols P4.3 / P4.4 own."""
+
+    def setUp(self) -> None:
+        plan_path = ROOT / "data" / "review" / "fixture-plan.json"
+        if not plan_path.exists():  # pragma: no cover - only before PR #6 landed
+            self.skipTest("data/review/fixture-plan.json is not present")
+        self.symbols = json.loads(plan_path.read_text(encoding="utf-8"))["policy_symbols"]
+
+    def frozen_value(self, name: str):
+        entry = self.symbols[name]
+        self.assertEqual(entry["owner"], "P4.3" if name.startswith(("MASTERY", "STATE_FIELD")) else "P4.4", name)
+        self.assertEqual(entry["status"], "frozen", name)
+        self.assertIsNotNone(entry["frozen_by"], name)
+        return entry["value"]
+
+    def test_owned_symbols_are_frozen(self) -> None:
+        for name in P4_3_P4_4_POLICY_SYMBOLS:
+            self.frozen_value(name)
+
+    def test_frozen_values_match_the_kernel_constants(self) -> None:
+        self.assertEqual(self.frozen_value("MASTERY_STATE_ENUM"), list(MASTERY_STATES))
+        self.assertEqual(self.frozen_value("MASTERY_INITIAL_STATE"), "new")
+        streak = self.frozen_value("MASTERY_SUCCESS_STREAK_TO_MASTERED")
+        self.assertEqual(streak["min_consecutive_successes"], MASTERY_MIN_DISTINCT_SUCCESS_DAYS)
+        self.assertEqual(streak["min_distinct_success_local_dates"], MASTERY_MIN_DISTINCT_SUCCESS_DAYS)
+        self.assertEqual(self.frozen_value("MASTERY_MASTERED_PERSISTENCE"), "revocable")
+        self.assertEqual(self.frozen_value("MASTERY_MASTERED_FAILURE_TRANSITION"), "demote_to_learning")
+        self.assertEqual(self.frozen_value("MASTERY_INSUFFICIENT_EVIDENCE_STATE")["is_failure"], False)
+        self.assertEqual(self.frozen_value("SCHED_INTERVAL_LADDER"), list(INTERVAL_LADDER_DAYS))
+        self.assertEqual(
+            self.frozen_value("SCHED_FAILURE_RESET_RULE")["applied_interval_days"],
+            FAILURE_INTERVAL_DAYS,
+        )
+        self.assertEqual(
+            self.frozen_value("SCHED_MASTERED_MAINTENANCE_RULE")["interval_days"],
+            MASTERED_MAINTENANCE_INTERVAL_DAYS,
+        )
+        self.assertEqual(self.frozen_value("SCHED_OVERDUE_RULE")["changes_interval"], False)
+        self.assertEqual(self.frozen_value("SCHED_SAME_DAY_REPEAT_RULE")["advances_interval"], False)
+        self.assertEqual(self.frozen_value("SCHED_DUE_COUNT_DEFINITION")["statuses"], ["due", "overdue"])
+        self.assertEqual(self.frozen_value("STATE_DUE_PROJECTION_NAMES")["values"], list(REVIEW_STATUSES))
+        self.assertEqual(
+            self.frozen_value("SCHED_DATE_BOUNDARY_TIMEZONE")["implicit_machine_timezone"],
+            "forbidden",
+        )
+        self.assertEqual(
+            self.frozen_value("SCHED_DUE_GRANULARITY")["due_boundary"],
+            "inclusive",
+        )
 
 
 class DocumentationSyncTests(unittest.TestCase):

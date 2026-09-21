@@ -67,6 +67,8 @@ Phase 4 的规则层已完成 P4.3 / P4.4 的 contract 冻结：Mastery State Ma
 - [Mastery State Machine v0.1](docs/review/MASTERY_POLICY_V01.md)
 - [Review Scheduling Policy v0.1](docs/review/REVIEW_SCHEDULING_POLICY_V01.md)
 - [Policy Test Matrix v0.1](docs/review/POLICY_TEST_MATRIX_V01.md)
+- [Policy Symbol Freeze v0.1](docs/review/POLICY_SYMBOL_FREEZE_V01.md)
+- [Phase 4 测试矩阵设计稿](docs/PHASE4_TEST_MATRIX.md)
 - [Progress / Adaptive Engine 边界](engine/rules/README.md)
 
 ## 开发边界
