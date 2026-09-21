@@ -84,3 +84,46 @@ Phase 4 没有实现 30-Day Plan 实例化、数据库、API 或 UI。`recent_sc
 
 详细契约和验证结果见 [`docs/PROGRESS_MODEL_V01_VALIDATION.md`](../PROGRESS_MODEL_V01_VALIDATION.md)、
 [`docs/review/README.md`](../review/README.md) 与 [`data/progress/schema.json`](../../data/progress/schema.json)。
+
+## Cockpit UI（仅规划）
+
+`Cockpit UI` 的**规划**已沉淀为文档，位于 [`docs/ui/`](../ui/README.md)：
+
+- [`COCKPIT_UI_BLUEPRINT.md`](../ui/COCKPIT_UI_BLUEPRINT.md)：Product Goal、UX Principles、IA、Dashboard 卡片数据语义；
+- [`PAGE_MAP.md`](../ui/PAGE_MAP.md)：路由矩阵与实现 Gate；
+- [`DOMAIN_TO_UI_MAPPING.md`](../ui/DOMAIN_TO_UI_MAPPING.md)：UI 指标 → domain 字段映射与 null / unavailable 语义；
+- [`READ_MODEL_CONTRACT.md`](../ui/READ_MODEL_CONTRACT.md)：UI Read Model consumer contract；
+- [`REVIEW_MASTERY_UX.md`](../ui/REVIEW_MASTERY_UX.md)、[`TODAY_PLANNER_UX.md`](../ui/TODAY_PLANNER_UX.md)；
+- [`DESIGN_DIRECTION.md`](../ui/DESIGN_DIRECTION.md)、[`COMPONENT_MAP.md`](../ui/COMPONENT_MAP.md)、[`RESPONSIVE_ACCESSIBILITY.md`](../ui/RESPONSIVE_ACCESSIBILITY.md)。
+
+边界说明：
+
+- 这些文档只是**规划**，不改变上图的阶段顺序，也不占用任何 Phase 编号；
+- 仍然**没有**前端工程、API、数据库、账号系统或写路径；
+- UI 不得自行推算 mastery / review_due / plan completion；Today 与 Review 的呈现分别依赖 Adaptive Planner 与 `MasteryReviewState` replay；
+- UI Read Model 可派生、可缓存、可重建，但**不是事实源**。
+
+### Review / Mastery 的当前状态（容易误读）
+
+Phase 4 目前停在**中间态**，UI 文档必须沿用这一分层：
+
+```text
+已冻结：Mastery State Machine v0.1 + Review Scheduling Policy v0.1（P4.3 / P4.4）
+        mastery-policy/spaced-consecutive/v0.1 + review-policy/simple-ladder/v0.1
+        状态枚举与 policy 层字段名（见 docs/review/POLICY_SYMBOL_FREEZE_V01.md）
+
+未冻结：Review Model / `review_item` 身份（P4.1）
+        Review Event / Evidence 契约（P4.2）
+        `MasteryReviewState v0.1` replay 与 `as_of` API（P4.5）
+        fixture expected 值（P4.6）
+```
+
+因此：
+
+```text
+规则已冻结 != 可消费
+UI 可消费的前提是 P4.5 的 replay 输出，而不是 policy kernel 本身
+```
+
+`docs/review/ASSUMPTIONS_PENDING_P4_1_P4_2.md` 仍为 `UNRESOLVED`；`scripts/validate_review.py`
+仍输出 `PENDING_CONTRACT_FREEZE`。UI 的 Review / Mastery 部分因此仍只能渲染不可用态。

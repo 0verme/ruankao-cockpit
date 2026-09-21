@@ -70,7 +70,10 @@ Phase 4 的规则层已完成 P4.3 / P4.4 的 contract 冻结：Mastery State Ma
 - [Policy Symbol Freeze v0.1](docs/review/POLICY_SYMBOL_FREEZE_V01.md)
 - [Phase 4 测试矩阵设计稿](docs/PHASE4_TEST_MATRIX.md)
 - [Progress / Adaptive Engine 边界](engine/rules/README.md)
+- [Cockpit UI / UX Blueprint（规划，未实现）](docs/ui/README.md)
 
 ## 开发边界
 
 本阶段不初始化前端技术栈、数据库、API 或 Planner；当前实现标准库 Progress Event / Replay 基础，以及 Phase 4 冻结的 Mastery / Review policy kernel。详细的版权、数据边界、测试优先级和领域约束见 [AGENTS.md](AGENTS.md)。
+
+Cockpit UI 目前只有**规划文档**（[`docs/ui/`](docs/ui/README.md)）：信息架构、页面地图、Domain → UI 映射、UI Read Model consumer contract、Design Direction 与组件边界已冻结为可审计文档，但仍**没有**前端工程、API、数据库或账号系统。UI 的实现 Gate 依赖 `MasteryReviewState` replay 输出（P4.5）与 Adaptive Planner 的正式契约，详见 [`docs/ui/README.md`](docs/ui/README.md) 的 Gate 状态表。
