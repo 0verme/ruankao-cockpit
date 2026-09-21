@@ -63,8 +63,8 @@ read model 字段语义 ≠ domain 字段语义时 → 视为新事实，禁止
 | `replay_rule_version` | `aggregate` | ✅ `progress-replay/v0.1` | Progress replay 规则版本 |
 | `taxonomy_version` | `aggregate` | ✅ taxonomy v0.1 | Knowledge Topic 契约版本 |
 | `capability_version` | `aggregate` | ✅ capability v0.1 | Case Capability 契约版本 |
-| `mastery_policy_version` | `phase4` | ❌ `TBD — dependent on Issue #4` | Mastery 状态机 policy 版本 |
-| `review_policy_version` | `phase4` | ❌ `TBD — dependent on Issue #4` | Review scheduling policy 版本 |
+| `mastery_policy_version` | `phase4` | ✅ 已冻结：`mastery-policy/spaced-consecutive/v0.1`（需 P4.5 replay 输出） | Mastery 状态机 policy 版本 |
+| `review_policy_version` | `phase4` | ✅ 已冻结：`review-policy/simple-ladder/v0.1`（需 P4.5 replay 输出） | Review scheduling policy 版本 |
 | `policy_version` | `future` | ❌ `TBD — dependent on Planner contract` | 计划策略版本 |
 | `plan_version` | `future` | ❌ `TBD — dependent on Planner contract` | 计划实例版本 |
 | `unavailable[]` | `projection` | ✅ | 显式列出本视图中不可用的指标及其依赖 |
@@ -213,8 +213,8 @@ tasks[].type                                TBD — dependent on Planner contrac
 tasks[].ref                                 TBD — dependent on Planner contract
 tasks[].est_minutes                         TBD — dependent on Planner contract
 tasks[].required                            TBD — dependent on Planner contract
-review.due_count                            TBD — dependent on Issue #4
-review.overdue_count                        TBD — dependent on Issue #4
+review.due_count                            ✅ 字段名已冻结（unit = review_item）；需 P4.5 replay
+review.overdue_count                        ✅ 字段名已冻结；需 P4.5 replay
 cta_target                                  TBD — dependent on Planner contract
 explain.rule_ids / explain.signal_snapshot  TBD — dependent on Planner contract
 ```
@@ -268,7 +268,7 @@ explain.rule_ids / explain.signal_snapshot  TBD — dependent on Planner contrac
 | **purpose** | 回答「今天要复习什么、为什么」，并按 engine 的顺序呈现 |
 | **consumer** | `/review`、`ReviewQueue`、`ReviewItemCard`、`DueBadge`、`MasteryBadge`、`ExplainPanel` |
 | **source categories** | `phase4`（全部核心字段） |
-| **version metadata** | 通用信封 + `mastery_policy_version` + `review_policy_version`（均 `TBD — dependent on Issue #4`） |
+| **version metadata** | 通用信封 + `mastery_policy_version` + `review_policy_version`（均已冻结值，但需 P4.5 replay 输出） |
 | **as_of** | **必填且关键**；「今天到期」完全由 `as_of` + `review_policy_version` 决定 |
 | **timezone semantics** | 必填；决定 due 的日历日归属与 overdue 的「已逾期 N 天」计算 |
 | **null semantics** | 无 evidence → 不得表示为失败或 0；`insufficient_evidence` 与 `mastered` 必须可区分 |
@@ -276,21 +276,37 @@ explain.rule_ids / explain.signal_snapshot  TBD — dependent on Planner contrac
 
 **规划字段（字段名与状态枚举均为 TBD）**
 
+> 下表已按 P4.3 / P4.4 的冻结记录（`docs/review/POLICY_SYMBOL_FREEZE_V01.md` § 3）更新 policy 层字段名。
+> **字段名已冻结 ≠ 可消费**：本视图仍需要 P4.5 的 replay 输出，当前不可实现。
+
 ```text
-items[].review_item_id                      TBD — dependent on Issue #4
-items[].item_kind                           TBD — dependent on Issue #4
-items[].canonical_ref                       TBD — dependent on Issue #4
-items[].mastery_status                      TBD — dependent on Issue #4
-items[].scheduling_status                   TBD — dependent on Issue #4
-items[].review_due_at                       TBD — dependent on Issue #4
-items[].last_review_at                      TBD — dependent on Issue #4
-items[].review_interval_days                TBD — dependent on Issue #4
-items[].evidence_summary                    TBD — dependent on Issue #4
-items[].transition_reason                   TBD — dependent on Issue #4
-items[].policy_version                      TBD — dependent on Issue #4
-order                                       TBD — dependent on Issue #4（由 engine 提供）
-due_count                                   TBD — dependent on Issue #4
-overdue_count                               TBD — dependent on Issue #4
+items[].review_item_id                      ✅ 字段名已冻结（身份构成为 P4.1，未冻结）
+items[].item_kind                           TBD — dependent on P4.1 Review Model
+items[].canonical_ref                       TBD — dependent on P4.1 Review Model
+items[].mastery_state                       ✅ 已冻结：new / learning / mastered
+items[].mastery_reason                      ✅ 字段名已冻结
+items[].review_status                       ✅ 已冻结：not_scheduled / scheduled / due / overdue
+items[].review_status_reason                ✅ 字段名已冻结
+items[].scheduling_reason                   ✅ 字段名已冻结
+items[].next_due_at                         ✅ 字段名与粒度已冻结（UTC instant）
+items[].next_due_local_date                 ✅ 字段名与粒度已冻结（YYYY-MM-DD）
+items[].last_review_at                      ✅ 字段名已冻结（UTC instant）
+items[].last_evidence_id                    ✅ 字段名已冻结
+items[].review_interval_days                ✅ 字段名已冻结（整数或 null）
+items[].evidence_summary                    ✅ 可由已冻结计数派生
+                                            （evaluated_evidence_count / successful_review_count /
+                                              failure_count / insufficient_evidence_count /
+                                              consecutive_success_count / consecutive_success_day_count）
+items[].policy_version                      ✅ 已冻结值：mastery-policy/spaced-consecutive/v0.1
+                                                          + review-policy/simple-ladder/v0.1
+order                                       ❌ 仍不可用：需 P4.5 replay 提供 item 集合与排序（policy 层只冻结同 item evidence 的 tie-breaker）
+due_count                                   ✅ 字段名已冻结；unit = review_item，不变量 due_count == due_today_count + overdue_count
+due_today_count / overdue_count              ✅ 字段名已冻结
+not_scheduled_count / scheduled_count        ✅ 字段名已冻结
+total_items                                  ✅ 字段名已冻结
+new_count / learning_count / mastered_count  ✅ 字段名已冻结
+as_of / schedule_timezone / tzdata_version   ✅ 字段名已冻结（replay metadata 由 P4.5 输出）
+schema_version                               TBD — dependent on P4.5 / P4.6
 ```
 
 **约束（冻结）**：
@@ -298,8 +314,12 @@ overdue_count                               TBD — dependent on Issue #4
 ```text
 1. `order` 必须来自 engine；UI 不得重新排序
 2. `items[].item_kind` 必须返回；不同粒度的 item 不得共用同一进度条
-3. mastery 与 due 必须是两个独立字段，不得合并成单一互斥枚举
+3. mastery 与 due 必须是两个独立字段（mastery_state / review_status），不得合并成单一互斥枚举
+   —— 已由 P4.3 / P4.4 确认冻结；mastered + due 是合法组合
 4. `insufficient_evidence` 不得渲染为红，也不得渲染为 0
+   —— P4.3 的语义是「effect = no_change，且不是 failure」
+5. UI 不得调用 `engine.rules.review_policy_v01` 自行计算 item 状态；只能消费 replay 输出
+6. `due_count` 不得由 UI 重算；若展示子计数，必须满足 due_count == due_today_count + overdue_count
 ```
 
 ---
@@ -326,7 +346,7 @@ days[].has_learning_record                    aggregate（progress events）
 days[].event_type_counts                      aggregate（可选：comprehensive / case / study）
 days[].study_minutes                          aggregate
 days[].completed                               TBD — task execution contract（Future）
-days[].due_count / overdue_count              TBD — dependent on Issue #4
+days[].due_count / overdue_count              ✅ 字段名已冻结；需 P4.5 replay
 days[].has_assessment                         TBD — assessment contract（Future）
 legend                                        projection
 ```
@@ -367,7 +387,7 @@ case             { attempt_count, scored_attempt_count, score_earned,
 capabilities[]   { capability_id, attempt_count, score_earned, score_possible,
                    score_ratio, evidence_status }                                aggregate
 study            { session_count, study_minutes }                                aggregate
-mastery[]        TBD — dependent on Issue #4
+mastery[]        ✅ 字段名 / 枚举已冻结（P4.3）；需 P4.5 replay
 meta             { replayed_event_count, schema_version, replay_rule_version,
                    taxonomy_version, capability_version }                        aggregate
 ```
@@ -434,7 +454,7 @@ versions                         envelope
 | T5 | 不得在 read model 投影中调用系统当前时间 |
 | T6 | 若视图跨越 DST 边界，必须记录 timezone 与日历语义 |
 
-**已知未决**：`review_due_at` 是 instant、local date 还是二者并存的语义，`TBD — dependent on Issue #4`。在冻结前，`ReviewQueueView` / `CalendarView` 的 due 相关字段不可实现。
+**已解决（曾为未决）**：`next_due_at` 的粒度已由 P4.4 冻结为“同时保存 UTC instant 与 local date”，canonical = instant；due 边界含，overdue 从下一个本地 00:00 起；时区必须显式传入 IANA `schedule_timezone`。`review_due_at` 不是本仓库的字段名，已统一为 `next_due_at` / `next_due_local_date`。
 
 ---
 
@@ -447,8 +467,11 @@ versions                         envelope
 | `taxonomy_version` | taxonomy v0.1 ✅ |
 | `capability_version` | capability v0.1 ✅ |
 | `state_schema_version` | `progress-state/v0.1` ✅ |
-| `mastery_policy_version` | `TBD — dependent on Issue #4` |
-| `review_policy_version` | `TBD — dependent on Issue #4` |
+| `mastery_policy_version` | ✅ 已冻结：`mastery-policy/spaced-consecutive/v0.1`（但需 P4.5 replay 输出） |
+| `review_policy_version` | ✅ 已冻结：`review-policy/simple-ladder/v0.1`（但需 P4.5 replay 输出） |
+| `review_projection_schema_version` | 🟡 `review-policy-projection/v0.1`；schema 版本号字符串由 P4.5 / P4.6 命名空间确认 |
+| `schedule_timezone` | ✅ 字段名已冻结；必填、无隐式默认 |
+| `tzdata_version` | ✅ 字段名已冻结 |
 | `policy_version` | `TBD — dependent on Planner contract` |
 | `plan_version` | `TBD — dependent on Planner contract` |
 | `assessment_version` | `TBD — assessment contract 未冻结` |
@@ -470,7 +493,9 @@ versions                         envelope
 data/review/fixture-schema.draft.json → review-fixture/v0.1-draft（status: draft, frozen: false）
 ```
 
-它是 Phase 4 **测试 fixture** 的字段骨架，不是 `MasteryReviewState`，也不是 UI read model 契约。本文件中的 `phase4` / `planner` 字段仍保持 `TBD`，不得从该 draft 反向推导。
+它是 Phase 4 **测试 fixture** 的字段骨架，不是 `MasteryReviewState`，也不是 UI read model 契约。
+
+**方向相反的情况**：`docs/review/POLICY_SYMBOL_FREEZE_V01.md` 是**正式冻结契约**，其 policy 层字段名与枚举已直接用于本文件的 `ReviewQueueView`；但 `MasteryReviewState` 的顶层对象名与 `schema_version` 字符串仍属 P4.5 / P4.6，不得从 policy 层记录反推。
 
 ---
 

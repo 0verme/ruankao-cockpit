@@ -51,7 +51,7 @@ Gate 定义沿用 Issue #5。当前真实状态如下：
 |---|---|---|---|
 | **Gate 0** | 无领域依赖的规划 / 静态原型 | 🟡 部分允许 | 本目录（IA / Page Map / token / component 方向）已完成；wireframe 与 synthetic prototype（UI.9）**未开始** |
 | **Gate A** | Progress Contract 稳定 | ✅ PASS | `progress-event/v0.1` + `progress-state/v0.1` + `progress-replay/v0.1` 已在 main 冻结并验证 |
-| **Gate B** | Mastery / Review v0.1 Gate PASS | ❌ 未通过 | 依赖 Issue #4。P4.6 / P4.7 的**测试骨架**已进入 main（`docs/PHASE4_TEST_MATRIX.md`），但 contract 仍是 `PENDING_CONTRACT_FREEZE`；`mastery` / `due_count` / `review_due_at` 仍不存在 |
+| **Gate B** | Mastery / Review v0.1 Gate PASS | ❌ 未通过 | P4.3 / P4.4 **规则已冻结**（`mastery-policy/spaced-consecutive/v0.1` + `review-policy/simple-ladder/v0.1`），但四问仍需**确定性 replay** 回答；P4.5 replay 不存在（`PENDING_CONTRACT_FREEZE`）→ Gate B 未 PASS |
 | **Gate C** | Planner MVP Contract 冻结 | ❌ 未冻结 | Today Card / PlanTimeline / PlanModeSwitcher 的输入契约不存在 |
 | **Gate D** | Cockpit Read Model 冻结 | 🟡 本轮定义 consumer contract | 见 [`READ_MODEL_CONTRACT.md`](READ_MODEL_CONTRACT.md)；**契约定义 ≠ 实现**，且 Phase 4 / Planner 字段仍为 TBD |
 
@@ -64,7 +64,7 @@ Gate C 解锁的视图只能显示明确的空态
 Gate D 尚未完成 → 禁止开始正式前端实现
 ```
 
-**Gate 状态以 `main` 为准**：未合并分支上的 policy 冻结、draft schema 或 fixture 骨架都不构成 Gate 通过。
+**Gate 状态以 `main` 为准**：只有合并进 `main` 的契约才能进入 Gate 判定；未合并分支上的 policy 或 draft schema 不构成 Gate 通过。但合并本身也不等于 Gate 通过——Gate B 要求 replay 能回答四问。
 
 ---
 
@@ -86,26 +86,39 @@ taxonomy_version / capability_version
 replayed_event_count
 ```
 
-### 4.2 依赖 Issue #4（Phase 4，当前不存在）
+### 4.2 依赖 Issue #4（Phase 4）—— 当前为中间态
+
+**已冻结（已在 main）**：
 
 ```text
-mastery / mastered / learning
-review_due_at / review_interval / overdue
-due_count
-review_item / review_item_id / item_kind
-review evidence / transition reason
-mastery policy version / review policy version
+mastery-policy/spaced-consecutive/v0.1
+review-policy/simple-ladder/v0.1
+mastery_state：      new / learning / mastered
+review_status：      not_scheduled / scheduled / due / overdue
+policy 层 item 字段名（review_item_id / mastery_state / review_status /
+                      review_interval_days / next_due_at / next_due_local_date / ...）
+policy 层聚合：      due_count / due_today_count / overdue_count /
+                      new_count / learning_count / mastered_count
 ```
 
-**当前 Phase 4 真实状态**：
+**未冻结 / 未实现**：
 
 ```text
-已存在：测试设计稿 / fixture 计划 / 确定性测试骨架 / review-fixture/v0.1-draft
-不存在：Review Model 正式契约 / Mastery State Machine / Review Scheduling Policy /
-        engine.review replay / 任何 mastery 或 due 字段
+P4.1  review_item 身份构成 / item_kind / 迁移策略
+P4.2  Review Event / Evidence 契约；success-failure 推导阈值
+P4.5  MasteryReviewState replay（顶层对象名 / schema_version / as_of API / error category）
+P4.6  fixture expected 值
 ```
 
-`data/review/fixture-schema.draft.json` 明确标为 `"status": "draft"`、`"frozen": false`，且 `scripts/validate_review.py` 输出 `PENDING_CONTRACT_FREEZE`。**测试骨架就绪不等于契约冻结**，UI 仍不得消费任何 mastery / due 字段。
+**关键结论**：
+
+```text
+规则已冻结 != 可消费
+UI 只能消费 P4.5 的 replay 输出，不能消费 policy kernel 本身
+UI 不得绕过 replay 直接调用 engine.rules.review_policy_v01 拼装视图
+```
+
+`data/review/fixture-schema.draft.json` 仍为 `status: draft` / `frozen: false`；`scripts/validate_review.py` 仍输出 `PENDING_CONTRACT_FREEZE`。因此 UI 仍不得渲染任何 mastery / due 值。
 
 ### 4.3 依赖 Planner（当前不存在）
 
@@ -212,7 +225,7 @@ UI Read Model：
 ## 8. 维护规则
 
 1. **不得把 Draft 升级为 Contract**：`docs/30_DAY_CURRICULUM_DRAFT.md` 中的 `Day 1..30`、`1/3/7/15`、`连续答对 >= 3`、`due_card_count` 等规则，只有在对应正式契约冻结后才能被 UI 消费。
-2. **不得虚构上游 schema**：Phase 4（Issue #4）与 Planner 尚未冻结的字段必须写 `TBD — dependent on Issue #4` 或 `TBD — dependent on Planner contract`，不得给出看似确定的字段名与枚举。
+2. **不得虚构上游 schema**：Phase 4（Issue #4）尚未冻结的部分（P4.1 `review_item` 身份 / `item_kind`、P4.2 evidence 契约、P4.5 `MasteryReviewState` 顶层对象名与 `schema_version`）与 Planner 尚未冻结的字段，必须写 `TBD — dependent on P4.1 / P4.2 / P4.5` 或 `TBD — dependent on Planner contract`，不得给出看似确定的字段名与枚举。已由 P4.3 / P4.4 正式冻结的字段名与枚举应直接引用 `docs/review/POLICY_SYMBOL_FREEZE_V01.md`，不得自行改写。
 3. **不得引入虚假业务数据**：任何示例数值只能以 `reference-only` / `synthetic` / `non-contract` 形式出现，且不得被任何 domain、engine、validator 或 fixture 消费。
 4. **不得改动 Phase 编号**：本目录引用 README / `docs/architecture/README.md` 的阶段顺序，但不新增、不重排、不命名任何 Phase。
 5. **变更需可审计**：修改任何映射或状态语义时，必须在同一次改动中说明它对应哪个上游 contract 版本。
@@ -229,5 +242,10 @@ UI Read Model：
 - [`data/progress/schema.json`](../../data/progress/schema.json)
 - [`engine/rules/README.md`](../../engine/rules/README.md)
 - [`taxonomy/README.md`](../../taxonomy/README.md)
-- [`docs/PHASE4_TEST_MATRIX.md`](../PHASE4_TEST_MATRIX.md)（`PENDING_CONTRACT_FREEZE`，仅测试设计）
+- [`docs/PHASE4_TEST_MATRIX.md`](../PHASE4_TEST_MATRIX.md)（测试设计，`PENDING_CONTRACT_FREEZE`）
+- [`docs/review/README.md`](../review/README.md)（P4.3 / P4.4，FROZEN v0.1）
+- [`docs/review/MASTERY_POLICY_V01.md`](../review/MASTERY_POLICY_V01.md)
+- [`docs/review/REVIEW_SCHEDULING_POLICY_V01.md`](../review/REVIEW_SCHEDULING_POLICY_V01.md)
+- [`docs/review/POLICY_SYMBOL_FREEZE_V01.md`](../review/POLICY_SYMBOL_FREEZE_V01.md)（字段名 / 枚举冻结记录）
+- [`docs/review/ASSUMPTIONS_PENDING_P4_1_P4_2.md`](../review/ASSUMPTIONS_PENDING_P4_1_P4_2.md)（`UNRESOLVED`）
 - [`data/review/fixture-schema.draft.json`](../../data/review/fixture-schema.draft.json)（draft，非正式契约）

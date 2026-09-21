@@ -155,11 +155,13 @@ Dashboard / Review / Progress ← view-model，互相不直接引用对方内部
 |---|---|---|---|---|
 | `ReviewQueue` | 渲染 engine 给出的有序队列 | `ReviewQueueView`（含 engine `order`） | 无到期项 → 「今天没有到期的复习」；依赖未冻结 → `UnavailableBadge` | 重新排序；自行分组；自行分页截断而不标注 |
 | `ReviewItemCard` | 渲染单个 review item | `items[]` 中的一项 | 不适用 | 混用不同粒度的进度条；把 mastery 与 due 合并成一个字段 |
-| `DueBadge` | 表达 scheduling status | `scheduling_status` / `review_due_at`（TBD） | 无 due → 不渲染 | 由 UI 用 `last_event_at + 常量` 计算；只显示红点而无文案 |
-| `MasteryBadge` | 表达 mastery status | `mastery_status`（TBD） | `insufficient_evidence` → 中性灰「证据不足」 | 由 `topic accuracy` / `capability score_ratio` 推导；用红色表达证据不足 |
+| `DueBadge` | 表达 scheduling status | `review_status`（TBD） | 无 due → 不渲染 | 由 UI 用 `last_event_at + 常量` 计算；只显示红点而无文案 |
+| `MasteryBadge` | 表达 mastery status | `mastery_state`（TBD） | `insufficient_evidence` → 中性灰「证据不足」 | 由 `topic accuracy` / `capability score_ratio` 推导；用红色表达证据不足 |
 | `ExplainPanel` | 展开原因链 | `ExplainView` | engine 未输出原因 → 「原因不可用」 | 生成推测性解释；展示未经 engine 输出的 rule / policy |
 
-**`ReviewItemCard` 必须显示 `item_kind`**，取值与字段名 `TBD — dependent on Issue #4`。
+**`ReviewItemCard` 必须显示 `item_kind`**（字段名与取值 `TBD — dependent on P4.1 Review Model`）。
+
+**已冻结字段可先进入 view-model 设计**：P4.3 / P4.4 已冻结 `review_item_id` / `mastery_state` / `review_status` / `review_interval_days` / `next_due_at` / `next_due_local_date` / `mastery_reason` / `review_status_reason` / `scheduling_reason` / `last_review_at` / `last_evidence_id` 及各计数。但**由于 P4.5 replay 尚未实现，实际仍无可渲染数据**，组件必须停留在 `UnavailableBadge`。
 
 ---
 

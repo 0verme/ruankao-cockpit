@@ -13,9 +13,9 @@
 | 值 | 含义 |
 |---|---|
 | `aggregate` | 直接来自 replay 输出的聚合事实（`progress-state/v0.1`） |
-| `projection` | 由 aggregate 或 user_config 确定性派生的视图投影（可重建、不产生新事实） |
+| `projection` | 由 aggregate 或 user_config 确定性派生的只读投影（可重建、不产生新事实） |
 | `user_config` | 用户显式配置的输入（不是 domain 事实） |
-| `phase4` | 依赖 Issue #4 冻结后可得（Mastery / Review Scheduling v0.1） |
+| `phase4` | Issue #4 Mastery / Review 派生层。**P4.3 / P4.4 规则与字段名已冻结，但 P4.5 replay 未实现** → 当前仍不可消费 |
 | `planner` | 依赖 Planner contract 冻结后可得 |
 | `future` | 无任何 contract，当前不可用 |
 
@@ -85,23 +85,48 @@
 
 ## 5. 主映射表 · `phase4`（依赖 Issue #4，当前不存在）
 
-> 以下所有字段名均为**规划占位**。最终字段名与状态枚举由 Issue #4 的正式契约决定。
+> **Phase 4 当前真实状态（重要）**：仓库处于**中间态**，必须区分“规则已冻结”与“可消费”。
 >
-> **Phase 4 当前真实状态**：P4.6 / P4.7 的测试骨架已进入 main（`docs/PHASE4_TEST_MATRIX.md`、`data/review/fixture-schema.draft.json`、`scripts/validate_review.py`），但均为 `draft` / `PENDING_CONTRACT_FREEZE`。测试骨架不提供任何 UI 可消费字段。
+> ```text
+> ✅ 已冻结（P4.3 / P4.4，已在 main，来自 docs/review/POLICY_SYMBOL_FREEZE_V01.md § 3）
+>    policy 标识：mastery-policy/spaced-consecutive/v0.1 + review-policy/simple-ladder/v0.1
+>    mastery_state：new / learning / mastered
+>    review_status：not_scheduled / scheduled / due / overdue
+>    字段名：review_item_id / mastery_state / mastery_reason / review_status /
+>            review_status_reason / scheduling_reason / last_review_at / last_evidence_id /
+>            review_interval_days / next_due_at / next_due_local_date /
+>            evaluated_evidence_count / successful_review_count / failure_count /
+>            insufficient_evidence_count / consecutive_success_count /
+>            consecutive_success_day_count
+>    聚合：total_items / not_scheduled_count / scheduled_count / due_today_count /
+>          overdue_count / due_count；new_count / learning_count / mastered_count
+>
+> ❌ 未冻结 / 未实现
+>    P4.1 review_item 身份构成 / item_kind / 迁移策略
+>    P4.2 Review Evidence 契约 / success-failure 推导阈值
+>    P4.5 MasteryReviewState replay（顶层对象名 / schema_version / as_of API）
+>    P4.6 fixture expected 值
+> ```
+>
+> 因此下表的 `Current Availability` 保持 `Phase 4`：**UI 只能消费 replay 输出，不能消费 policy kernel**。
+> 所有 `TBD — dependent on Issue #4` 现在细化为 `TBD — dependent on P4.1 / P4.2 / P4.5`。
 
 | UI Metric | UI Meaning | Domain Field | Domain Source | Source Category | Current Availability | Null Semantics | Explain Source | Notes / Constraints |
 |---|---|---|---|---|---|---|---|---|
-| mastery | 某 review item 的掌握状态 | `TBD — dependent on Issue #4` | MasteryReviewState v0.1 | `phase4` | `Phase 4`（不存在） | 无 evidence → `TBD`（预计为 `new` 或显式 `insufficient_evidence`，由 Issue #4 决定） | mastery policy version + transition reason + evidence + `as_of` | **accuracy ≠ mastery**；不得由 topic accuracy 阈值直接生成；不得由 UI 推断 |
-| mastery 分布 | 各状态的 item 数量 | `TBD — dependent on Issue #4` | MasteryReviewState | `phase4` | `Phase 4` | 无 item → `0`（真实事实） | 状态计数 | 用于 `OperationalStatsGrid` T8 |
-| 到期复习数 `due_count` | 截至 `as_of` 到期的 item 数量 | `TBD — dependent on Issue #4` | MasteryReviewState（scheduling projection） | `phase4` | `Phase 4` | 无 item → `0`；无 policy → 不可用 | review policy version + `as_of` | 是 item 数量还是事件计数由 Issue #4 冻结 |
-| 下次到期时间 `review_due_at` | 该 item 下次到期时刻 | `TBD — dependent on Issue #4` | MasteryReviewState | `phase4` | `Phase 4` | 无 evidence → `null` | interval transition + policy version | instant / local date / 二者并存的语义由 Issue #4 冻结 |
-| 复习间隔 `review_interval` | 当前 policy 下的间隔 | `TBD — dependent on Issue #4` | Review policy | `phase4` | `Phase 4` | 未进入调度 → `null` | policy version + transition reason | 具体间隔序列由 Issue #4 裁决；**当前 `1 / 3 / 7 / 15` 只是草案候选** |
-| 上次复习时间 `last_review_at` | 最近一次 review evidence 的时刻 | `TBD — dependent on Issue #4` | MasteryReviewState | `phase4` | `Phase 4` | 无 review → `null` | review evidence 事件 | 首次学习与 review 的区分由 Issue #4 冻结 |
-| 逾期状态 overdue | 已过 `review_due_at` 的状态 | `TBD — dependent on Issue #4` | scheduling projection | `phase4` | `Phase 4` | 无 due → 不适用 | `review_due_at` + `as_of` | 与 mastery 是**两个独立维度**；见 `REVIEW_MASTERY_UX.md` |
-| transition reason | 为什么状态 / 到期时间变成现在这样 | `TBD — dependent on Issue #4` | Mastery / Review policy | `phase4` | `Phase 4` | engine 未输出 → UI 显示「原因不可用」 | policy 输出 | **UI 不得生成推测性解释** |
-| review item 身份 | 复习对象的稳定 id | `TBD — dependent on Issue #4` | Review Model | `phase4` | `Phase 4` | 不适用 | 身份构成规则 | 不得依赖展示名称 / 题干 / 自由文本；迁移策略未冻结（D8） |
-| review item 粒度 | item kind | `TBD — dependent on Issue #4`（候选 Topic / Question / Case Capability） | Review Model | `phase4` | `Phase 4` | 不适用 | Review Model 契约 | UI 必须显示 `item_kind`，不得混用同一进度条 |
-| mastery / review policy 版本 | 解释可复现所需的 policy 标识 | `TBD — dependent on Issue #4` | Mastery / Review policy | `phase4` | `Phase 4` | 未冻结 → 不适用 | policy 元数据 | 进入 `PolicyVersionFooter` |
+| mastery | 某 review item 的掌握状态 | `mastery_state`（枚举已冻结） | MasteryReviewState v0.1（P4.5 replay） | `phase4` | `Phase 4`：枚举已冻结，**replay 未实现** | 无 evidence → `new`（不是 `insufficient_evidence`） | `mastery_reason` + `consecutive_success_day_count` + `policy` + `as_of` | 枚举：`new` / `learning` / `mastered`；**accuracy ≠ mastery**；mastery 由 item 自身跨天连续成功数（阈值 3）决定，不读 `topic_accuracy`；UI 不得推断 |
+| mastery 分布 | 各状态的 item 数量 | `new_count` / `learning_count` / `mastered_count` | MasteryReviewState（policy 层已冻结） | `phase4` | `Phase 4`：字段名已冻结，replay 未实现 | 无 item → `0`（真实事实） | 状态计数 | 用于 `OperationalStatsGrid` T8 |
+| 到期复习数 `due_count` | 截至 `as_of` 到期的 item 数量 | `due_count` | MasteryReviewState（policy 层已冻结） | `phase4` | `Phase 4`：字段名已冻结，replay 未实现 | 无 item → `0`；无 policy → 不可用 | `policy` + `as_of` + `schedule_timezone` | **unit = review_item（不是事件数）**；已冻结不变量 `due_count == due_today_count + overdue_count`；UI 不得自行重算 |
+| 下次到期时间 | 该 item 下次到期时刻 / 本地日 | `next_due_at`（UTC instant）+ `next_due_local_date`（YYYY-MM-DD） | MasteryReviewState（policy 层已冻结） | `phase4` | `Phase 4`：字段名与粒度已冻结，replay 未实现 | 未进入调度 → `null` | `scheduling_reason` + `review_status_reason` | 二者同时保存；canonical = instant；due 边界含，overdue 边界不含 |
+| 复习间隔 `review_interval_days` | 当前 policy 下的间隔天数 | `review_interval_days`（整数或 `null`） | Review policy v0.1（已冻结） | `phase4` | `Phase 4`：规则已冻结，replay 未实现 | 未进入调度 → `null` | `policy` + `review_status_reason` | ladder 已冻结为 `1 / 3 / 7 / 15`，failure 重置为 `1`，mastered 保留 `15` maintenance |
+| 上次复习时间 `last_review_at` | 最近一次 review evidence 的时刻 | `last_review_at`（UTC instant） | MasteryReviewState（policy 层已冻结） | `phase4` | `Phase 4`：字段名已冻结，replay 未实现 | 无 review → `null` | `last_evidence_id` | 逐条 evidence 明细仍属 P4.2，**未冻结** |
+| 到期状态 `review_status` | `due` / `overdue` 时间投影 | `review_status` | Review policy v0.1（已冻结） | `phase4` | `Phase 4`：枚举已冻结，replay 未实现 | 无 evidence → `not_scheduled` | `review_status_reason` + `as_of` + `schedule_timezone` | 枚举：`not_scheduled` / `scheduled` / `due` / `overdue`；**与 mastery 是两个独立维度**；`mastered + due` 合法 |
+| transition reason | 为什么状态 / 到期时间变成现在这样 | `mastery_reason` + `review_status_reason` + `scheduling_reason` | policy 层已冻结 | `phase4` | `Phase 4`：字段名已冻结，replay 未实现 | engine 未输出 → UI 显示「原因不可用」 | policy 输出 | **UI 不得生成推测性解释**；不得用 accuracy 补充解释 mastery |
+| review item 身份 | 复习对象的稳定 id | `review_item_id`（**字段名已冻结**） | Review Model（P4.1） | `phase4` | `Phase 4`：字段名已冻结，**身份构成规则未冻结** | 不适用 | P4.1 身份构成规则 | 不得依赖展示名称 / 题干 / 自由文本；迁移策略未冻结（D8）；UI 不得自行拼 `review_item_id` |
+| review item 粒度 | item kind | `TBD — dependent on P4.1 Review Model` | Review Model（P4.1） | `phase4` | `Phase 4`：未冻结 | 不适用 | P4.1 契约 | UI 必须显示 `item_kind`；不同粒度不得混用同一进度条；v0.1 对三种 kind 用同一套 policy 数学 |
+| 证据详情 | 逐条 review evidence | `TBD — dependent on P4.2 Review Evidence` | Review Evidence（P4.2） | `phase4` | `Phase 4`：未冻结 | 不适用 | P4.2 契约 | success / failure 阈值属 P4.2；policy 只消费 `success` / `failure` / `insufficient` primitive |
+| policy 标识 / 版本 | 解释可复现所需的 policy 标识 | `policy`（policy_identity）+ `schema_version` | MasteryReviewState（P4.5） | `phase4` | `Phase 4`：policy 标识已冻结，replay 元数据未冻结 | 未冻结 → 不适用 | policy 元数据 | 已冻结值：`mastery-policy/spaced-consecutive/v0.1` + `review-policy/simple-ladder/v0.1`；顶层 `schema_version` 字符串由 P4.5 / P4.6 命名 |
+| 调度时区 | 日历日边界依据 | `schedule_timezone`（显式 IANA，必填） | policy 层已冻结 | `phase4` | `Phase 4` | 无隐式默认；不得回退到机器时区 | `tzdata_version` | 与 `user_config.timezone` 的关系由 P4.5 确认；UI 不得混用两者 |
+| 时区数据库版本 | 解释可复现所需 | `tzdata_version` | policy 层已冻结 | `phase4` | `Phase 4` | 恒有值 | policy 元数据 | 进入 `PolicyVersionFooter` |
 
 ---
 

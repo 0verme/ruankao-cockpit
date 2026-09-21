@@ -201,7 +201,7 @@ unavailable state / data source / explain behavior
 | 维度 | 字段 | 依赖 | 标记 |
 |---|---|---|---|
 | 论文 | outline readiness / material coverage / practice status / assessment | essay contract | `TBD — essay contract 未冻结` |
-| 三科 | mastery / 掌握度 | Issue #4 | `TBD — dependent on Issue #4` |
+| 三科 | mastery / 掌握度 | P4.3 / P4.4 已冻结枚举与字段名；需 P4.5 replay | `TBD — dependent on P4.5 replay` |
 | 三科 | 目标达成度（离及格线多远） | assessment contract | `TBD — assessment contract 未冻结` |
 
 **维度可用性矩阵（冻结，禁止补齐成同构）**
@@ -269,24 +269,21 @@ TodayFocusCard 的唯一合法当前状态 = EmptyState:
 **future fields（依赖 Planner contract，字段名与枚举均为 TBD）**
 
 ```text
-day_index                                  TBD — dependent on Planner contract
-plan_phase                                 TBD — dependent on Planner contract
-day_type                                   TBD — dependent on Planner contract
-theme.primary_topic_id                     TBD — dependent on Planner contract
-theme.supporting_topic_ids                 TBD — dependent on Planner contract
-theme.capability_ids                       TBD — dependent on Planner contract
-capacity.planned_minutes / capacity.tier   TBD — dependent on Planner contract
-tasks[].id / type / ref / est_minutes / required   TBD — dependent on Planner contract
-plan_version / policy version              TBD — dependent on Planner contract
-cta_target                                 TBD — dependent on Planner contract
+Today Plan / day_index / plan_phase / day_type         TBD — dependent on Planner contract
+theme.primary_topic_id / supporting_topic_ids / capability_ids   TBD — dependent on Planner contract
+capacity.planned_minutes / capacity.tier               TBD — dependent on Planner contract
+tasks[].id / type / ref / est_minutes / required       TBD — dependent on Planner contract
+plan_version / policy version                          TBD — dependent on Planner contract
+cta_target                                             TBD — dependent on Planner contract
 ```
 
 **future fields（依赖 Issue #4）**
 
 ```text
-review.due_count                           TBD — dependent on Issue #4
-review.overdue_count                       TBD — dependent on Issue #4
-review.next_due_at                         TBD — dependent on Issue #4
+review.due_count        ✅ 字段名与语义已冻结（unit = review_item）
+                        —— 但仍需 P4.5 replay 才能取值
+review.overdue_count    ✅ 字段名已冻结；需 P4.5 replay
+review.next_due_at      ✅ 字段名与粒度已冻结；需 P4.5 replay
 ```
 
 **empty state**
@@ -300,7 +297,7 @@ review.next_due_at                         TBD — dependent on Issue #4
 | 子区域 | 不可用原因 | 表达 |
 |---|---|---|
 | 今日任务列表 | Planner contract 未冻结 | `UnavailableBadge` →「契约未冻结」 |
-| 到期复习入口 | Issue #4 未完成 | `UnavailableBadge` →「依赖 Mastery / Review v0.1」 |
+| 到期复习入口 | P4.5 replay 未实现 | `UnavailableBadge` →「依赖 Mastery / Review replay（P4.5）」 |
 
 **硬约束**
 
@@ -333,8 +330,8 @@ review.next_due_at                         TBD — dependent on Issue #4
 | T4 | 知识覆盖 | `aggregate` | `coverage.l1/l2/l3.ratio`（分母 = taxonomy 全量节点） | ✅ Available |
 | T5 | 错题数 / 归因分布 | `aggregate` | `errors.error_count` / `errors.error_count_by_cause` / `errors.unclassified_error_count` | ✅ Available |
 | T6 | 案例加权得分率 | `aggregate` | `case.score_ratio`（加权 earned/possible） | ✅ Available |
-| T7 | 今日到期复习数 | `phase4` | `due_count` | ⏳ `TBD — dependent on Issue #4` |
-| T8 | mastery 分布 | `phase4` | MasteryReviewState | ⏳ `TBD — dependent on Issue #4` |
+| T7 | 今日到期复习数 | `phase4` | `due_count`（unit = review_item） | 🟡 字段名已冻结；`TBD — dependent on P4.5 replay` |
+| T8 | mastery 分布 | `phase4` | `new_count` / `learning_count` / `mastered_count` | 🟡 字段名已冻结；`TBD — dependent on P4.5 replay` |
 | T9 | 计划完成度 | `future` | task execution contract | ⏳ 未冻结 |
 | T10 | 近期 assessment | `future` | assessment contract | ⏳ 未冻结 |
 | T11 | 连续学习天数 | `future` | 无 contract | ⏳ **禁止由 UI 推断** |
@@ -348,7 +345,7 @@ review.next_due_at                         TBD — dependent on Issue #4
 **unavailable state**
 
 ```text
-T7 / T8  → UnavailableBadge（依赖 Mastery / Review v0.1）
+T7 / T8  → UnavailableBadge（依赖 Mastery / Review replay，P4.5）
 T9 / T10 / T11 → UnavailableBadge（契约未定义）
 ```
 
@@ -427,7 +424,7 @@ T9 / T10 / T11 → UnavailableBadge（契约未定义）
 |---|---|---|
 | 有学习记录（有事件） | immutable progress events | ✅ Available |
 | 完成日（task execution） | task execution contract | ❌ Future |
-| Review due / overdue | Issue #4 | ❌ `TBD — dependent on Issue #4` |
+| Review due / overdue | Issue #4（P4.4 规则已冻结；需 P4.5 replay） | 🟡 `TBD — dependent on P4.5 replay` |
 | Assessment | assessment contract | ❌ Future |
 
 **Legend 草案**
@@ -435,7 +432,7 @@ T9 / T10 / T11 → UnavailableBadge（契约未定义）
 ```text
 ○  有学习记录
 ●  已完成                  （Future — task execution contract）
-!  有逾期复习              （Phase 4 — Issue #4）
+!  有逾期复习              （Phase 4 — P4.4 规则已冻结，需 P4.5 replay）
 △  有 Assessment           （Future — assessment contract）
 ```
 
@@ -497,8 +494,8 @@ T9 / T10 / T11 → UnavailableBadge（契约未定义）
 **future fields**
 
 ```text
-综合：review debt                          TBD — dependent on Issue #4
-案例：weak capability ranking              TBD — dependent on Issue #4（排序必须来自 engine）
+综合：review debt                          TBD — dependent on P4.5 replay（P4.4 字段名已冻结）
+案例：weak capability ranking              TBD — dependent on P4.5 replay（排序必须来自 engine）
 论文：全部字段                             TBD — essay contract 未冻结
 ```
 
@@ -514,7 +511,7 @@ T9 / T10 / T11 → UnavailableBadge（契约未定义）
 
 ```text
 论文卡 → PaperUnavailableBadge →「尚未建立契约」
-review debt → UnavailableBadge →「依赖 Mastery / Review v0.1」
+review debt → UnavailableBadge →「依赖 Mastery / Review replay（P4.5）」
 ```
 
 **硬约束（冻结）**
@@ -590,7 +587,7 @@ UI ✗→ 直接改写派生状态
 
 | 依赖 | 阻塞内容 | 当前状态 |
 |---|---|---|
-| D1 · Phase 4 Mastery / Review（Issue #4） | Review Queue、DueBadge、MasteryBadge、ExplainPanel、`due_count`、review debt | OPEN，未实现 |
+| D1 · Phase 4 Mastery / Review（Issue #4） | Review Queue、DueBadge、MasteryBadge、ExplainPanel、`due_count`、review debt | 🟡 **规则层已冻结**（P4.3 / P4.4）；**replay 未实现**（P4.5）→ UI 仍不可消费 |
 | D2 · Planner contract | Today Card、PlanTimeline、PlanModeSwitcher、冲刺阶段 | 未冻结 |
 | D3 · Cockpit Read Model contract | 所有页面的数据输入 | 本轮定义 consumer contract，未实现 |
 | D4 · Assessment contract | 模拟分数、`recent_score`、目标达成度 | 未定义 |

@@ -3,6 +3,7 @@
 > **状态**：PLANNING CONTRACT（Issue #5 · UI.6）
 > **依赖**：Planner contract（**未冻结**）+ Issue #4（**未完成**）
 > **重要声明**：本文件只冻结「UI 如何消费未来 Planner 输出」的规划。**不实现 Planner，不定义 Planner 的输出 schema。**
+> **备注**：下方的 `review.*` 字段名已由 P4.3 / P4.4 冻结，但仍需 P4.5 replay 才能取值。
 
 ---
 
@@ -130,9 +131,9 @@ explain（rule id + signal snapshot）         TBD — dependent on Planner cont
 依赖 Issue #4 的复习区块：
 
 ```text
-review.due_count                            TBD — dependent on Issue #4
-review.overdue_count                        TBD — dependent on Issue #4
-review.next_due_at                          TBD — dependent on Issue #4
+review.due_count                            ✅ 字段名已冻结（unit = review_item）
+review.overdue_count                        ✅ 字段名已冻结
+review.next_due_at                          ✅ 字段名与粒度已冻结
 ```
 
 ### 4.3 消费约束（冻结）
@@ -199,7 +200,7 @@ Planner 冻结后，任务必须可展开解释：
 | 区域 | 当前状态 | 用户可见文案 |
 |---|---|---|
 | `TodayFocusCard` 任务区 | Planner contract 未冻结 | 「Planner contract 尚未冻结」 |
-| `TodayFocusCard` 复习区 | Issue #4 未完成 | 「依赖 Mastery / Review v0.1」 |
+| `TodayFocusCard` 复习区 | P4.5 replay 未实现 | 「依赖 Mastery / Review replay（P4.5）」 |
 | `PlanTimeline` | Planner contract 未冻结 | 「Planner contract 尚未冻结」 |
 | `PlanModeSwitcher` | Planner contract 未冻结 | **不渲染** |
 | 冲刺阶段标签 | Planner contract 未冻结 | 「尚未建立契约」（或在 `/settings` 中由用户配置） |

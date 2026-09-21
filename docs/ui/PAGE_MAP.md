@@ -72,10 +72,10 @@ Not Needed  v0.1 明确不需要的页面
 |---|---|
 | user job | 今天有哪些内容到期、为什么到期、复习后发生什么 |
 | 状态 | **MVP**（数据依赖 Issue #4） |
-| data dependency | **Issue #4**：`MasteryReviewState`、`review_item`、`due_count`、`review_due_at`、transition reason |
-| implementation gate | **Gate B**（未通过） |
+| data dependency | **Issue #4**：`MasteryReviewState` — P4.3 / P4.4 规则与字段名已冻结；`item_kind`（P4.1）、evidence 契约（P4.2）、replay 输出（P4.5）仍未冻结 |
+| implementation gate | **Gate B**（未通过：需 P4.5 replay 回答四问） |
 | 排序 | **100% 来自 engine**；UI 不重新排序、不自行计算优先级 |
-| 未冻结时的行为 | `UnavailableBadge`：「依赖 Mastery / Review v0.1」 |
+| 未冻结时的行为 | `UnavailableBadge`：「依赖 Mastery / Review replay（P4.5）」 |
 
 **冻结约束**：Review Queue 的排序、优先级、next due 全部来自 engine 输出。UI 不得用「看起来更合理」的顺序重排。
 
@@ -90,7 +90,7 @@ Not Needed  v0.1 明确不需要的页面
 | user job | 解释 accuracy / coverage / error / mastery，而不是只看一个数字 |
 | 状态 | **MVP**（掌握度部分依赖 Issue #4） |
 | data dependency | `progress-state/v0.1`（Gate A ✅）+ Issue #4（mastery 部分） |
-| implementation gate | Gate A ✅（accuracy / coverage / errors）；Gate B（mastery） |
+| implementation gate | Gate A ✅（accuracy / coverage / errors）；Gate B（mastery，需 P4.5 replay） |
 | 组成 | `ProgressSummary`、`TopicAccuracyList`、`CoverageBreakdown`、`ErrorCauseBreakdown`、`CapabilityEvidenceList` |
 | 未冻结时的行为 | mastery 区块显示 `UnavailableBadge`；不得用 `topic accuracy` 冒充 mastery |
 
@@ -228,7 +228,7 @@ coverage（taxonomy 节点分母）!= 考试权重覆盖率
 3. :id 不得是展示名称 / 自由文本；必须是稳定 canonical id
 ```
 
-**身份稳定性风险（已知未决）**：`review_item_id` 在 taxonomy / capability 版本升级时的迁移策略尚未冻结（依赖 Issue #4 · D8）。在此之前，`/explain` 深链的长期稳定性不作承诺。
+**身份稳定性风险（已知未决）**：`review_item_id` 的**字段名**已由 P4.3 / P4.4 冻结，但其**身份构成规则**属 P4.1，仍未冻结。在 P4.1 落地前，`/explain` 深链的长期稳定性不作承诺。
 
 ---
 
