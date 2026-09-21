@@ -1,0 +1,107 @@
+{
+  "schema_version": "golden-set/v0.1",
+  "taxonomy_version": "0.1",
+  "question_type": "case",
+  "sample_scope": "11 real case sub-questions selected to stress multi-topic and topic/capability separation; source text and answers are not reproduced.",
+  "records": [
+    {
+      "id":"gs-case-2024-h1-1-q2",
+      "question_type":"case",
+      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2024年上半年-系统架构设计师-案例分析.md","source_question_id":"2024-h1-case-1-q2","case_id":"2024-h1-case-1","sub_question_id":"q2"},
+      "identification":{"term":"2024年上半年","case_title":"软件架构设计与评估","summary":"质量属性效用树填空"},
+      "topics":[{"topic_id":"QUALITY.EVALUATION.UTILITY_TREE","confidence":"high"},{"topic_id":"QUALITY.ATTRIBUTES","confidence":"high"},{"topic_id":"ARCH.CLOUD_NATIVE.MICROSERVICES","confidence":"medium"}],
+      "capabilities":[{"capability_id":"CASE.QUALITY_ATTRIBUTE_ANALYSIS","confidence":"high"},{"capability_id":"CASE.ARCHITECTURE_SELECTION","confidence":"medium"},{"capability_id":"CASE.SCORING_POINT_EXPRESSION","confidence":"high"}],
+      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"效用树是评估工具，微服务是案例背景中的架构主题；两者不合并。"}
+    },
+    {
+      "id":"gs-case-2024-h1-2-q1",
+      "question_type":"case",
+      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2024年上半年-系统架构设计师-案例分析.md","source_question_id":"2024-h1-case-2-q1","case_id":"2024-h1-case-2","sub_question_id":"q1"},
+      "identification":{"term":"2024年上半年","case_title":"系统设计与建模","summary":"UML 时序图消息类型说明"},
+      "topics":[{"topic_id":"SOFTWARE.MODELING.UML","confidence":"high"}],
+      "capabilities":[{"capability_id":"CASE.MODELING","confidence":"high"},{"capability_id":"CASE.SCORING_POINT_EXPRESSION","confidence":"high"}],
+      "annotation":{"status":"reviewed","annotator":"human","reviewed_at":"2026-09-21","note":"公开材料存在物流题面与预约图版本冲突；本条只确认共同的 UML 消息知识，不使用冲突图答案。","issues":[{"kind":"source_conflict","description":"同一考次公开材料保留不同背景/图版本。"}]}
+    },
+    {
+      "id":"gs-case-2024-h1-3-q1",
+      "question_type":"case",
+      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2024年上半年-系统架构设计师-案例分析.md","source_question_id":"2024-h1-case-3-q1","case_id":"2024-h1-case-3","sub_question_id":"q1"},
+      "identification":{"term":"2024年上半年","case_title":"分布式锁与 Redis","summary":"数据库锁与 Redis 锁比较"},
+      "topics":[{"topic_id":"DATA.DISTRIBUTED.DISTRIBUTED_LOCK","confidence":"high"},{"topic_id":"DATA.CACHE","confidence":"high"},{"topic_id":"DATA.DATABASE.TRANSACTION","confidence":"medium"}],
+      "capabilities":[{"capability_id":"CASE.DATA_DESIGN","confidence":"high"},{"capability_id":"CASE.DISTRIBUTED_DESIGN","confidence":"high"},{"capability_id":"CASE.SOLUTION_TRADEOFF","confidence":"high"}],
+      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"同一小问同时比较数据库和缓存/协调机制，验证一对多 topic。"}
+    },
+    {
+      "id":"gs-case-2024-h2-1-q2",
+      "question_type":"case",
+      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2024年下半年-系统架构设计师-案例分析.md","source_question_id":"2024-h2-case-1-q2","case_id":"2024-h2-case-1","sub_question_id":"q2"},
+      "identification":{"term":"2024年下半年","case_title":"面向质量属性的软件架构设计","summary":"Ping/Echo 与心跳故障检测比较"},
+      "topics":[{"topic_id":"QUALITY.ATTRIBUTES.AVAILABILITY","confidence":"high"},{"topic_id":"QUALITY.EVALUATION.SCENARIOS","confidence":"high"},{"topic_id":"RELIABILITY.SOFTWARE.FAULT_TOLERANCE","confidence":"medium"}],
+      "capabilities":[{"capability_id":"CASE.QUALITY_ATTRIBUTE_ANALYSIS","confidence":"high"},{"capability_id":"CASE.RELIABILITY_DESIGN","confidence":"high"},{"capability_id":"CASE.SOLUTION_TRADEOFF","confidence":"high"},{"capability_id":"CASE.SCORING_POINT_EXPRESSION","confidence":"high"}],
+      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"检测策略比较同时要求可用性场景和资源权衡。"}
+    },
+    {
+      "id":"gs-case-2024-h2-2-q1",
+      "question_type":"case",
+      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2024年下半年-系统架构设计师-案例分析.md","source_question_id":"2024-h2-case-2-q1","case_id":"2024-h2-case-2","sub_question_id":"q1"},
+      "identification":{"term":"2024年下半年","case_title":"Cache-Aside 缓存架构","summary":"缓存读取流程补全"},
+      "topics":[{"topic_id":"DATA.CACHE.CACHE_ASIDE","confidence":"high"}],
+      "capabilities":[{"capability_id":"CASE.DATA_DESIGN","confidence":"high"},{"capability_id":"CASE.MODELING","confidence":"medium"},{"capability_id":"CASE.SCORING_POINT_EXPRESSION","confidence":"high"}],
+      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"流程图表达属于答题能力，但知识归属仍是 Cache-Aside。"}
+    },
+    {
+      "id":"gs-case-2024-h2-2-q3",
+      "question_type":"case",
+      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2024年下半年-系统架构设计师-案例分析.md","source_question_id":"2024-h2-case-2-q3","case_id":"2024-h2-case-2","sub_question_id":"q3"},
+      "identification":{"term":"2024年下半年","case_title":"Cache-Aside 缓存架构","summary":"缓存与数据库不一致原因及方案"},
+      "topics":[{"topic_id":"DATA.CACHE.CACHE_ASIDE","confidence":"high"},{"topic_id":"DATA.DISTRIBUTED.CONSISTENCY","confidence":"high"},{"topic_id":"DATA.DATABASE.TRANSACTION","confidence":"medium"}],
+      "capabilities":[{"capability_id":"CASE.ROOT_CAUSE_ANALYSIS","confidence":"high"},{"capability_id":"CASE.DATA_DESIGN","confidence":"high"},{"capability_id":"CASE.DISTRIBUTED_DESIGN","confidence":"high"},{"capability_id":"CASE.SOLUTION_TRADEOFF","confidence":"high"}],
+      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"该小问是主动攻击模型的边界样本：问题原因、数据主题和分布式一致性能力并存。"}
+    },
+    {
+      "id":"gs-case-2024-h2-5-q1",
+      "question_type":"case",
+      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2024年下半年-系统架构设计师-案例分析.md","source_question_id":"2024-h2-case-5-q1","case_id":"2024-h2-case-5","sub_question_id":"q1"},
+      "identification":{"term":"2024年下半年","case_title":"安全关键系统与胰岛素泵","summary":"危险驱动安全分析步骤"},
+      "topics":[{"topic_id":"ARCH.EMBEDDED.SAFETY_CRITICAL","confidence":"high"},{"topic_id":"RELIABILITY.SOFTWARE.FAULT_TOLERANCE","confidence":"medium"}],
+      "capabilities":[{"capability_id":"CASE.ROOT_CAUSE_ANALYSIS","confidence":"high"},{"capability_id":"CASE.RELIABILITY_DESIGN","confidence":"high"},{"capability_id":"CASE.MODELING","confidence":"medium"}],
+      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"安全关键是系统安全属性/风险语境，不将其误标为信息安全架构。"}
+    },
+    {
+      "id":"gs-case-2025-h1-1-q2",
+      "question_type":"case",
+      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2025年上半年-系统架构设计师-案例分析.md","source_question_id":"2025-h1-case-1-q2","case_id":"2025-h1-case-1","sub_question_id":"q2"},
+      "identification":{"term":"2025年上半年","case_title":"系统架构设计","summary":"解释器风格架构图补全"},
+      "topics":[{"topic_id":"ARCH.FOUNDATION.STYLES","confidence":"high"},{"topic_id":"SOFTWARE.MODELING.FORMAL_MODELING","confidence":"medium"}],
+      "capabilities":[{"capability_id":"CASE.ARCHITECTURE_SELECTION","confidence":"high"},{"capability_id":"CASE.ARCHITECTURE_DESIGN","confidence":"high"},{"capability_id":"CASE.MODELING","confidence":"high"}],
+      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"解释器是架构风格，图中状态/引擎是结构表达；不把“解释器”当作 capability。"}
+    },
+    {
+      "id":"gs-case-2025-h1-2-q3",
+      "question_type":"case",
+      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2025年上半年-系统架构设计师-案例分析.md","source_question_id":"2025-h1-case-2-q3","case_id":"2025-h1-case-2","sub_question_id":"q3"},
+      "identification":{"term":"2025年上半年","case_title":"知识图谱智能问答系统","summary":"知识图谱存储方式与理由"},
+      "topics":[{"topic_id":"DATA.BIGDATA.KNOWLEDGE_GRAPH","confidence":"high"},{"topic_id":"DATA.DATABASE.NOSQL","confidence":"medium"},{"topic_id":"EMERGING.TECHNOLOGY.AI","confidence":"medium"}],
+      "capabilities":[{"capability_id":"CASE.DATA_DESIGN","confidence":"high"},{"capability_id":"CASE.ARCHITECTURE_SELECTION","confidence":"high"},{"capability_id":"CASE.SOLUTION_TRADEOFF","confidence":"medium"}],
+      "annotation":{"status":"reviewed","annotator":"human","reviewed_at":"2026-09-21","note":"公开回忆答案对部分图空存在冲突，但存储方式问题的 topic 边界清晰。","issues":[{"kind":"source_conflict","description":"同一公开材料对问题1部分空位有不同整理；本条不依赖那些空位。"}]}
+    },
+    {
+      "id":"gs-case-2025-h1-4-q3",
+      "question_type":"case",
+      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2025年上半年-系统架构设计师-案例分析.md","source_question_id":"2025-h1-case-4-q3","case_id":"2025-h1-case-4","sub_question_id":"q3"},
+      "identification":{"term":"2025年上半年","case_title":"Redis 主从复制与持久化","summary":"RDB 与 AOF 持久化比较"},
+      "topics":[{"topic_id":"DATA.CACHE.CACHE_PERSISTENCE","confidence":"high"},{"topic_id":"DATA.DISTRIBUTED.REPLICATION_PARTITIONING","confidence":"high"},{"topic_id":"RELIABILITY.SOFTWARE.FAULT_TOLERANCE","confidence":"medium"}],
+      "capabilities":[{"capability_id":"CASE.DATA_DESIGN","confidence":"high"},{"capability_id":"CASE.DISTRIBUTED_DESIGN","confidence":"high"},{"capability_id":"CASE.RELIABILITY_DESIGN","confidence":"medium"},{"capability_id":"CASE.SOLUTION_TRADEOFF","confidence":"high"}],
+      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"持久化比较同时涉及数据存储、复制和故障恢复，验证多 topic 与多 capability。"}
+    },
+    {
+      "id":"gs-case-2025-h2-3-q3",
+      "question_type":"case",
+      "source":{"source_id":"younghong1992","source_commit":"c467a7cbc16970c52cf6d723badbb22938963ae6","source_path":"02.历年真题-清洗版/2025年下半年-系统架构设计师-案例分析.md","source_question_id":"2025-h2-case-3-q3","case_id":"2025-h2-case-3","sub_question_id":"q3"},
+      "identification":{"term":"2025年下半年","case_title":"Redis 热点缓存失效处理","summary":"互斥锁与逻辑过期方案比较"},
+      "topics":[{"topic_id":"DATA.CACHE.CACHE_FAILURE","confidence":"high"},{"topic_id":"DATA.CACHE.CACHE_ASIDE","confidence":"medium"},{"topic_id":"DATA.DISTRIBUTED.CONSISTENCY","confidence":"high"},{"topic_id":"QUALITY.ATTRIBUTES.AVAILABILITY","confidence":"high"}],
+      "capabilities":[{"capability_id":"CASE.ROOT_CAUSE_ANALYSIS","confidence":"high"},{"capability_id":"CASE.DATA_DESIGN","confidence":"high"},{"capability_id":"CASE.DISTRIBUTED_DESIGN","confidence":"high"},{"capability_id":"CASE.RELIABILITY_DESIGN","confidence":"medium"},{"capability_id":"CASE.SOLUTION_TRADEOFF","confidence":"high"},{"capability_id":"CASE.SCORING_POINT_EXPRESSION","confidence":"high"}],
+      "annotation":{"status":"confirmed","annotator":"human","reviewed_at":"2026-09-21","note":"主动选择的难标样本：缓存策略、分布式并发、一致性与可用性不可压成一个 topic。"}
+    }
+  ]
+}

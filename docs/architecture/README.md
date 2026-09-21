@@ -22,8 +22,17 @@ Cockpit UI
 
 ```text
 当前阶段：
-Repository Bootstrap
+Taxonomy v0.1 + Golden Set Design + Small Validation Sample
 
 下一阶段：
-Taxonomy v0.1 + Golden Set Design
+根据 validation report 决定 Golden Set 是否扩量；不进入 Progress Engine 或 UI
 ```
+
+本轮已落地：
+
+- `taxonomy/`：13 个 L1 domain、27 个 L2 topic、110 个 L3 subtopic，以及 alias、provenance、confidence 和 unresolved contract；
+- `taxonomy/capabilities.json`：独立的 Case Capability v0.1；
+- `data/golden-set/`：JSON schema 与 26 道综合知识、11 道案例子问题的小样本；
+- `docs/TAXONOMY_SOURCE_INVENTORY.md` 与 `docs/TAXONOMY_V01_VALIDATION.md`：source schema 盘点和验证结论。
+
+本轮未实现 Progress Engine、Adaptive Planner、30 天计划实例化、数据库或 UI。
