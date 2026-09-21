@@ -1,0 +1,70 @@
+{
+  "contract": "review-test-fixtures",
+  "schema_version": "review-fixture/v0.1-draft",
+  "status": "draft",
+  "frozen": false,
+  "owner": "P4.6",
+  "depends_on": [
+    "P4.1 Review Model v0.1 contract",
+    "P4.2 Review Event / Evidence contract",
+    "P4.5 Mastery / Review deterministic replay"
+  ],
+  "purpose": "定义 Phase 4 synthetic fixture 的字段骨架，使 P4.1~P4.4 contract freeze 后可以直接填充 expected / expected_error，而不需要重写 fixture harness。",
+  "required": [
+    "schema_version",
+    "fixture_id",
+    "description",
+    "as_of",
+    "timezone"
+  ],
+  "content_alternatives": [
+    "events",
+    "events_by_case"
+  ],
+  "expected_alternatives": [
+    "expected",
+    "expected_error"
+  ],
+  "optional": [
+    "items",
+    "references",
+    "policies",
+    "variants",
+    "events_by_case",
+    "tags",
+    "notes",
+    "source_fixture"
+  ],
+  "field_rules": {
+    "schema_version": "必须等于 review-fixture/v0.1-draft；contract freeze 后由 P4.6 统一升级为正式版本。",
+    "fixture_id": "稳定唯一 ID，等于文件名去掉 .json。",
+    "description": "人读说明；不得包含第三方题干、答案或解析。",
+    "as_of": "timezone-aware ISO 8601 instant，replay 的唯一时间输入；fixture 不得依赖系统时间。",
+    "timezone": "IANA timezone name（如 UTC、Asia/Shanghai）；用于 local date 边界解释，不依赖本机 timezone。",
+    "items": "review item 的 synthetic 声明（identity / kind / canonical reference）；字段以 P4.1 contract 为准，当前未冻结。",
+    "references": "最小 canonical / source reference，不允许正文内容。",
+    "policies": "该 fixture 使用的 mastery / review policy id + version；字段以 P4.3 / P4.4 contract 为准。",
+    "events": "事实事件序列；event 结构与是否新增 review event type 由 P4.2 冻结。",
+    "events_by_case": "同一组 items / policies 下按 case 分组的事件集合，供 variants 引用；与 events 二选一。",
+    "variants": "同一 fixture 内的边界变体列表，每项形如 {variant_id, as_of?, timezone?, expected | expected_error}，用于 as_of / timezone / due 边界矩阵，避免复制事件。",
+    "expected": "完整或投影后的 MasteryReviewState；字段名以 P4.3 / P4.4 contract 为准，当前所有 fixture 均不得伪造该值。",
+    "expected_error": "validation error category；命名以 P4.5 contract 为准。",
+    "tags": "自由分类标签，不参与 replay。",
+    "notes": "人读备注，不参与 replay。",
+    "source_fixture": "仅 backward-compatibility fixture 使用，指向 data/progress/fixtures 中的既有 fixture id。"
+  },
+  "invariants": [
+    "fixture 只保存 synthetic 事实、显式 as_of/timezone 和 expected 值，不保存第三方正文。",
+    "expected 与 expected_error 互斥；两者都没有时 fixture 只能是 status=planned（尚未冻结）。",
+    "fixture 不得包含 datetime.now()/utcnow() 等隐式时间来源。",
+    "同一 fixture 的 replay 必须满足 repeatability 与 input-order independence。",
+    "policy-dependent 的 expected 值必须能追溯到 fixture-plan.json 中的 policy symbol。"
+  ],
+  "out_of_scope": [
+    "production mastery / scheduling policy",
+    "review_item_id 最终格式",
+    "success threshold",
+    "interval ladder 具体天数",
+    "failure reset 具体行为"
+  ]
+}
