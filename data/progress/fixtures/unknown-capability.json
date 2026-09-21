@@ -1,0 +1,18 @@
+{
+  "schema_version": "progress-fixture/v0.1",
+  "fixture_id": "unknown-capability",
+  "expected_error": "unknown_capability_id",
+  "events": [
+    {
+      "event_id": "evt-unknown-capability",
+      "schema_version": "progress-event/v0.1",
+      "event_type": "case_attempt",
+      "occurred_at": "2026-01-01T09:00:00Z",
+      "question": {"source_id": "synthetic-case-bank", "source_commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "source_path": "fixtures/invalid.json", "source_question_id": "invalid-capability"},
+      "topics": ["ARCH.FOUNDATION"],
+      "capabilities": ["CASE.UNKNOWN"],
+      "score_earned": 1,
+      "score_possible": 2
+    }
+  ]
+}

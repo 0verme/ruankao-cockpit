@@ -1,0 +1,18 @@
+{
+  "schema_version": "progress-fixture/v0.1",
+  "fixture_id": "invalid-score",
+  "expected_error": "invalid_score",
+  "events": [
+    {
+      "event_id": "evt-invalid-score",
+      "schema_version": "progress-event/v0.1",
+      "event_type": "case_attempt",
+      "occurred_at": "2026-01-01T09:00:00Z",
+      "question": {"source_id": "synthetic-case-bank", "source_commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "source_path": "fixtures/invalid.json", "source_question_id": "invalid-score"},
+      "topics": ["DATA.DATABASE"],
+      "capabilities": ["CASE.DATA_DESIGN"],
+      "score_earned": 7,
+      "score_possible": 6
+    }
+  ]
+}

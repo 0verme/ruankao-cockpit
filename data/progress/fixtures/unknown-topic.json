@@ -1,0 +1,16 @@
+{
+  "schema_version": "progress-fixture/v0.1",
+  "fixture_id": "unknown-topic",
+  "expected_error": "unknown_topic_id",
+  "events": [
+    {
+      "event_id": "evt-unknown-topic",
+      "schema_version": "progress-event/v0.1",
+      "event_type": "comprehensive_attempt",
+      "occurred_at": "2026-01-01T09:00:00Z",
+      "question": {"source_id": "synthetic-bank", "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "source_path": "fixtures/invalid.json", "source_question_id": "invalid-topic"},
+      "topics": ["TOPIC.UNKNOWN"],
+      "correct": true
+    }
+  ]
+}

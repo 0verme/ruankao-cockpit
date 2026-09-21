@@ -1,0 +1,22 @@
+{
+  "schema_version": "progress-fixture/v0.1",
+  "fixture_id": "incorrect",
+  "description": "One incorrect comprehensive attempt with a classified cause.",
+  "events": [
+    {
+      "event_id": "evt-basic-incorrect",
+      "schema_version": "progress-event/v0.1",
+      "event_type": "comprehensive_attempt",
+      "occurred_at": "2026-01-01T09:05:00Z",
+      "question": {
+        "source_id": "synthetic-bank",
+        "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "source_path": "fixtures/comprehensive.json",
+        "source_question_id": "synthetic-q-002"
+      },
+      "topics": ["DATA.DATABASE.NORMALIZATION"],
+      "correct": false,
+      "error_cause": "knowledge_gap"
+    }
+  ]
+}

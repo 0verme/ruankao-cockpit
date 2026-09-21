@@ -1,0 +1,30 @@
+{
+  "schema_version": "progress-fixture/v0.1",
+  "fixture_id": "study",
+  "description": "Measured sessions sum duration only.",
+  "events": [
+    {
+      "event_id": "evt-study-ended",
+      "schema_version": "progress-event/v0.1",
+      "event_type": "study_session",
+      "occurred_at": "2026-01-01T13:00:00Z",
+      "session_id": "session-ended",
+      "started_at": "2026-01-01T13:00:00Z",
+      "ended_at": "2026-01-01T13:45:00Z",
+      "duration_minutes": 45,
+      "activity_type": "reading",
+      "topics": ["ARCH.FOUNDATION"]
+    },
+    {
+      "event_id": "evt-study-duration",
+      "schema_version": "progress-event/v0.1",
+      "event_type": "study_session",
+      "occurred_at": "2026-01-01T14:00:00Z",
+      "session_id": "session-duration",
+      "started_at": "2026-01-01T14:00:00Z",
+      "duration_minutes": 30,
+      "activity_type": "review",
+      "topics": ["DATA.DATABASE"]
+    }
+  ]
+}

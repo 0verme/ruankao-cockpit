@@ -1,0 +1,6 @@
+{
+  "schema_version": "progress-fixture/v0.1",
+  "fixture_id": "zero",
+  "description": "No events: denominators remain empty and accuracy is null.",
+  "events": []
+}
