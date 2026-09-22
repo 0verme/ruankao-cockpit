@@ -194,14 +194,14 @@ initial_learning | review
 - **Decision**：校验 Progress Event、Item 和 Context，按明确 item/source mapping 生成一条 policy-neutral evidence；按 UTC instant + stable IDs 排序。
 - **Reason**：投影可删除、可重建、可测试，不依赖人工 aggregate state。
 - **Rejected Alternative**：直接把 ProgressState 的 accuracy/score 拷贝成 review evidence；会丢失来源粒度和证据语义。
-- **Future Extension**：P4.5 可在此投影上实现 deterministic replay，但必须保留 source event/context/evidence 链。
+- **Future Extension**：P4.5 已在此投影上实现 deterministic replay；后续扩展仍必须保留 source event/context/evidence 链。
 
 ### D7 — comprehensive evidence 语义
 
 - **Decision**：综合题只把上游 `correct: true/false` 作为 `comprehensive_correctness` fact；不在 Evidence 层写 success/failure。
 - **Reason**：这是 Progress Event v0.1 已冻结的不可争议事实，且保留 zero/incorrect/null 的区别。
 - **Rejected Alternative**：在 evidence 中直接写 `success`，或由 topic accuracy 阈值生成结果；阈值属于 P4.3 policy。
-- **Future Extension**：Mastery policy 可基于 question/topic evidence 定义 success，但必须版本化并说明样本/transition。
+- **Future Extension**：P4.5 adapter 已将 comprehensive fact 确定性映射为 policy outcome；未来新增样本或 score rubric 必须版本化并说明样本/transition。
 
 ### D8 — case/capability evidence 语义
 
@@ -236,7 +236,7 @@ initial_learning | review
 - **Decision**：本窗口不冻结 mastery states、success/failure threshold、interval、due、overdue、maintenance 或 1/3/7/15。
 - **Reason**：Evidence 应 policy-neutral；这些规则依赖 Evidence 之后的独立状态机和 scheduling policy。
 - **Rejected Alternative**：在 Review Evidence 中写 `success`、`mastery` 或 `review_due`，或把旧课程草案升级为 formal rule。
-- **Future Extension**：P4.3/P4.4 必须把 policy/mastery version、as_of、transition reason 和 evidence trace 作为下游 contract。综合题 boolean 可由显式 adapter 映射为 outcome；案例/能力 score 的 success mapping 尚未冻结，属于 P4.5 的 `BLOCKING_DECISION`，不得把阈值写回 Evidence。若需要本窗口未提供的字段，应先记录阻塞后再扩展。
+- **Future Extension**：下游必须把 policy/mastery version、as_of、transition reason 和 evidence trace 作为 contract。综合题 boolean 由显式 adapter 映射为 outcome；案例/能力 score 的 threshold/rubric 仍未冻结，P4.5 的 `review-outcome/raw-facts/v0.1` 只将其保留为 raw fact 并映射为 policy `insufficient`，不得把阈值写回 Evidence。未来 score mapping 必须使用新的 adapter version。
 
 ## 7. 明确留给后续阶段
 

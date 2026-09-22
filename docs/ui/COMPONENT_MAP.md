@@ -153,15 +153,15 @@ Dashboard / Review / Progress ← view-model，互相不直接引用对方内部
 
 | 组件 | 职责 | view-model 输入 | empty / unavailable | 禁止 |
 |---|---|---|---|---|
-| `ReviewQueue` | 渲染 engine 给出的有序队列 | `ReviewQueueView`（含 engine `order`） | 无到期项 → 「今天没有到期的复习」；依赖未冻结 → `UnavailableBadge` | 重新排序；自行分组；自行分页截断而不标注 |
+| `ReviewQueue` | 渲染 engine 给出的有序队列 | `ReviewQueueView`（含 engine `item_order`） | 无到期项 → 「今天没有到期的复习」；read model 未接入 → 实现层 `UnavailableBadge` | 重新排序；自行分组；自行分页截断而不标注 |
 | `ReviewItemCard` | 渲染单个 review item | `items[]` 中的一项 | 不适用 | 混用不同粒度的进度条；把 mastery 与 due 合并成一个字段 |
-| `DueBadge` | 表达 scheduling status | `review_status`（TBD） | 无 due → 不渲染 | 由 UI 用 `last_event_at + 常量` 计算；只显示红点而无文案 |
-| `MasteryBadge` | 表达 mastery status | `mastery_state`（TBD） | `insufficient_evidence` → 中性灰「证据不足」 | 由 `topic accuracy` / `capability score_ratio` 推导；用红色表达证据不足 |
+| `DueBadge` | 表达 scheduling status | `review_status` | 无 due → 不渲染 | 由 UI 用 `last_event_at + 常量` 计算；只显示红点而无文案 |
+| `MasteryBadge` | 表达 mastery status | `mastery_state` | `insufficient_evidence` → 中性灰「证据不足」 | 由 `topic accuracy` / `capability score_ratio` 推导；用红色表达证据不足 |
 | `ExplainPanel` | 展开原因链 | `ExplainView` | engine 未输出原因 → 「原因不可用」 | 生成推测性解释；展示未经 engine 输出的 rule / policy |
 
-**`ReviewItemCard` 必须显示 `item_kind`**（字段名与取值 `TBD — dependent on P4.1 Review Model`）。
+**`ReviewItemCard` 必须显示 `item_kind`**（`topic` / `question` / `case_capability`），并使用 replay 输出的 stable `review_item_id`。
 
-**已冻结字段可先进入 view-model 设计**：P4.3 / P4.4 已冻结 `review_item_id` / `mastery_state` / `review_status` / `review_interval_days` / `next_due_at` / `next_due_local_date` / `mastery_reason` / `review_status_reason` / `scheduling_reason` / `last_review_at` / `last_evidence_id` 及各计数。但**由于 P4.5 replay 尚未实现，实际仍无可渲染数据**，组件必须停留在 `UnavailableBadge`。
+**已冻结字段可进入 view-model 设计**：P4.1～P4.5 已提供 `review_item_id` / `item_kind` / `canonical_ref` / `mastery_state` / `review_status` / `review_interval_days` / `next_due_at` / `next_due_local_date` / `mastery_reason` / `review_status_reason` / `scheduling_reason` / `last_review_at` / `last_evidence_id` 及各计数。domain replay 可渲染；正式 UI read model 仍未实现。
 
 ---
 
@@ -169,7 +169,7 @@ Dashboard / Review / Progress ← view-model，互相不直接引用对方内部
 
 | 组件 | 职责 | view-model 输入 | empty / unavailable | 禁止 |
 |---|---|---|---|---|
-| `ProgressSummary` | 组合进度明细区块 | `ProgressSummaryView` | mastery 区块 → `UnavailableBadge` | 把 `topic accuracy` 标注为 mastery |
+| `ProgressSummary` | 组合进度明细区块 | `ProgressSummaryView` + `MasteryReviewState v0.1` projection | mastery domain source available；read model 未接入 → 实现层 unavailable | 把 `topic accuracy` 标注为 mastery |
 | `TopicAccuracyList` | 渲染 topic 级事实正确率 | `topics[]` | 某 topic `attempt_count = 0` → 「未评估」（不是 0%） | 用 accuracy 颜色暗示 mastery；隐藏 `attempt_count` |
 | `CoverageBreakdown` | 渲染 L1 / L2 / L3 覆盖 | `coverage` | 分母为 0 → `empty` | 把 taxonomy 分母描述为「考试权重覆盖」 |
 | `ErrorCauseBreakdown` | 渲染错误归因分布 | `errors` | 无已分类错误 → `error_cause_mix = empty`（不是 0%） | 把 `unclassified_error_count` 静默并入某一类；隐藏 mix 的分母 |
@@ -204,18 +204,18 @@ Dashboard / Review / Progress ← view-model，互相不直接引用对方内部
 
 ## 9. 组件 × 依赖矩阵
 
-| 组件 | Gate A | Gate B（Issue #4） | Gate C（Planner） | User Config | Future contract |
+| 组件 | Gate A | Gate B（Issue #4 domain replay） | Gate C（Planner） | User Config | Future contract |
 |---|---|---|---|---|---|
 | `AppShell` / `PrimaryNav` / `ContextStrip` | — | — | 🟡（阶段字段） | ✅ | — |
 | `TopHeader` | ✅（replay 元数据） | — | 🟡（`PlanModeSwitcher` 不渲染） | ✅ | — |
-| `OverallProgressCard` | ✅ | 🟡（mastery） | — | — | 🟡（论文） |
-| `TodayFocusCard` | — | 🟡（review 区块） | ❌ 阻塞 | 🟡 | — |
-| `OperationalStatsGrid` | ✅ | 🟡（due / mastery tile） | — | — | 🟡（plan / assessment / streak） |
+| `OverallProgressCard` | ✅ | 🟡（domain available；UI 未实现） | — | — | 🟡（论文） |
+| `TodayFocusCard` | — | 🟡（domain available；UI 未实现） | ❌ 阻塞 | 🟡 | — |
+| `OperationalStatsGrid` | ✅ | 🟡（domain due / mastery available；UI 未实现） | — | — | 🟡（plan / assessment / streak） |
 | `ExamCountdown` | — | — | 🟡（冲刺阶段） | ✅ | — |
-| `StudyCalendar` | ✅（有学习记录） | 🟡（due / overdue） | — | ✅ | 🟡（assessment / completion） |
-| `SubjectStatusGrid` | ✅ | 🟡（review debt） | — | — | 🟡（论文） |
-| `ReviewQueue` 系列 | — | ❌ 阻塞 | — | ✅（timezone） | — |
-| `ProgressSummary` 系列 | ✅ | 🟡（mastery 区块） | — | — | — |
+| `StudyCalendar` | ✅（有学习记录） | 🟡（domain due / overdue available；UI 未实现） | — | ✅ | 🟡（assessment / completion） |
+| `SubjectStatusGrid` | ✅ | 🟡（domain review debt available；UI 未实现） | — | — | 🟡（论文） |
+| `ReviewQueue` 系列 | — | 🟡（domain available；UI 未实现） | — | ✅（timezone） | — |
+| `ProgressSummary` 系列 | ✅ | 🟡（domain mastery available；UI 未实现） | — | — | — |
 | `EmptyState` / `UnavailableBadge` / `PolicyVersionFooter` / `ExplainDisclosure` | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 图例：✅ 可用 · 🟡 部分 / 降级 · ❌ 阻塞

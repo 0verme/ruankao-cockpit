@@ -1,14 +1,14 @@
 # Phase 4 Test Matrix（P4.6 / P4.7 设计稿）
 
-> 状态：`TEST_DESIGN_READY` / `WAITING_FOR_CONTRACT_FREEZE`
+> 状态：`TEST_DESIGN_READY` / `WAITING_FOR_FIXTURE_MATRIX_FREEZE`
 >
 > 本文件定义 **P4.6（synthetic fixtures）** 与 **P4.7（unit tests / edge cases）** 的
 > 完整验证矩阵、fixture 结构、测试骨架和 contract 缺口。
 >
-> 本窗口**不冻结**任何 mastery / scheduling 业务规则：
-> `review_item_id` 格式、success threshold、连续成功次数、interval ladder、
-> failure reset、mastered maintenance 均由窗口 A（P4.1 / P4.2）与窗口 B（P4.3 / P4.4）
-> 决定。本文档只保证 contract freeze 后可以**直接填充 expected 值**，而不需要重写测试结构。
+> 本窗口**不重新冻结**任何 mastery / scheduling 业务规则：
+> `review_item_id`、Review Evidence、success adapter、连续成功次数、interval ladder、
+> failure reset、mastered maintenance 已由 P4.1～P4.5 对应 contract / engine 决定。
+> 本文档只保证 fixture matrix freeze 后可以**直接填充 expected 值**，而不需要重写测试结构。
 
 ---
 
@@ -60,7 +60,7 @@ Progress Replay v0.1       → 语义不漂移
 
 * 在 manifest 中标记 `contract_independence: policy_dependent`；
 * 必须引用至少一个 `policy_symbols` 条目（`blocked_by` 指明 owner）；
-* 在 contract freeze 前**不得**出现在任何 fixture 文件里；
+* 在 fixture matrix freeze 前**不得**出现在任何 fixture 文件里；
 * 由 `tests/test_review_fixture_plan.py` 强制检查（planned fixture 不允许在
   `data/review/fixtures/` 中出现同名文件）。
 
@@ -231,7 +231,7 @@ data/review/                       ← Phase 4 独立域，不与 progress fixtu
 ├── TEST_ASSETS.md                 ← 本目录边界与当前状态
 ├── fixture-plan.json              ← fixture 设计 manifest（机器可读）
 ├── fixture-schema.draft.json      ← draft fixture contract（未冻结）
-└── fixtures/                      ← contract freeze 后填写
+└── fixtures/                      ← fixture matrix freeze 后填写
     └── <fixture_id>.json
 ```
 
@@ -259,9 +259,9 @@ policy version、`as_of` 和 fixture schema；放在 progress 目录下会被误
 ```
 
 * `expected` 与 `expected_error` 互斥；
-* contract freeze 前**不创建**任何 fixture 文件，只维护 manifest；
+* fixture matrix freeze 前**不创建**任何 fixture 文件，只维护 manifest；
 * `variants` 用于 `as_of` / timezone / due 边界族，避免复制同一组 events；
-* 最终字段以 P4.1 / P4.2 contract 为准，本 draft 只保证 harness 不需重写。
+* item / event 字段以 P4.1 / P4.2 contract 为准，expected state 以 P4.5 schema 为准；本 draft 只保证 harness 不需重写。
 
 ### 3.3 命名规则
 
@@ -409,8 +409,8 @@ REGEN_PROGRESS_BASELINE=1 python3 -m unittest discover -s tests -p 'test_progres
 ```text
 1. 校验 fixture plan 与 draft schema 自洽（复用 tests/reviewkit.py）
 2. 盘上 fixture 的数量与 planned / ready 状态一致
-3. 若 engine.review replay 尚不存在 → 输出 PENDING，退出码 0
-4. contract freeze 后：逐个 fixture 执行 replay + 确定性性质检查 + expected 比对
+3. 若 engine.review replay 尚不存在 → 输出 `PENDING_REPLAY_IMPLEMENTATION`，退出码 0
+4. fixture matrix freeze 后且存在 ready fixture：逐个 fixture 执行 replay + 确定性性质检查 + expected 比对；否则输出 `PENDING_REVIEW_FIXTURE_MATRIX`
 ```
 
 明确：该脚本输出 `PENDING` 不等于 Phase 4 完成，也不得打印 `PASS Phase 4`。

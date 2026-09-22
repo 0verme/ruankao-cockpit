@@ -21,7 +21,7 @@ Review Item / Evidence v0.1  ✅
    ↓
 Mastery / Review Policy v0.1 ✅ 规则冻结（P4.3 / P4.4）
    ↓
-Mastery / Review Replay      ⏳ (P4.5)
+Mastery / Review Replay      ✅ (P4.5)
    ↓
 Adaptive Planner             ⏳
    ↓
@@ -48,7 +48,7 @@ Phase 3 已完成 Progress Model v0.1 的基础契约与 deterministic replay；
 
 ## Phase 4（进行中）
 
-Phase 4 的规则设计部分（P4.3 / P4.4）已冻结 v0.1 contract，但还没有实现 replay。
+Phase 4 的规则设计部分（P4.3 / P4.4）已冻结 v0.1 contract，P4.5 已将 Review Evidence 与 policy kernel 串接为可重建的 `MasteryReviewState v0.1`。
 
 冻结的分层是：
 
@@ -67,7 +67,7 @@ Axis 2  Review Scheduling Projection   not_scheduled / scheduled / due / overdue
 
 本阶段仍然没有实现：
 
-- `MasteryReviewState v0.1` replay（P4.5）与 fixture / validation report（P4.6 / P4.7 / P4.9）；
+- P4.6 / P4.7 synthetic fixture matrix 与 edge-case 收口，以及 P4.9 validation report；
 - Adaptive Planner、Rolling 7-Day Plan、30-Day Plan 实例化、数据库、API、UI。
 
 `progress-state/v0.1` 的字段与语义不因 Phase 4 改变：mastery / review 是**独立派生层**，不是 ProgressState 的新字段。
@@ -106,7 +106,7 @@ Phase 4 的 mastery / review policy 已冻结为确定性规则，但**不是**�
 
 ### Review / Mastery 的当前状态
 
-Phase 4 当前已冻结 P4.1/P4.2 的 Review Model / Evidence、P4.3/P4.4 的 Mastery/Scheduling policy；尚未实现 P4.5 replay：
+Phase 4 当前已冻结 P4.1/P4.2 的 Review Model / Evidence、P4.3/P4.4 的 Mastery/Scheduling policy，并已实现 P4.5 replay：
 
 ```text
 已冻结：Review Item / Review Evidence（P4.1 / P4.2）
@@ -114,14 +114,14 @@ Phase 4 当前已冻结 P4.1/P4.2 的 Review Model / Evidence、P4.3/P4.4 的 Ma
         stable identity、explicit context、policy-neutral facts
         Mastery State Machine / Review Scheduling Policy（P4.3 / P4.4）
 
-未实现：`MasteryReviewState v0.1` replay 与 `as_of` API（P4.5）
-        fixture expected 值与 validation report（P4.6 / P4.7 / P4.9）
+已实现：`MasteryReviewState v0.1` replay 与显式 `as_of` / timezone API（P4.5）
+未实现：fixture expected 值与 validation report（P4.6 / P4.7 / P4.9）
         Adaptive Planner
 ```
 
 因此：
 
 ```text
-规则/证据契约冻结 != 可消费的 MasteryReviewState replay
-UI 可消费的前提是 P4.5 的 replay 输出，而不是 policy kernel 或 Evidence 单独存在
+规则/证据契约冻结 + P4.5 replay = 可消费的 MasteryReviewState domain output
+UI 仍只能消费 replay 输出；不得绕过 replay 直接调用 policy kernel
 ```

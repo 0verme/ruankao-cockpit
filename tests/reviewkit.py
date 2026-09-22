@@ -1,4 +1,4 @@
-"""P4.6 / P4.7 review-domain test kit (design stage).
+"""P4.6 / P4.7 review-domain test kit (fixture matrix design stage).
 
 本模块**不包含任何 production policy**。它只提供：
 
@@ -7,8 +7,8 @@
 * deterministic replay 的性质测试 harness；
 * 禁止 wall-clock 依赖的静态源码扫描。
 
-contract freeze 之后，fixture 只需要填充 `expected` / `expected_error`，
-性质测试 harness 可以直接指向 `engine.review` 的 replay 入口，无需重写测试结构。
+fixture matrix freeze 之后，fixture 只需要填充 `expected` / `expected_error`，
+性质测试 harness 再指向 `engine.review` 的 replay 入口；P4.5 domain contract 已完成，fixture shape / adapter 仍待收口。
 """
 from __future__ import annotations
 
@@ -138,8 +138,8 @@ def validate_fixture_plan(plan: Mapping[str, Any], root: Path | None = None) -> 
         return ["plan must be an object"]
     if plan.get("manifest_version") != PLAN_MANIFEST_VERSION:
         errors.append(f"plan: manifest_version must be {PLAN_MANIFEST_VERSION!r}")
-    if plan.get("status") != "TEST_DESIGN_READY_WAITING_FOR_CONTRACT_FREEZE":
-        errors.append("plan: status must record waiting for contract freeze")
+    if plan.get("status") != "TEST_DESIGN_READY_WAITING_FOR_FIXTURE_MATRIX_FREEZE":
+        errors.append("plan: status must record waiting for fixture matrix freeze")
 
     symbols = plan.get("policy_symbols")
     if not isinstance(symbols, Mapping) or not symbols:

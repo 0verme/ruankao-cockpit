@@ -1,0 +1,342 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/0verme/ruankao-cockpit/blob/main/data/review/mastery-review-state.schema.json",
+  "title": "MasteryReviewState v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "review_model_version",
+    "review_event_schema_version",
+    "review_evidence_version",
+    "progress_event_schema_version",
+    "progress_replay_version",
+    "mastery_policy_version",
+    "review_policy_version",
+    "policy_projection_schema_version",
+    "as_of",
+    "timezone",
+    "schedule_timezone",
+    "tzdata_version",
+    "policy",
+    "outcome_adapter",
+    "progress_replayed_event_count",
+    "item_order",
+    "items",
+    "review",
+    "mastery"
+  ],
+  "properties": {
+    "schema_version": {"const": "mastery-review-state/v0.1"},
+    "review_model_version": {"const": "review-model/v0.1"},
+    "review_event_schema_version": {"const": "review-event/v0.1"},
+    "review_evidence_version": {"const": "review-evidence/v0.1"},
+    "progress_event_schema_version": {"const": "progress-event/v0.1"},
+    "progress_replay_version": {"const": "progress-replay/v0.1"},
+    "mastery_policy_version": {"const": "mastery-policy/spaced-consecutive/v0.1"},
+    "review_policy_version": {"const": "review-policy/simple-ladder/v0.1"},
+    "policy_projection_schema_version": {"const": "review-policy-projection/v0.1"},
+    "as_of": {"type": "string", "format": "date-time"},
+    "timezone": {"type": "string", "minLength": 1},
+    "schedule_timezone": {"type": "string", "minLength": 1},
+    "tzdata_version": {"type": "string", "minLength": 1},
+    "policy": {"$ref": "#/$defs/policy"},
+    "outcome_adapter": {"$ref": "#/$defs/outcomeAdapter"},
+    "progress_replayed_event_count": {"type": "integer", "minimum": 0},
+    "item_order": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "items": {
+      "type": "object",
+      "additionalProperties": {"$ref": "#/$defs/itemState"}
+    },
+    "review": {"$ref": "#/$defs/reviewAggregate"},
+    "mastery": {"$ref": "#/$defs/masteryAggregate"}
+  },
+  "$defs": {
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mastery_policy_id",
+        "mastery_policy_version",
+        "review_policy_id",
+        "review_policy_version",
+        "parameters"
+      ],
+      "properties": {
+        "mastery_policy_id": {"const": "mastery-policy/spaced-consecutive"},
+        "mastery_policy_version": {"const": "v0.1"},
+        "review_policy_id": {"const": "review-policy/simple-ladder"},
+        "review_policy_version": {"const": "v0.1"},
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "interval_ladder_days",
+            "failure_interval_days",
+            "mastery_min_distinct_success_days",
+            "mastered_maintenance_interval_days",
+            "same_day_success_advances_interval",
+            "overdue_changes_interval",
+            "insufficient_evidence_changes_state",
+            "due_boundary",
+            "overdue_boundary",
+            "evidence_ordering",
+            "future_evidence"
+          ],
+          "properties": {
+            "interval_ladder_days": {
+              "const": [1, 3, 7, 15]
+            },
+            "failure_interval_days": {"const": 1},
+            "mastery_min_distinct_success_days": {"const": 3},
+            "mastered_maintenance_interval_days": {"const": 15},
+            "same_day_success_advances_interval": {"const": false},
+            "overdue_changes_interval": {"const": false},
+            "insufficient_evidence_changes_state": {"const": false},
+            "due_boundary": {"const": "local_day_start_inclusive"},
+            "overdue_boundary": {"const": "first_local_midnight_after_due_local_date"},
+            "evidence_ordering": {"const": "utc_instant_then_evidence_id"},
+            "future_evidence": {"const": "reject"}
+          }
+        }
+      }
+    },
+    "outcomeAdapter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["adapter_id", "adapter_version", "adapter"],
+      "properties": {
+        "adapter_id": {"const": "review-outcome/raw-facts"},
+        "adapter_version": {"const": "v0.1"},
+        "adapter": {"const": "review-outcome/raw-facts/v0.1"}
+      }
+    },
+    "sourceReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "source_commit", "source_path"],
+      "properties": {
+        "source_id": {"type": "string", "minLength": 1},
+        "source_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "source_path": {"type": "string", "minLength": 1},
+        "source_question_id": {"type": "string", "minLength": 1},
+        "golden_set_record_id": {"type": "string", "minLength": 1},
+        "source_value": {"type": "string", "minLength": 1}
+      }
+    },
+    "canonicalReference": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["topic_id", "taxonomy_version"],
+          "properties": {
+            "topic_id": {"type": "string", "minLength": 1},
+            "taxonomy_version": {"const": "0.1"}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["source_id", "source_question_id"],
+          "properties": {
+            "source_id": {"type": "string", "minLength": 1},
+            "source_question_id": {"type": "string", "minLength": 1}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["capability_id", "taxonomy_version"],
+          "properties": {
+            "capability_id": {"type": "string", "minLength": 1},
+            "taxonomy_version": {"const": "0.1"}
+          }
+        }
+      ]
+    },
+    "evidenceValue": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["correct"],
+          "properties": {"correct": {"type": "boolean"}}
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["score_earned", "score_possible"],
+          "properties": {
+            "score_earned": {"type": "integer", "minimum": 0},
+            "score_possible": {"type": "integer", "minimum": 1}
+          }
+        }
+      ]
+    },
+    "evidenceTrace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_id",
+        "source_event_id",
+        "review_event_id",
+        "occurred_at",
+        "attempt_context",
+        "evidence_kind",
+        "evidence_status",
+        "evidence_value",
+        "source_reference",
+        "policy_outcome",
+        "policy_outcome_reason"
+      ],
+      "properties": {
+        "evidence_id": {"type": "string", "minLength": 1},
+        "source_event_id": {"type": "string", "minLength": 1},
+        "review_event_id": {"type": "string", "minLength": 1},
+        "occurred_at": {"type": "string", "format": "date-time"},
+        "attempt_context": {"enum": ["initial_learning", "review"]},
+        "evidence_kind": {
+          "enum": [
+            "comprehensive_correctness",
+            "case_score",
+            "case_capability_score",
+            "case_capability_score_missing",
+            "case_topic_score_unavailable"
+          ]
+        },
+        "evidence_status": {"enum": ["supported", "insufficient_evidence", "unsupported"]},
+        "evidence_value": {"$ref": "#/$defs/evidenceValue"},
+        "source_reference": {"$ref": "#/$defs/sourceReference"},
+        "policy_outcome": {"enum": ["success", "failure", "insufficient"]},
+        "policy_outcome_reason": {
+          "enum": [
+            "comprehensive_correctness_fact",
+            "score_outcome_mapping_unfrozen",
+            "insufficient_evidence",
+            "unsupported_evidence"
+          ]
+        }
+      }
+    },
+    "itemState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "review_item_id",
+        "item_kind",
+        "canonical_ref",
+        "source_reference",
+        "mastery_state",
+        "mastery_reason",
+        "evaluated_evidence_count",
+        "successful_review_count",
+        "failure_count",
+        "insufficient_evidence_count",
+        "consecutive_success_count",
+        "consecutive_success_day_count",
+        "last_review_at",
+        "last_evidence_id",
+        "review_interval_days",
+        "next_due_at",
+        "next_due_local_date",
+        "review_status",
+        "review_status_reason",
+        "scheduling_reason",
+        "evidence_ids",
+        "evidence"
+      ],
+      "properties": {
+        "review_item_id": {"type": "string", "minLength": 1},
+        "item_kind": {"enum": ["topic", "question", "case_capability"]},
+        "canonical_ref": {"$ref": "#/$defs/canonicalReference"},
+        "source_reference": {"$ref": "#/$defs/sourceReference"},
+        "mastery_state": {"enum": ["new", "learning", "mastered"]},
+        "mastery_reason": {
+          "enum": [
+            "no_evaluated_evidence",
+            "failure_enters_learning",
+            "success_enters_learning",
+            "learning_failure_keeps_learning",
+            "learning_success_below_mastery",
+            "learning_success_reaches_mastery",
+            "mastered_success_maintenance",
+            "mastered_failure_demotes_learning"
+          ]
+        },
+        "evaluated_evidence_count": {"type": "integer", "minimum": 0},
+        "successful_review_count": {"type": "integer", "minimum": 0},
+        "failure_count": {"type": "integer", "minimum": 0},
+        "insufficient_evidence_count": {"type": "integer", "minimum": 0},
+        "consecutive_success_count": {"type": "integer", "minimum": 0},
+        "consecutive_success_day_count": {"type": "integer", "minimum": 0},
+        "last_review_at": {"type": ["string", "null"], "format": "date-time"},
+        "last_evidence_id": {"type": ["string", "null"]},
+        "review_interval_days": {"type": ["integer", "null"], "minimum": 1},
+        "next_due_at": {"type": ["string", "null"], "format": "date-time"},
+        "next_due_local_date": {"type": ["string", "null"], "format": "date"},
+        "review_status": {"enum": ["not_scheduled", "scheduled", "due", "overdue"]},
+        "review_status_reason": {
+          "enum": [
+            "not_scheduled_no_evaluated_evidence",
+            "scheduled_due_in_future",
+            "due_on_due_local_date",
+            "overdue_since_next_local_date"
+          ]
+        },
+        "scheduling_reason": {
+          "enum": [
+            "no_evidence_not_scheduled",
+            "success_schedules_ladder_interval",
+            "same_day_success_keeps_schedule",
+            "failure_schedules_retry_interval"
+          ]
+        },
+        "evidence_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "evidence": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/evidenceTrace"}
+        }
+      }
+    },
+    "reviewAggregate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "total_items",
+        "not_scheduled_count",
+        "scheduled_count",
+        "due_today_count",
+        "overdue_count",
+        "due_count"
+      ],
+      "properties": {
+        "total_items": {"type": "integer", "minimum": 0},
+        "not_scheduled_count": {"type": "integer", "minimum": 0},
+        "scheduled_count": {"type": "integer", "minimum": 0},
+        "due_today_count": {"type": "integer", "minimum": 0},
+        "overdue_count": {"type": "integer", "minimum": 0},
+        "due_count": {"type": "integer", "minimum": 0}
+      }
+    },
+    "masteryAggregate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["new_count", "learning_count", "mastered_count"],
+      "properties": {
+        "new_count": {"type": "integer", "minimum": 0},
+        "learning_count": {"type": "integer", "minimum": 0},
+        "mastered_count": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

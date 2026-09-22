@@ -7,7 +7,7 @@ engine/rules/review_policy_v01.py    Phase 4（P4.3 / P4.4）冻结的 Mastery /
 tests/test_review_policy.py          对应的 policy-level 单元测试
 ```
 
-这个 kernel 是**纯函数**：输入为 policy-eligible evidence、显式 `as_of` 和显式 IANA timezone，不读系统时间、不读机器时区、不含隐藏状态。它不是完整 replay（属 P4.5），也不定义 Review Item / Review Evidence 契约（属 P4.1 / P4.2）。
+这个 kernel 是**纯函数**：输入为 policy-eligible evidence、显式 `as_of` 和显式 IANA timezone，不读系统时间、不读机器时区、不含隐藏状态。`engine.review.replay.replay(...)`（P4.5）负责校验 Progress / Review contract、投影 Evidence、执行 outcome adapter 并组装 `MasteryReviewState v0.1`；kernel 本身仍不定义 Review Item / Review Evidence 契约。
 
 ## 当前可读取的 replay 输出
 
@@ -33,7 +33,7 @@ study.study_minutes
 - coverage 的分母明确为 taxonomy 的 L1/L2/L3 总节点数，L3 引用会闭包覆盖父级；
 - `study_minutes` 只累加会话时长，不表示学习质量、专注度或效率。
 
-当前没有把 `recent_score` 写成正式 replay 输出：它需要先有明确的 assessment contract（assessment_id、完成时间、总分证据）。
+当前没有把 `recent_score` 写成正式 replay 输出：它需要先有明确的 assessment contract（assessment_id、完成时间、总分证据）。`MasteryReviewState` 是独立派生层，不会把 mastery / due 字段加入此处的 `ProgressState`。
 
 ## Phase 4 v0.1 frozen policies
 
@@ -60,7 +60,7 @@ Review Scheduling Projection   not_scheduled | scheduled | due | overdue
 
 完整规则、transition table 与 rejected alternatives 见 [`docs/review/README.md`](../../docs/review/README.md)；依赖 P4.1 / P4.2 的假设见 [`ASSUMPTIONS_PENDING_P4_1_P4_2.md`](../../docs/review/ASSUMPTIONS_PENDING_P4_1_P4_2.md)。
 
-本目录**不**包含：planner、自适应排序、SM-2、FSRS、forgetting curve、AI 判断、UI、存储。
+本目录**不**包含：planner、自适应排序、SM-2、FSRS、forgetting curve、AI 判断、UI、存储；P4.5 replay 位于 `engine/review/`。
 
 ## Review Evidence boundary
 
@@ -70,14 +70,14 @@ Review Scheduling Projection   not_scheduled | scheduled | due | overdue
 
 ## Future inputs
 
-未来规则层可以读取的输入（当前 Mastery / Review 已有 v0.1 冻结 policy，但 replay 尚未实现）：
+未来规则层可以读取的输入（Mastery / Review v0.1 policy 与 P4.5 replay 已实现；本目录仍只描述 policy kernel 边界）：
 
 ```text
 recent_score                 Future: assessment contract 未冻结
-review_evidence              Current: Review Evidence v0.1；不含 policy conclusion
+review_evidence              Current: Review Evidence v0.1；由 P4.5 adapter 接入 policy，不回写 evidence
 mastery                      规则已冻结（P4.3）：mastery-policy/spaced-consecutive/v0.1
 review_due                   规则已冻结（P4.4）：review-policy/simple-ladder/v0.1
-review_interval              规则已冻结（P4.4）；replay 未实现（P4.5）
+review_interval              规则已冻结（P4.4）；由 P4.5 replay 投影
 completion_rate              Future: task execution contract 未实现
 capacity_actual              Future
 essay_progress               Future

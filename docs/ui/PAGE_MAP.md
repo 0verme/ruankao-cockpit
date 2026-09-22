@@ -19,9 +19,9 @@ Not Needed  v0.1 明确不需要的页面
 | 路由 | 页面 | 状态 | user job | data dependency | implementation gate |
 |---|---|---|---|---|---|
 | `/` | Cockpit Dashboard | **MVP** | 一眼知道整体状态、今天做什么、哪些要复习 | `progress-state/v0.1` + User Config | Gate A ✅；Today 区域需 Gate C |
-| `/today` | 今日学习 | **MVP** | 开始今天的任务并记录结果 | Planner 输出 + Review 输出 | Gate C + Gate B |
-| `/review` | 复习队列 | **MVP** | 清掉今天到期的复习 | MasteryReviewState（Issue #4） | Gate B |
-| `/progress` | 学习进度 / 掌握度 | **MVP** | 解释 accuracy / coverage / error / mastery | `progress-state/v0.1` + Issue #4 | Gate A ✅ + Gate B |
+| `/today` | 今日学习 | **MVP** | 开始今天的任务并记录结果 | Planner 输出 + `MasteryReviewState v0.1` review output | Gate C + Gate B domain replay ✅ |
+| `/review` | 复习队列 | **MVP** | 清掉今天到期的复习 | `MasteryReviewState v0.1`（Issue #4） | Gate B domain replay ✅；UI 未实现 |
+| `/progress` | 学习进度 / 掌握度 | **MVP** | 解释 accuracy / coverage / error / mastery | `progress-state/v0.1` + `MasteryReviewState v0.1` | Gate A ✅ + Gate B domain replay ✅；UI 未实现 |
 | `/settings` | 配置（考试 / 时间 / 时区） | **MVP（最小）** | 设定考试日期、时区、可用时间、目标 | User Configuration | Gate 0（无账号体系） |
 | `/plan` | 学习计划 | **Later** | 看清 30 天结构与可调整的近期安排 | Planner 输出 | Gate C |
 | `/comprehensive` | 综合知识 | **Later** | 练综合题并查看 topic 级表现 | 题源接入 + 作答交互 + `progress-state/v0.1` | Gate A ✅；题源接入未就绪 |
@@ -41,10 +41,10 @@ Not Needed  v0.1 明确不需要的页面
 |---|---|
 | user job | 打开后立刻知道：整体怎么样、今天做什么、哪些要复习、离目标多远 |
 | 状态 | **MVP** |
-| data dependency | `progress-state/v0.1`（Gate A ✅）、User Configuration、Planner（Today 区域）、Issue #4（Review 区域） |
-| implementation gate | 综合 / 案例 / 统计 / 倒计时区域：Gate A；Today 区域：Gate C；Review 区域：Gate B |
+| data dependency | `progress-state/v0.1`（Gate A ✅）、User Configuration、Planner（Today 区域）、`MasteryReviewState v0.1`（Review 区域） |
+| implementation gate | 综合 / 案例 / 统计 / 倒计时区域：Gate A；Today 区域：Gate C；Review domain：Gate B ✅（UI/read model 未实现） |
 | 卡片组成 | `OverallProgressCard`、`TodayFocusCard`、`OperationalStatsGrid`、`ExamCountdown`、`StudyCalendar`、`SubjectStatusGrid` |
-| 未冻结时的行为 | Today 区域显示 `EmptyState`「Planner contract 尚未冻结」；Review 区域显示 `UnavailableBadge` |
+| 未实现时的行为 | Today 区域显示 `EmptyState`「Planner contract 尚未冻结」；Review domain 已可用，正式 read model 未接入时显示实现层 unavailable |
 
 **冻结约束**：Dashboard 不得因为依赖缺失而渲染伪造数据。允许「少卡片」，不允许「假卡片」。
 
@@ -56,8 +56,8 @@ Not Needed  v0.1 明确不需要的页面
 |---|---|
 | user job | 今天做什么、开始做、做完记录 |
 | 状态 | **MVP**（Today-first 核心闭环入口） |
-| data dependency | Planner 输出（tasks / theme / capacity）+ Review 输出（due） |
-| implementation gate | **Gate C**（Planner）+ **Gate B**（Review） |
+| data dependency | Planner 输出（tasks / theme / capacity）+ `MasteryReviewState v0.1` review output（due） |
+| implementation gate | **Gate C**（Planner）+ Gate B domain replay ✅（UI/read model 仍待实现） |
 | 核心流程 | 见第 5 节 Flow A |
 | 未冻结时的行为 | `EmptyState`：「Planner contract 尚未冻结」；不渲染任务列表，不渲染伪造 CTA 目标 |
 | Explain | 任务展开显示触发 rule id / 信号快照 / plan version（依赖 Planner 的 explain 输出） |
@@ -71,11 +71,11 @@ Not Needed  v0.1 明确不需要的页面
 | 项 | 内容 |
 |---|---|
 | user job | 今天有哪些内容到期、为什么到期、复习后发生什么 |
-| 状态 | **MVP**（数据依赖 Issue #4） |
-| data dependency | **Issue #4**：`MasteryReviewState` — P4.3 / P4.4 规则与字段名已冻结；`item_kind`（P4.1）、evidence 契约（P4.2）、replay 输出（P4.5）仍未冻结 |
-| implementation gate | **Gate B**（未通过：需 P4.5 replay 回答四问） |
+| 状态 | **MVP**（数据依赖 P4.5 domain replay；UI 未实现） |
+| data dependency | **Issue #4**：`MasteryReviewState v0.1` — P4.1～P4.5 contract / replay 已冻结；P4.6/P4.7/P4.9 仍未收口 |
+| implementation gate | **Gate B domain PASS**；正式 UI read model / frontend 仍未实现 |
 | 排序 | **100% 来自 engine**；UI 不重新排序、不自行计算优先级 |
-| 未冻结时的行为 | `UnavailableBadge`：「依赖 Mastery / Review replay（P4.5）」 |
+| 未接入 UI 时的行为 | 实现层 unavailable；UI 不得绕过 replay 自行计算 due / mastery |
 
 **冻结约束**：Review Queue 的排序、优先级、next due 全部来自 engine 输出。UI 不得用「看起来更合理」的顺序重排。
 
@@ -88,11 +88,11 @@ Not Needed  v0.1 明确不需要的页面
 | 项 | 内容 |
 |---|---|
 | user job | 解释 accuracy / coverage / error / mastery，而不是只看一个数字 |
-| 状态 | **MVP**（掌握度部分依赖 Issue #4） |
-| data dependency | `progress-state/v0.1`（Gate A ✅）+ Issue #4（mastery 部分） |
-| implementation gate | Gate A ✅（accuracy / coverage / errors）；Gate B（mastery，需 P4.5 replay） |
+| 状态 | **MVP**（mastery domain output 已由 P4.5 提供；UI 未实现） |
+| data dependency | `progress-state/v0.1`（Gate A ✅）+ `MasteryReviewState v0.1`（mastery domain output） |
+| implementation gate | Gate A ✅（accuracy / coverage / errors）；Gate B domain replay ✅（mastery UI 未实现） |
 | 组成 | `ProgressSummary`、`TopicAccuracyList`、`CoverageBreakdown`、`ErrorCauseBreakdown`、`CapabilityEvidenceList` |
-| 未冻结时的行为 | mastery 区块显示 `UnavailableBadge`；不得用 `topic accuracy` 冒充 mastery |
+| 未接入 UI 时的行为 | mastery 区块显示实现层 unavailable；不得用 `topic accuracy` 冒充 mastery |
 
 **冻结约束**：
 
@@ -228,7 +228,7 @@ coverage（taxonomy 节点分母）!= 考试权重覆盖率
 3. :id 不得是展示名称 / 自由文本；必须是稳定 canonical id
 ```
 
-**身份稳定性风险（已知未决）**：`review_item_id` 的**字段名**已由 P4.3 / P4.4 冻结，但其**身份构成规则**属 P4.1，仍未冻结。在 P4.1 落地前，`/explain` 深链的长期稳定性不作承诺。
+P4.1 已冻结 `review_item_id` 的稳定 identity；`/explain` 深链必须使用 engine 输出的 canonical ID，不得由 UI 自行拼接。
 
 ---
 
@@ -309,13 +309,15 @@ Dashboard
 → Dashboard 更新
 ```
 
-在 Gate B / Gate C 未通过时，Flow A 的合法形态只有：
+在 Gate C 或正式 UI/read model 未实现时，Flow A 的合法形态只有：
 
 ```text
 Dashboard
 → 看到整体进度（Gate A 可用）
-→ 看到「Planner contract 尚未冻结」/「依赖 Mastery / Review v0.1」
+→ 看到「Planner contract 尚未冻结」或实现层 unavailable
 ```
+
+P4.5 已使 Review domain output 可消费；UI 仍不得绕过 replay 或用伪任务补齐闭环。
 
 **不允许**用伪任务把 Flow A 补成一个看起来完整的闭环。
 
@@ -377,9 +379,9 @@ Dashboard
 ```text
 MVP 集合（第一版 Cockpit 真正需要的路由）：
   /              Dashboard
-  /today         Today（依赖 Planner / Issue #4）
-  /review        Review Queue（依赖 Issue #4）
-  /progress      Progress Summary（mastery 部分依赖 Issue #4）
+  /today         Today（依赖 Planner + P4.5 review domain output）
+  /review        Review Queue（依赖 P4.5 domain replay；UI 未实现）
+  /progress      Progress Summary（mastery domain 依赖 P4.5 replay）
   /settings      最小配置
 
 摘要入口（Later）：

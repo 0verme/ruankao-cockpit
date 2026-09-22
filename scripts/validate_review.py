@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
-"""Validate Phase 4 Review / Mastery test scaffolding (P4.6 / P4.7 design stage).
+"""Validate Review / Mastery scaffolding and report replay capability honestly.
 
-当前阶段职责：
+当前职责：
 
 1. 校验 `data/review/fixture-plan.json` 与 `fixture-schema.draft.json` 自洽；
 2. 校验盘上 fixture 与 planned / ready 状态一致；
-3. 若 review replay 尚未实现 → 输出 `PENDING`（contract 未冻结），退出码 0；
-4. contract freeze 后：逐个 fixture 执行 replay + 确定性性质检查 + expected 比对。
+3. 识别 P4.5 replay 与 `MasteryReviewState` schema 是否存在；
+4. 只有正式 ready fixture 到位后才执行 fixture replay / expected 比对。
 
-本脚本不会打印 `PASS Phase 4`：PENDING 只是“测试骨架已就绪”，不是 Phase 4 完成。
+本脚本不会打印 `PASS Phase 4`：PENDING 只表示 fixture / edge-case / validation
+收口仍未完成，不代表 Phase 4 完成。
 """
 from __future__ import annotations
 
@@ -25,12 +26,13 @@ if str(ROOT / "tests") not in sys.path:
 
 import reviewkit  # noqa: E402  (tests/ 下的共享测试工具)
 
-PENDING_STATUS = "PENDING_CONTRACT_FREEZE"
+PENDING_STATUS = "PENDING_REVIEW_FIXTURE_MATRIX"
+REPLAY_PENDING_STATUS = "PENDING_REPLAY_IMPLEMENTATION"
 TEST_DESIGN_STATUS = "TEST_DESIGN_READY"
 
 
 def load_review_replay(root: Path) -> Callable[..., Any] | None:
-    """contract freeze 后由 P4.5 提供的 replay 入口；当前预期为 None。"""
+    """Load the P4.5 replay entry point when the implementation is present."""
     if str(root) not in sys.path:
         sys.path.insert(0, str(root))
     try:
@@ -100,9 +102,21 @@ def main() -> int:
                 print(f"FAIL: {error}", file=sys.stderr)
             return 1
         if draft.get("status") != "draft" or draft.get("frozen") is not False:
-            print("FAIL: fixture schema draft must stay draft until contract freeze", file=sys.stderr)
+            print("FAIL: fixture schema draft must stay draft until fixture matrix freeze", file=sys.stderr)
             return 1
 
+        state_schema = root / "data/review/mastery-review-state.schema.json"
+        if not state_schema.is_file():
+            print(f"FAIL: missing MasteryReviewState schema {state_schema}", file=sys.stderr)
+            return 1
+        state_schema_doc = reviewkit.load_json(state_schema)
+        if (
+            state_schema_doc.get("title") != "MasteryReviewState v0.1"
+            or state_schema_doc.get("properties", {}).get("schema_version", {}).get("const")
+            != "mastery-review-state/v0.1"
+        ):
+            print(f"FAIL: invalid MasteryReviewState schema {state_schema}", file=sys.stderr)
+            return 1
         design_doc = root / plan["design_doc"]
         if not design_doc.is_file():
             print(f"FAIL: design doc {design_doc} is missing", file=sys.stderr)
@@ -126,6 +140,8 @@ def main() -> int:
         print(f"  policy symbols registered: {len(plan['policy_symbols'])}"
               f" (unfrozen: {sum(1 for s in plan['policy_symbols'].values() if s['status'] == 'unfrozen')})")
         print(f"  fixtures on disk: {len(shipped)} (ready in plan: {len(ready)})")
+        print(f"  replay capability: {'available' if replay_fn is not None else 'missing'}")
+        print("  MasteryReviewState schema: available")
 
         outcomes: dict[str, int] = {}
         for entry in ready:
@@ -139,13 +155,12 @@ def main() -> int:
             print(f"  verified {outcome}: {count}")
 
         if replay_fn is None:
-            print(f"{PENDING_STATUS}: engine.review replay is not available yet")
-            print("  测试骨架已就绪；policy-dependent expected values 等 P4.1~P4.4 contract freeze 后补齐。")
+            print(f"{REPLAY_PENDING_STATUS}: engine.review replay is not available yet")
             return 0
         if not ready:
-            print(f"{PENDING_STATUS}: review replay exists but no fixture is marked ready yet")
+            print(f"{PENDING_STATUS}: replay exists; P4.6/P4.7 ready fixtures are not complete")
             return 0
-        print("PASS review fixtures replayed deterministically")
+        print("PASS ready review fixtures replayed deterministically")
         return 0
     except reviewkit.FixtureContractError as exc:
         print(f"FAIL: {exc}", file=sys.stderr)

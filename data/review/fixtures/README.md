@@ -8,17 +8,16 @@
 
 ```text
 TEST_DESIGN_READY
-WAITING_FOR_CONTRACT_FREEZE（P4.1 / P4.2 / P4.3 / P4.4 / P4.5）
+WAITING_FOR_FIXTURE_MATRIX_FINALIZATION（P4.6 / P4.7）
 ```
 
 因此这里**暂时没有** `*.json` fixture。原因不是遗漏，而是：
 
-- `review_item_id`、review evidence 来源、mastery 状态名、success 阈值和
-  interval ladder 尚未冻结，任何 `expected` / `expected_error` 都会提前发明
-  业务规则；
-- 事件 schema 是否扩展也尚未决定，连 `events` 都无法稳定书写。
+- P4.1～P4.5 的 item / evidence / policy / replay contract 已冻结；
+- fixture manifest 的 policy-dependent expected、edge-case matrix 与 synthetic
+  fixture 文件仍未收口，避免在 fixture 资产中悄然扩展业务规则。
 
-contract freeze 后按以下顺序补齐：
+fixture matrix finalization 后按以下顺序补齐：
 
 1. 在 `../fixture-plan.json` 中把对应条目从 `status: planned` 改为 `status: ready`；
 2. 新增 `data/review/fixtures/<fixture_id>.json`，按

@@ -1,7 +1,7 @@
 {
   "manifest_version": "review-fixture-plan/v0.1",
   "stage": "P4.6 synthetic fixtures + P4.7 unit tests / edge cases — design stage",
-  "status": "TEST_DESIGN_READY_WAITING_FOR_CONTRACT_FREEZE",
+  "status": "TEST_DESIGN_READY_WAITING_FOR_FIXTURE_MATRIX_FREEZE",
   "owner": "P4.6",
   "contract_freeze_owners": [
     "P4.1",
