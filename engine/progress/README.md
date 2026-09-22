@@ -118,6 +118,17 @@ sum(score_earned) / sum(score_possible)
 
 Coverage 的分母是传入 taxonomy 中全部 L1/L2/L3 节点；引用 L3 会通过 parent closure 覆盖 L2/L1。Coverage ratio 在 taxonomy 分母非零时按 `covered / total` 计算。
 
+## Review boundary
+
+Review Model / Evidence v0.1 位于独立的 `engine.review` 与 `data/review/` contract 中：
+
+- Progress Event v0.1 的三类 event 语义保持不变，不加入隐式 review 字段；
+- `review_context` 显式关联一个 attempt fact 与 `initial_learning` / `review`；
+- 没有 context 的 Progress Fact 不会被猜测为 Review Evidence；
+- Review Evidence 不能反向修改或替代 ProgressState。
+
+详见 [`docs/review/REVIEW_MODEL_V01.md`](../../docs/review/REVIEW_MODEL_V01.md) 与 [`docs/review/REVIEW_EVIDENCE_V01.md`](../../docs/review/REVIEW_EVIDENCE_V01.md)。
+
 ## Boundary
 
 本阶段没有实现：

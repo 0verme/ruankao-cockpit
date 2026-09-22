@@ -58,11 +58,15 @@ Review Scheduling Projection   not_scheduled | scheduled | due | overdue
 - `as_of` 早于 evidence 时直接拒绝（`future_evidence`），不静默丢弃或泄漏未来事实；
 - `due_count` 是 item 级到期数量，不是事件数。
 
-完整规则、transition table 与 rejected alternatives 见
-[`docs/review/README.md`](../../docs/review/README.md)；依赖 P4.1 / P4.2 的假设见
-[`ASSUMPTIONS_PENDING_P4_1_P4_2.md`](../../docs/review/ASSUMPTIONS_PENDING_P4_1_P4_2.md)。
+完整规则、transition table 与 rejected alternatives 见 [`docs/review/README.md`](../../docs/review/README.md)；依赖 P4.1 / P4.2 的假设见 [`ASSUMPTIONS_PENDING_P4_1_P4_2.md`](../../docs/review/ASSUMPTIONS_PENDING_P4_1_P4_2.md)。
 
 本目录**不**包含：planner、自适应排序、SM-2、FSRS、forgetting curve、AI 判断、UI、存储。
+
+## Review Evidence boundary
+
+`Review Model / Evidence v0.1` 已在独立 contract 中冻结。规则层可以读取由 Progress Events 加显式 `review_context` 投影出的 policy-neutral evidence，但本目录不在 Evidence 层决定 success、failure、mastery 或 review_due。
+
+详见 [`docs/review/REVIEW_EVIDENCE_V01.md`](../../docs/review/REVIEW_EVIDENCE_V01.md)。
 
 ## Future inputs
 
@@ -70,6 +74,7 @@ Review Scheduling Projection   not_scheduled | scheduled | due | overdue
 
 ```text
 recent_score                 Future: assessment contract 未冻结
+review_evidence              Current: Review Evidence v0.1；不含 policy conclusion
 mastery                      规则已冻结（P4.3）：mastery-policy/spaced-consecutive/v0.1
 review_due                   规则已冻结（P4.4）：review-policy/simple-ladder/v0.1
 review_interval              规则已冻结（P4.4）；replay 未实现（P4.5）
