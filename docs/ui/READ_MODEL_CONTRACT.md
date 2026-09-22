@@ -63,8 +63,8 @@ read model 字段语义 ≠ domain 字段语义时 → 视为新事实，禁止
 | `replay_rule_version` | `aggregate` | ✅ `progress-replay/v0.1` | Progress replay 规则版本 |
 | `taxonomy_version` | `aggregate` | ✅ taxonomy v0.1 | Knowledge Topic 契约版本 |
 | `capability_version` | `aggregate` | ✅ capability v0.1 | Case Capability 契约版本 |
-| `mastery_policy_version` | `phase4` | ✅ 已冻结：`mastery-policy/spaced-consecutive/v0.1`（需 P4.5 replay 输出） | Mastery 状态机 policy 版本 |
-| `review_policy_version` | `phase4` | ✅ 已冻结：`review-policy/simple-ladder/v0.1`（需 P4.5 replay 输出） | Review scheduling policy 版本 |
+| `mastery_policy_version` | `phase4` | ✅ 已冻结：`mastery-policy/spaced-consecutive/v0.1`（由 P4.5 replay 输出） | Mastery 状态机 policy 版本 |
+| `review_policy_version` | `phase4` | ✅ 已冻结：`review-policy/simple-ladder/v0.1`（由 P4.5 replay 输出） | Review scheduling policy 版本 |
 | `policy_version` | `future` | ❌ `TBD — dependent on Planner contract` | 计划策略版本 |
 | `plan_version` | `future` | ❌ `TBD — dependent on Planner contract` | 计划实例版本 |
 | `unavailable[]` | `projection` | ✅ | 显式列出本视图中不可用的指标及其依赖 |
@@ -137,9 +137,9 @@ read model 字段语义 ≠ domain 字段语义时 → 视为新事实，禁止
 | `CockpitDashboardView` | Dashboard `/` | Gate A + User Config + Gate B + Gate C | 🟡 部分（不含 Today / Review 区块） |
 | `TodayPlanView` | `/today`、`TodayFocusCard` | Gate C + Gate B | ❌ 未冻结 |
 | `SubjectStatusView` | `SubjectStatusGrid` | Gate A + Gate B + essay contract | 🟡 部分（论文不可用） |
-| `ReviewQueueView` | `/review`、`ReviewQueue` | Gate B（Issue #4） | ❌ 未冻结 |
+| `ReviewQueueView` | `/review`、`ReviewQueue` | Gate B（Issue #4） | 🟡 domain replay available；UI read model / frontend 未实现 |
 | `CalendarView` | `StudyCalendar` | Gate A + Gate B + assessment contract | 🟡 部分（只有「有学习记录」） |
-| `ProgressSummaryView` | `/progress` | Gate A + Gate B | 🟡 部分（mastery 区块不可用） |
+| `ProgressSummaryView` | `/progress` | Gate A + Gate B | 🟡 部分（mastery domain output available；UI 未实现） |
 | `ExplainView` | `ExplainPanel` / `/explain/:kind/:id` | 取决于被解释对象 | 🟡 部分 |
 
 ---
@@ -151,11 +151,11 @@ read model 字段语义 ≠ domain 字段语义时 → 视为新事实，禁止
 | **purpose** | 支撑首屏四问：整体怎么样 / 今天做什么 / 哪些要复习 / 离目标多远 |
 | **consumer** | `/` Dashboard、`OverallProgressCard`、`TodayFocusCard`、`OperationalStatsGrid`、`ExamCountdown`、`StudyCalendar`、`SubjectStatusGrid` |
 | **source categories** | `aggregate` + `projection` + `user_config` + `phase4` + `planner` + `future` |
-| **version metadata** | 通用信封 + `mastery_policy_version` / `review_policy_version`（TBD）+ `plan_version`（TBD） |
+| **version metadata** | 通用信封 + P4.5 `mastery_policy_version` / `review_policy_version`；`plan_version` 仍 TBD |
 | **as_of** | 必填；所有子区块共享同一 `as_of`（禁止一个视图内混用多个时间点） |
 | **timezone semantics** | 必填；日历区块与倒计时依赖它确定日历日边界 |
 | **null semantics** | 每个数值字段必须带 `value_state`；`global.accuracy = null` → `empty`；`capabilities[*].evidence_status = insufficient_evidence` → 同名字段 |
-| **future / unavailable** | `overall.paper` → `no_contract` / `essay-contract`；`today.*` → `dependency_open` / `planner-contract`（Gate C）；`review.*` → `dependency_open` / `issue-4`（Gate B）；`stats.due_count` / `stats.mastery_distribution` → 同上；`stats.plan_completion` / `stats.recent_assessment` / `stats.streak` → `no_contract` |
+| **future / unavailable** | `overall.paper` → `no_contract` / `essay-contract`；`today.*` → `dependency_open` / `planner-contract`（Gate C）；`review.*`、`stats.due_count`、`stats.mastery_distribution` 可由 `MasteryReviewState v0.1` domain replay 提供，但 dashboard read model 尚未实现；`stats.plan_completion` / `stats.recent_assessment` / `stats.streak` → `no_contract` |
 
 **区块结构（规划）**
 
@@ -168,7 +168,7 @@ overall
 today
   → unavailable_future（Planner）或完整 TodayPlanView 区块
 review
-  → unavailable_future（Issue #4）或 due 摘要
+  → replay-derived due 摘要（正式 ReviewQueue read model 未实现）
 stats
   study_minutes / session_count / accuracy / coverage / errors / case_score_ratio  （available）
   due_count / mastery_distribution                                                 （phase4）
@@ -195,7 +195,7 @@ unavailable[]
 | **as_of** | 必填；必须与 Planner 生成计划时的 `as_of` 语义一致 |
 | **timezone semantics** | 必填；决定「今天」是哪一天（日历日边界） |
 | **null semantics** | 无计划 → 不返回伪造任务；返回 `value_state = unavailable_future`，或返回带空任务列表的显式空态（由 Planner 契约决定） |
-| **future / unavailable** | 全部字段当前不可用：`no_contract` / `planner-contract` / Gate C；`review.due_count` → `dependency_open` / `issue-4` / Gate B |
+| **future / unavailable** | Planner 任务字段 → `no_contract` / `planner-contract` / Gate C；`review.due_count` domain replay 可用，但 Today read model / queue consumer 尚未实现 |
 
 **规划字段（字段名与枚举均为 TBD）**
 
@@ -213,8 +213,8 @@ tasks[].type                                TBD — dependent on Planner contrac
 tasks[].ref                                 TBD — dependent on Planner contract
 tasks[].est_minutes                         TBD — dependent on Planner contract
 tasks[].required                            TBD — dependent on Planner contract
-review.due_count                            ✅ 字段名已冻结（unit = review_item）；需 P4.5 replay
-review.overdue_count                        ✅ 字段名已冻结；需 P4.5 replay
+review.due_count                            ✅ P4.5 replay 输出（unit = review_item）
+review.overdue_count                        ✅ P4.5 replay 输出
 cta_target                                  TBD — dependent on Planner contract
 explain.rule_ids / explain.signal_snapshot  TBD — dependent on Planner contract
 ```
@@ -237,11 +237,11 @@ explain.rule_ids / explain.signal_snapshot  TBD — dependent on Planner contrac
 | **purpose** | 三科各自的真实状态（**模型不强制同构**） |
 | **consumer** | `SubjectStatusGrid`、`OverallProgressCard` 的三科维度 |
 | **source categories** | `aggregate`（综合 / 案例）+ `phase4`（review debt）+ `future`（论文） |
-| **version metadata** | 通用信封 + `mastery_policy_version` / `review_policy_version`（TBD） |
+| **version metadata** | 通用信封 + P4.5 `mastery_policy_version` / `review_policy_version` |
 | **as_of** | 必填 |
 | **timezone semantics** | 对 review debt 的「今天」判断必需；纯 aggregate 区块可忽略，但仍需携带 |
 | **null semantics** | 综合：`attempt_count = 0` → `empty`；案例：capability 无 evidence → `insufficient_evidence`；论文：`unavailable_future` |
-| **future / unavailable** | 论文全部字段 → `no_contract` / `essay-contract`；`review_debt` → `dependency_open` / `issue-4` / Gate B |
+| **future / unavailable** | 论文全部字段 → `no_contract` / `essay-contract`；`review_debt` domain replay 可用，正式 SubjectStatus read model 未实现 |
 
 **三科结构差异（冻结，禁止同构化）**
 
@@ -268,21 +268,21 @@ explain.rule_ids / explain.signal_snapshot  TBD — dependent on Planner contrac
 | **purpose** | 回答「今天要复习什么、为什么」，并按 engine 的顺序呈现 |
 | **consumer** | `/review`、`ReviewQueue`、`ReviewItemCard`、`DueBadge`、`MasteryBadge`、`ExplainPanel` |
 | **source categories** | `phase4`（全部核心字段） |
-| **version metadata** | 通用信封 + `mastery_policy_version` + `review_policy_version`（均已冻结值，但需 P4.5 replay 输出） |
+| **version metadata** | 通用信封 + `mastery_policy_version` + `review_policy_version`（由 P4.5 replay 输出） |
 | **as_of** | **必填且关键**；「今天到期」完全由 `as_of` + `review_policy_version` 决定 |
 | **timezone semantics** | 必填；决定 due 的日历日归属与 overdue 的「已逾期 N 天」计算 |
 | **null semantics** | 无 evidence → 不得表示为失败或 0；`insufficient_evidence` 与 `mastered` 必须可区分 |
-| **future / unavailable** | 当前全部字段不可用：`dependency_open` / `issue-4` / Gate B |
+| **future / unavailable** | ReviewQueue 的 domain 字段由 `MasteryReviewState v0.1` 提供；正式 UI read model / queue ordering consumer 仍待 UI 实现，Planner 相关字段仍为 `planner-contract` |
 
-**规划字段（字段名与状态枚举均为 TBD）**
+**domain 字段（由 replay 提供；UI read model 仍为规划）**
 
-> 下表已按 P4.3 / P4.4 的冻结记录（`docs/review/POLICY_SYMBOL_FREEZE_V01.md` § 3）更新 policy 层字段名。
-> **字段名已冻结 ≠ 可消费**：本视图仍需要 P4.5 的 replay 输出，当前不可实现。
+> 下表按 P4.3 / P4.4 的冻结记录和 P4.5 `MasteryReviewState v0.1` 输出更新。
+> **domain replay 可消费 ≠ 前端已实现**：本文件仍不定义 API 或 UI 实现。
 
 ```text
-items[].review_item_id                      ✅ 字段名已冻结（身份构成为 P4.1，未冻结）
-items[].item_kind                           TBD — dependent on P4.1 Review Model
-items[].canonical_ref                       TBD — dependent on P4.1 Review Model
+items[].review_item_id                      ✅ P4.1 stable identity 已冻结并由 catalog 校验
+items[].item_kind                           ✅ `topic` / `question` / `case_capability`
+items[].canonical_ref                       ✅ P4.1 canonical reference
 items[].mastery_state                       ✅ 已冻结：new / learning / mastered
 items[].mastery_reason                      ✅ 字段名已冻结
 items[].review_status                       ✅ 已冻结：not_scheduled / scheduled / due / overdue
@@ -293,26 +293,25 @@ items[].next_due_local_date                 ✅ 字段名与粒度已冻结（YY
 items[].last_review_at                      ✅ 字段名已冻结（UTC instant）
 items[].last_evidence_id                    ✅ 字段名已冻结
 items[].review_interval_days                ✅ 字段名已冻结（整数或 null）
-items[].evidence_summary                    ✅ 可由已冻结计数派生
+items[].evidence[]                          ✅ evidence trace + 已冻结计数
                                             （evaluated_evidence_count / successful_review_count /
                                               failure_count / insufficient_evidence_count /
                                               consecutive_success_count / consecutive_success_day_count）
-items[].policy_version                      ✅ 已冻结值：mastery-policy/spaced-consecutive/v0.1
-                                                          + review-policy/simple-ladder/v0.1
-order                                       ❌ 仍不可用：需 P4.5 replay 提供 item 集合与排序（policy 层只冻结同 item evidence 的 tie-breaker）
+policy / outcome_adapter                    ✅ 顶层 policy identity + adapter version
+item_order                                  ✅ P4.5 replay 提供稳定 lexical item 顺序；UI 不得自行重排
 due_count                                   ✅ 字段名已冻结；unit = review_item，不变量 due_count == due_today_count + overdue_count
 due_today_count / overdue_count              ✅ 字段名已冻结
 not_scheduled_count / scheduled_count        ✅ 字段名已冻结
 total_items                                  ✅ 字段名已冻结
 new_count / learning_count / mastered_count  ✅ 字段名已冻结
-as_of / schedule_timezone / tzdata_version   ✅ 字段名已冻结（replay metadata 由 P4.5 输出）
-schema_version                               TBD — dependent on P4.5 / P4.6
+as_of / timezone / schedule_timezone / tzdata_version ✅ P4.5 replay 输出
+schema_version                               ✅ `mastery-review-state/v0.1`
 ```
 
 **约束（冻结）**：
 
 ```text
-1. `order` 必须来自 engine；UI 不得重新排序
+1. `item_order` 必须来自 engine；UI 不得重新排序
 2. `items[].item_kind` 必须返回；不同粒度的 item 不得共用同一进度条
 3. mastery 与 due 必须是两个独立字段（mastery_state / review_status），不得合并成单一互斥枚举
    —— 已由 P4.3 / P4.4 确认冻结；mastered + due 是合法组合
@@ -331,11 +330,11 @@ schema_version                               TBD — dependent on P4.5 / P4.6
 | **purpose** | 展示某时间窗口内的事实与状态分布 |
 | **consumer** | `StudyCalendar`、`CalendarLegend` |
 | **source categories** | `aggregate`（有学习记录）+ `phase4`（due / overdue）+ `future`（assessment / 完成日） |
-| **version metadata** | 通用信封 + `review_policy_version`（TBD） |
+| **version metadata** | 通用信封 + `review_policy_version`（由 P4.5 replay 输出） |
 | **as_of** | 必填；未来事件不得泄漏到当前窗口 |
 | **timezone semantics** | **必填且关键**；每一天的归属由显式 timezone 的日历日决定，不由浏览器本地时区决定 |
 | **null semantics** | 某天无事件 → 该日 `has_learning_record = false`（这是真实事实），不等于「未完成」 |
-| **future / unavailable** | `completed_days` → `no_contract` / `task-execution-contract`；`assessment_days` → `no_contract` / `assessment-contract`；`due_days` / `overdue_days` → `dependency_open` / `issue-4` / Gate B |
+| **future / unavailable** | `completed_days` → `no_contract` / `task-execution-contract`；`assessment_days` → `no_contract` / `assessment-contract`；`due_days` / `overdue_days` 可由 P4.5 domain replay 提供，Calendar read model 仍待实现 |
 
 **规划字段**
 
@@ -346,7 +345,7 @@ days[].has_learning_record                    aggregate（progress events）
 days[].event_type_counts                      aggregate（可选：comprehensive / case / study）
 days[].study_minutes                          aggregate
 days[].completed                               TBD — task execution contract（Future）
-days[].due_count / overdue_count              ✅ 字段名已冻结；需 P4.5 replay
+days[].due_count / overdue_count              ✅ domain 值由 P4.5 replay 提供；Calendar read model 待实现
 days[].has_assessment                         TBD — assessment contract（Future）
 legend                                        projection
 ```
@@ -365,14 +364,14 @@ legend                                        projection
 
 | 项 | 内容 |
 |---|---|
-| **purpose** | 解释综合 / 案例的事实表现、覆盖与错误结构；mastery 部分待 Issue #4 |
+| **purpose** | 解释综合 / 案例的事实表现、覆盖与错误结构；mastery domain 值来自 `MasteryReviewState v0.1`，read model 仍待实现 |
 | **consumer** | `/progress`、`ProgressSummary`、`TopicAccuracyList`、`CoverageBreakdown`、`ErrorCauseBreakdown`、`CapabilityEvidenceList` |
 | **source categories** | `aggregate` + `phase4` |
-| **version metadata** | 通用信封 + `mastery_policy_version`（TBD） |
+| **version metadata** | 通用信封 + `mastery_policy_version`（由 P4.5 replay 输出） |
 | **as_of** | 必填 |
 | **timezone semantics** | 对 mastery / due 区块必需；aggregate 区块不依赖日历日，但仍必须携带 |
 | **null semantics** | `global.accuracy = null` → `empty`；`topics[*].accuracy = null` → `empty`（不可用 0 代替）；`errors.error_cause_mix = null` → `empty`；capability → `insufficient_evidence` |
-| **future / unavailable** | `mastery[]` → `dependency_open` / `issue-4` / Gate B |
+| **future / unavailable** | `mastery[]` domain replay 可用；ProgressSummary read model 未实现时为实现层 unavailable |
 
 **规划字段**
 
@@ -387,7 +386,7 @@ case             { attempt_count, scored_attempt_count, score_earned,
 capabilities[]   { capability_id, attempt_count, score_earned, score_possible,
                    score_ratio, evidence_status }                                aggregate
 study            { session_count, study_minutes }                                aggregate
-mastery[]        ✅ 字段名 / 枚举已冻结（P4.3）；需 P4.5 replay
+mastery[]        ✅ domain 值由 P4.5 replay 提供；ProgressSummary read model 待实现
 meta             { replayed_event_count, schema_version, replay_rule_version,
                    taxonomy_version, capability_version }                        aggregate
 ```
@@ -467,9 +466,9 @@ versions                         envelope
 | `taxonomy_version` | taxonomy v0.1 ✅ |
 | `capability_version` | capability v0.1 ✅ |
 | `state_schema_version` | `progress-state/v0.1` ✅ |
-| `mastery_policy_version` | ✅ 已冻结：`mastery-policy/spaced-consecutive/v0.1`（但需 P4.5 replay 输出） |
-| `review_policy_version` | ✅ 已冻结：`review-policy/simple-ladder/v0.1`（但需 P4.5 replay 输出） |
-| `review_projection_schema_version` | 🟡 `review-policy-projection/v0.1`；schema 版本号字符串由 P4.5 / P4.6 命名空间确认 |
+| `mastery_policy_version` | ✅ `mastery-policy/spaced-consecutive/v0.1`（由 P4.5 replay 输出） |
+| `review_policy_version` | ✅ `review-policy/simple-ladder/v0.1`（由 P4.5 replay 输出） |
+| `review_projection_schema_version` | ✅ `review-policy-projection/v0.1`；MasteryReviewState 顶层 schema 为 `mastery-review-state/v0.1` |
 | `schedule_timezone` | ✅ 字段名已冻结；必填、无隐式默认 |
 | `tzdata_version` | ✅ 字段名已冻结 |
 | `policy_version` | `TBD — dependent on Planner contract` |
@@ -495,7 +494,7 @@ data/review/fixture-schema.draft.json → review-fixture/v0.1-draft（status: dr
 
 它是 Phase 4 **测试 fixture** 的字段骨架，不是 `MasteryReviewState`，也不是 UI read model 契约。
 
-**方向相反的情况**：`docs/review/POLICY_SYMBOL_FREEZE_V01.md` 是**正式冻结契约**，其 policy 层字段名与枚举已直接用于本文件的 `ReviewQueueView`；但 `MasteryReviewState` 的顶层对象名与 `schema_version` 字符串仍属 P4.5 / P4.6，不得从 policy 层记录反推。
+**方向相反的情况**：`docs/review/POLICY_SYMBOL_FREEZE_V01.md` 是**正式冻结契约**，其 policy 层字段名与枚举已直接用于本文件的 `ReviewQueueView`；MasteryReviewState 顶层对象名与 `schema_version` 已由 P4.5 冻结，UI 仍不得从 policy kernel 自行拼装。
 
 ---
 
@@ -504,7 +503,7 @@ data/review/fixture-schema.draft.json → review-fixture/v0.1-draft（status: dr
 | Gate | 解锁的 read model 部分 |
 |---|---|
 | Gate A ✅ | `ProgressSummaryView` 的 aggregate 区块、`CalendarView.has_learning_record`、`SubjectStatusView` 的综合 / 案例区块 |
-| Gate B ❌ | `ReviewQueueView` 全部、`CalendarView.due/overdue`、`SubjectStatusView.review_debt`、`ProgressSummaryView.mastery[]`、`ExplainView`（review 对象） |
+| Gate B ✅ | P4.5 domain replay 已提供 `ReviewQueueView` 所需 mastery / scheduling / explain 字段；正式 UI read model 与 frontend 仍未实现 |
 | Gate C ❌ | `TodayPlanView` 全部、`CockpitDashboardView.today`、`ExplainView`（plan 对象） |
 | Gate D 🟡 | 本文件只定义 consumer contract；**Gate D 的完整冻结（字段、来源类别、版本元数据、null / unavailable 语义全部落定）仍依赖 Gate B / C 完成** |
 | Gate 之外 | `essay` / `assessment` / `resources` 相关部分 |

@@ -1,4 +1,16 @@
-"""Review Model / Evidence v0.1 public API."""
+"""Review Model / Evidence / MasteryReviewState v0.1 public API."""
+
+from .replay import (
+    MASTER_REVIEW_STATE_SCHEMA_VERSION,
+    MASTERY_REVIEW_STATE_SCHEMA_VERSION,
+    MASTERY_POLICY_FULL_VERSION,
+    OUTCOME_ADAPTER_FULL_VERSION,
+    OUTCOME_ADAPTER_ID,
+    OUTCOME_ADAPTER_VERSION,
+    REVIEW_POLICY_FULL_VERSION,
+    MasteryReviewReplayError,
+    replay,
+)
 
 from .model import (
     EVIDENCE_SCHEMA_VERSION,
@@ -21,6 +33,15 @@ from .model import (
 )
 
 __all__ = [
+    "MASTER_REVIEW_STATE_SCHEMA_VERSION",
+    "MASTERY_REVIEW_STATE_SCHEMA_VERSION",
+    "MASTERY_POLICY_FULL_VERSION",
+    "OUTCOME_ADAPTER_FULL_VERSION",
+    "OUTCOME_ADAPTER_ID",
+    "OUTCOME_ADAPTER_VERSION",
+    "REVIEW_POLICY_FULL_VERSION",
+    "MasteryReviewReplayError",
+    "replay",
     "EVIDENCE_SCHEMA_VERSION",
     "EVIDENCE_STATUSES",
     "IDENTITY_NAMESPACE",

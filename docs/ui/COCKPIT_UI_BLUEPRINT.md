@@ -16,7 +16,7 @@ Cockpit 必须能回答四个核心问题：
 |---|---|---|---|
 | Q1 | 我现在准备得怎么样？ | `OverallProgressCard`、`SubjectStatusGrid` | 🟡 部分（综合 / 案例可用；论文不可用） |
 | Q2 | 我今天应该做什么？ | `TodayFocusCard` | ❌ 依赖 Planner contract |
-| Q3 | 哪些内容需要复习？ | `ReviewQueue` / `DueBadge` | ❌ 依赖 Issue #4 |
+| Q3 | 哪些内容需要复习？ | `ReviewQueue` / `DueBadge` | 🟡 P4.5 domain replay available；UI read model 未实现 |
 | Q4 | 离目标还有多远？ | `ExamCountdown`、Coverage、Assessment | 🟡 倒计时可用（User Config）；目标达成度依赖 assessment contract |
 
 ### 1.1 验收目标
@@ -139,7 +139,7 @@ UI 不得把重放表述为无参数的「刷新」，也不得让「今天」�
 | 综合 | 我综合知识练得怎么样 / 去练习 | Later |
 | 案例 | 我的案例能力弱在哪 / 去练习 | Later |
 | 论文 | 我的论文准备到哪一步 | Future（无 essay contract） |
-| 复习 | 今天哪些内容需要复习 | MVP（数据依赖 Issue #4） |
+| 复习 | 今天哪些内容需要复习 | MVP（数据依赖 P4.5 replay；UI 未实现） |
 | 资源 | 内容从哪里来 | Later（只索引 / 引用） |
 
 **规则**：没有明确 user job 的入口不建。
@@ -201,7 +201,7 @@ unavailable state / data source / explain behavior
 | 维度 | 字段 | 依赖 | 标记 |
 |---|---|---|---|
 | 论文 | outline readiness / material coverage / practice status / assessment | essay contract | `TBD — essay contract 未冻结` |
-| 三科 | mastery / 掌握度 | P4.3 / P4.4 已冻结枚举与字段名；需 P4.5 replay | `TBD — dependent on P4.5 replay` |
+| 三科 | mastery / 掌握度 | `MasteryReviewState v0.1` domain replay（正式 read model 未实现） | `Available from replay; UI read model TBD` |
 | 三科 | 目标达成度（离及格线多远） | assessment contract | `TBD — assessment contract 未冻结` |
 
 **维度可用性矩阵（冻结，禁止补齐成同构）**
@@ -246,9 +246,9 @@ unavailable state / data source / explain behavior
 | 项 | 内容 |
 |---|---|
 | **user question** | 我今天应该做什么？ |
-| **data source** | Planner 输出（**未冻结**）+ Review 输出（Issue #4，**未冻结**） |
+| **data source** | Planner 输出（**未冻结**）+ `MasteryReviewState v0.1` review replay（P4.5） |
 | **source category** | `planner` + `phase4` |
-| **implementation gate** | Gate C（Planner）+ Gate B（Review） |
+| **implementation gate** | Gate C（Planner）+ Gate B domain replay ✅；frontend/read model 仍待实现 |
 | **explain behavior** | 展开后显示触发的 rule id、输入信号快照、plan / policy version（未来字段，契约未冻结） |
 
 **当前正式状态（必须冻结）**
@@ -277,13 +277,12 @@ plan_version / policy version                          TBD — dependent on Plan
 cta_target                                             TBD — dependent on Planner contract
 ```
 
-**future fields（依赖 Issue #4）**
+**review domain fields（由 P4.5 replay 提供；Today read model 仍待 Planner/UI contract）**
 
 ```text
-review.due_count        ✅ 字段名与语义已冻结（unit = review_item）
-                        —— 但仍需 P4.5 replay 才能取值
-review.overdue_count    ✅ 字段名已冻结；需 P4.5 replay
-review.next_due_at      ✅ 字段名与粒度已冻结；需 P4.5 replay
+review.due_count        ✅ replay 输出（unit = review_item）
+review.overdue_count    ✅ replay 输出
+review.next_due_at      ✅ item-level replay 输出
 ```
 
 **empty state**
@@ -297,7 +296,7 @@ review.next_due_at      ✅ 字段名与粒度已冻结；需 P4.5 replay
 | 子区域 | 不可用原因 | 表达 |
 |---|---|---|
 | 今日任务列表 | Planner contract 未冻结 | `UnavailableBadge` →「契约未冻结」 |
-| 到期复习入口 | P4.5 replay 未实现 | `UnavailableBadge` →「依赖 Mastery / Review replay（P4.5）」 |
+| 到期复习入口 | P4.5 domain replay available；Today read model 未实现 | 实现层 unavailable；不得自行计算 due |
 
 **硬约束**
 
@@ -315,9 +314,9 @@ review.next_due_at      ✅ 字段名与粒度已冻结；需 P4.5 replay
 | 项 | 内容 |
 |---|---|
 | **user question** | 我的整体运营统计是什么？（时长 / 覆盖 / 错题 / 复习债务） |
-| **data source** | `progress-state/v0.1` aggregate（部分 tile）+ Issue #4（部分 tile）+ 未定义 contract（部分 tile） |
+| **data source** | `progress-state/v0.1` aggregate（部分 tile）+ `MasteryReviewState v0.1`（部分 tile）+ 未定义 contract（部分 tile） |
 | **source category** | `aggregate` + `phase4` + `future` |
-| **implementation gate** | Available tile 可渲染；`phase4` / `future` tile 必须显示 `UnavailableBadge` |
+| **implementation gate** | Available / replay tile 的 domain source 已有；UI read model 未实现；`future` tile 必须显示 `UnavailableBadge` |
 | **explain behavior** | 每个 tile 必须声明 data source；可展开到对应明细视图 |
 
 **tile 冻结表**
@@ -330,8 +329,8 @@ review.next_due_at      ✅ 字段名与粒度已冻结；需 P4.5 replay
 | T4 | 知识覆盖 | `aggregate` | `coverage.l1/l2/l3.ratio`（分母 = taxonomy 全量节点） | ✅ Available |
 | T5 | 错题数 / 归因分布 | `aggregate` | `errors.error_count` / `errors.error_count_by_cause` / `errors.unclassified_error_count` | ✅ Available |
 | T6 | 案例加权得分率 | `aggregate` | `case.score_ratio`（加权 earned/possible） | ✅ Available |
-| T7 | 今日到期复习数 | `phase4` | `due_count`（unit = review_item） | 🟡 字段名已冻结；`TBD — dependent on P4.5 replay` |
-| T8 | mastery 分布 | `phase4` | `new_count` / `learning_count` / `mastered_count` | 🟡 字段名已冻结；`TBD — dependent on P4.5 replay` |
+| T7 | 今日到期复习数 | `phase4` | `review.due_count`（unit = review_item） | 🟡 domain replay available；dashboard read model 未实现 |
+| T8 | mastery 分布 | `phase4` | `mastery.new_count` / `learning_count` / `mastered_count` | 🟡 domain replay available；dashboard read model 未实现 |
 | T9 | 计划完成度 | `future` | task execution contract | ⏳ 未冻结 |
 | T10 | 近期 assessment | `future` | assessment contract | ⏳ 未冻结 |
 | T11 | 连续学习天数 | `future` | 无 contract | ⏳ **禁止由 UI 推断** |
@@ -345,7 +344,7 @@ review.next_due_at      ✅ 字段名与粒度已冻结；需 P4.5 replay
 **unavailable state**
 
 ```text
-T7 / T8  → UnavailableBadge（依赖 Mastery / Review replay，P4.5）
+T7 / T8  → domain source available；UI 未实现时显示实现层 unavailable，不得自行重算
 T9 / T10 / T11 → UnavailableBadge（契约未定义）
 ```
 
@@ -413,7 +412,7 @@ T9 / T10 / T11 → UnavailableBadge（契约未定义）
 | 项 | 内容 |
 |---|---|
 | **user question** | 我这些天有没有学习 / 有没有复习债务 / 有没有模拟？ |
-| **data source** | 事件聚合（`occurred_at`）+ Issue #4（due / overdue）+ assessment contract（未来） |
+| **data source** | 事件聚合（`occurred_at`）+ `MasteryReviewState v0.1`（due / overdue）+ assessment contract（未来） |
 | **source category** | `aggregate` + `phase4` + `future` |
 | **implementation gate** | 「有学习记录」：Gate A ✅；「复习 due / overdue」：Gate B；「Assessment」「完成日」：未解锁 |
 | **explain behavior** | 点击某一天展开当天的事实来源（事件类型、计数、`as_of`） |
@@ -424,7 +423,7 @@ T9 / T10 / T11 → UnavailableBadge（契约未定义）
 |---|---|---|
 | 有学习记录（有事件） | immutable progress events | ✅ Available |
 | 完成日（task execution） | task execution contract | ❌ Future |
-| Review due / overdue | Issue #4（P4.4 规则已冻结；需 P4.5 replay） | 🟡 `TBD — dependent on P4.5 replay` |
+| Review due / overdue | `MasteryReviewState v0.1` P4.5 replay | 🟡 domain available；Calendar read model 未实现 |
 | Assessment | assessment contract | ❌ Future |
 
 **Legend 草案**
@@ -432,7 +431,7 @@ T9 / T10 / T11 → UnavailableBadge（契约未定义）
 ```text
 ○  有学习记录
 ●  已完成                  （Future — task execution contract）
-!  有逾期复习              （Phase 4 — P4.4 规则已冻结，需 P4.5 replay）
+!  有逾期复习              （Phase 4 — P4.5 replay domain output）
 △  有 Assessment           （Future — assessment contract）
 ```
 
@@ -471,7 +470,7 @@ T9 / T10 / T11 → UnavailableBadge（契约未定义）
 | 项 | 内容 |
 |---|---|
 | **user question** | 三科分别处于什么状态？ |
-| **data source** | `progress-state/v0.1`（综合 / 案例） + Issue #4（review debt） + essay contract（论文） |
+| **data source** | `progress-state/v0.1`（综合 / 案例） + `MasteryReviewState v0.1`（review debt） + essay contract（论文） |
 | **source category** | `aggregate` + `phase4` + `future` |
 | **implementation gate** | 综合 / 案例：Gate A ✅；review debt：Gate B；论文：未解锁 |
 | **explain behavior** | 每张卡展开到该科的明细视图（topic accuracy / capability evidence / coverage） |
@@ -494,8 +493,8 @@ T9 / T10 / T11 → UnavailableBadge（契约未定义）
 **future fields**
 
 ```text
-综合：review debt                          TBD — dependent on P4.5 replay（P4.4 字段名已冻结）
-案例：weak capability ranking              TBD — dependent on P4.5 replay（排序必须来自 engine）
+综合：review debt                          由 `MasteryReviewState v0.1` replay 提供；read model 未实现
+案例：weak capability ranking              需要 engine 明确定义排序；不得由 UI 自行推断
 论文：全部字段                             TBD — essay contract 未冻结
 ```
 
@@ -511,7 +510,7 @@ T9 / T10 / T11 → UnavailableBadge（契约未定义）
 
 ```text
 论文卡 → PaperUnavailableBadge →「尚未建立契约」
-review debt → UnavailableBadge →「依赖 Mastery / Review replay（P4.5）」
+review debt → domain replay available；UI read model 未接入时显示实现层 unavailable
 ```
 
 **硬约束（冻结）**
@@ -587,13 +586,13 @@ UI ✗→ 直接改写派生状态
 
 | 依赖 | 阻塞内容 | 当前状态 |
 |---|---|---|
-| D1 · Phase 4 Mastery / Review（Issue #4） | Review Queue、DueBadge、MasteryBadge、ExplainPanel、`due_count`、review debt | 🟡 **规则层已冻结**（P4.3 / P4.4）；**replay 未实现**（P4.5）→ UI 仍不可消费 |
+| D1 · Phase 4 Mastery / Review（Issue #4） | Review Queue、DueBadge、MasteryBadge、ExplainPanel、`due_count`、review debt | ✅ **domain replay 可消费**（P4.5）；正式 UI read model / frontend 未实现 |
 | D2 · Planner contract | Today Card、PlanTimeline、PlanModeSwitcher、冲刺阶段 | 未冻结 |
 | D3 · Cockpit Read Model contract | 所有页面的数据输入 | 本轮定义 consumer contract，未实现 |
 | D4 · Assessment contract | 模拟分数、`recent_score`、目标达成度 | 未定义 |
 | D5 · User Configuration contract | 考试日期、时区、每日可用时间、及格线目标 | 未定义（本轮只冻结「属于 user_config」这一分类） |
 | D6 · Task execution contract | 计划完成度、完成日、streak | 未定义 |
 | D7 · Essay contract | 论文状态卡、论文页面 | 未定义 |
-| D8 · taxonomy / capability 迁移策略 | review item 深链稳定性 | 待 Issue #4 一并处理 |
+| D8 · taxonomy / capability 迁移策略 | review item 深链稳定性 | P4.1 identity 已冻结；未来迁移策略仍需独立 contract |
 
 **注意**：本文件中的所有 `TBD` 表示「上游契约尚未冻结」，不代表隐式默认值。任何实现前必须回到对应上游契约取值。

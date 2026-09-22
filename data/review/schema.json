@@ -3,6 +3,9 @@
   "item_schema_version": "review-item/v0.1",
   "event_schema_version": "review-event/v0.1",
   "evidence_schema_version": "review-evidence/v0.1",
+  "mastery_review_state_schema": "mastery-review-state/v0.1",
+  "mastery_review_state_schema_file": "mastery-review-state.schema.json",
+  "outcome_adapter": "review-outcome/raw-facts/v0.1",
   "fixture_schema_version": "review-fixture/v0.1",
   "source_of_truth": "progress-events-plus-explicit-review-context-events",
   "identity": {
@@ -127,7 +130,7 @@
       "evidence_value contains facts, not success/failure judgments",
       "no evidence record may contain mastery, interval, due or scheduling policy fields",
       "null or insufficient evidence is not a zero score and not a failure",
-      "case score to success/failure requires a separate versioned outcome adapter; it is a BLOCKING_DECISION for P4.5"
+      "case score to success/failure requires a separate versioned outcome adapter; v0.1 replay uses review-outcome/raw-facts/v0.1 and does not infer success/failure"
     ]
   },
   "projection": {

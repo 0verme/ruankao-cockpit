@@ -1,9 +1,9 @@
 # Today / Planner UX Contract v0.1
 
 > **状态**：PLANNING CONTRACT（Issue #5 · UI.6）
-> **依赖**：Planner contract（**未冻结**）+ Issue #4（**未完成**）
+> **依赖**：Planner contract（**未冻结**）+ Issue #4 domain replay（**P4.5 已完成**）
 > **重要声明**：本文件只冻结「UI 如何消费未来 Planner 输出」的规划。**不实现 Planner，不定义 Planner 的输出 schema。**
-> **备注**：下方的 `review.*` 字段名已由 P4.3 / P4.4 冻结，但仍需 P4.5 replay 才能取值。
+> **备注**：下方的 `review.*` domain 值由 `MasteryReviewState v0.1` replay 提供；本文件不直接调用 policy kernel。
 
 ---
 
@@ -30,7 +30,8 @@ plan explain（rule id + signal snapshot） ❌ 不存在
 因此：
 
 ```text
-TodayFocusCard 的唯一合法当前状态 = EmptyState
+TodayFocusCard 的 Planner 任务区当前状态 = EmptyState
+复习 domain 数据源 = P4.5 replay 可用；Today read model / UI 仍未实现
 ```
 
 ---
@@ -77,9 +78,9 @@ DRAFT（Curriculum 设计草案，不是最终每日计划）
 | 草案内容 | 类型 | 状态 |
 |---|---|---|
 | `Day 1..30` 逐日结构 | 阶段设计 | Draft；**禁止硬编码** |
-| `1 / 3 / 7 / 15` 复习间隔 | 候选调度参数 | Draft；由 **Issue #4** 裁决 |
-| `连续答对 >= 3 → mastered` | 候选 mastery 规则 | Draft；由 **Issue #4** 裁决 |
-| `due_card_count` | 候选复习债务信号 | Draft；由 **Issue #4** 裁决（字段名可能不同） |
+| `1 / 3 / 7 / 15` 复习间隔 | Review policy 参数 | ✅ P4.4 冻结；UI 只消费 replay 输出 |
+| `连续答对 >= 3 → mastered` | Mastery policy 规则 | ✅ P4.3 冻结；实际字段为 `mastery_state` |
+| `due_card_count` | 复习债务信号 | ❌ 非冻结字段；使用 replay 的 `review.due_count`（unit = review_item） |
 | `baseline_accuracy` / `recent_score` | 候选信号 | `recent_score` 依赖 assessment contract |
 | `capacity.tier`（8 / 14 / 22 小时档） | 候选容量档位 | Draft；不得作为 UI 常量 |
 | `error_cause_mix` 阈值（例如 `> 0.5`） | 候选规则阈值 | Draft；Planner 冻结前不得进入 UI |
@@ -131,9 +132,9 @@ explain（rule id + signal snapshot）         TBD — dependent on Planner cont
 依赖 Issue #4 的复习区块：
 
 ```text
-review.due_count                            ✅ 字段名已冻结（unit = review_item）
-review.overdue_count                        ✅ 字段名已冻结
-review.next_due_at                          ✅ 字段名与粒度已冻结
+review.due_count                            ✅ P4.5 replay 输出（unit = review_item）
+review.overdue_count                        ✅ P4.5 replay 输出
+review.next_due_at                          ✅ item-level P4.5 replay 输出
 ```
 
 ### 4.3 消费约束（冻结）
@@ -200,7 +201,7 @@ Planner 冻结后，任务必须可展开解释：
 | 区域 | 当前状态 | 用户可见文案 |
 |---|---|---|
 | `TodayFocusCard` 任务区 | Planner contract 未冻结 | 「Planner contract 尚未冻结」 |
-| `TodayFocusCard` 复习区 | P4.5 replay 未实现 | 「依赖 Mastery / Review replay（P4.5）」 |
+| `TodayFocusCard` 复习区 | P4.5 domain replay available；Today read model 未实现 | 若 UI 尚未接入，显示实现层 unavailable；不得自行计算 due |
 | `PlanTimeline` | Planner contract 未冻结 | 「Planner contract 尚未冻结」 |
 | `PlanModeSwitcher` | Planner contract 未冻结 | **不渲染** |
 | 冲刺阶段标签 | Planner contract 未冻结 | 「尚未建立契约」（或在 `/settings` 中由用户配置） |
@@ -236,7 +237,7 @@ UI 不得把 user_config 值伪装成 Planner 输出
 | Planner output contract | ❌ 未冻结 | Today Card、PlanTimeline、PlanModeSwitcher、冲刺阶段 |
 | Planner plan version | ❌ 未冻结 | Explain 可复现性 |
 | Planner explain（rule id + signal snapshot） | ❌ 未冻结 | Explain 层 |
-| Issue #4（review 区块） | ❌ 未完成 | Today 中的到期复习信息 |
+| Issue #4（review 区块） | ✅ P4.5 domain replay；P4.6/P4.7/P4.9 未收口 | Today 中的到期复习信息仍需 Planner/read model consumer |
 | task execution contract | ❌ 未定义 | 计划完成度、完成日、streak |
 | User Configuration contract | ❌ 未定义 | 考试日期、时区、可用时间、目标的持久化与版本 |
 

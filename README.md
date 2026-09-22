@@ -44,13 +44,13 @@ Progress Model v0.1   ✅
 Progress Replay       ✅
 Review Model / Evidence v0.1 ✅
 Mastery / Review Policy v0.1 ✅ 规则冻结
-Mastery / Review Replay ⏳
+Mastery / Review Replay ✅ deterministic replay v0.1
 Adaptive Planner      ⏳
 30-Day Plan           ⏳
 Cockpit UI            ⏳
 ```
 
-当前仓库已完成 Taxonomy v0.1、Case Capability v0.1、Golden Set 数据契约和 Phase 2 扩量验证（100 道综合题、48 道案例子问题），并已建立 Progress Event v0.1、基础 ProgressState、deterministic replay，以及 Phase 4 P4.1/P4.2 Review Model / Evidence 和 P4.3/P4.4 policy contract。ProgressState 始终由事件重建；尚未实现 Mastery / Review replay、Adaptive Planner、30 天计划实例化或 UI。
+当前仓库已完成 Taxonomy v0.1、Case Capability v0.1、Golden Set 数据契约和 Phase 2 扩量验证（100 道综合题、48 道案例子问题），并已建立 Progress Event v0.1、基础 ProgressState、deterministic replay，以及 Phase 4 P4.1/P4.2 Review Model / Evidence、P4.3/P4.4 policy contract 和 P4.5 `MasteryReviewState v0.1` replay。ProgressState 与 MasteryReviewState 都始终由 immutable facts 重建；Adaptive Planner、30 天计划实例化和 UI 仍未实现。
 
 ## 文档入口
 
@@ -70,6 +70,6 @@ Cockpit UI            ⏳
 
 ## 开发边界
 
-本阶段不初始化前端技术栈、数据库、API 或 Planner；当前实现标准库 Progress Event / Replay、独立的 Review Model / Evidence v0.1 契约，以及已冻结但尚未接入 replay 的 Mastery / Review policy kernel。详细的版权、数据边界、测试优先级和领域约束见 [AGENTS.md](AGENTS.md)。
+本阶段不初始化前端技术栈、数据库、API 或 Planner；当前实现标准库 Progress Event / Replay、独立的 Review Model / Evidence v0.1 契约，以及将冻结 policy kernel 接入 `MasteryReviewState v0.1` 的 deterministic replay。详细的版权、数据边界、测试优先级和领域约束见 [AGENTS.md](AGENTS.md)。
 
-Cockpit UI 目前只有**规划文档**（[`docs/ui/`](docs/ui/README.md)）：信息架构、页面地图、Domain → UI 映射、UI Read Model consumer contract、Design Direction 与组件边界已冻结为可审计文档，但仍**没有**前端工程、API、数据库或账号系统。UI 的实现 Gate 依赖 `MasteryReviewState` replay 输出（P4.5）与 Adaptive Planner 的正式契约，详见 [`docs/ui/README.md`](docs/ui/README.md) 的 Gate 状态表。
+Cockpit UI 目前只有**规划文档**（[`docs/ui/`](docs/ui/README.md)）：信息架构、页面地图、Domain → UI 映射、UI Read Model consumer contract、Design Direction 与组件边界已冻结为可审计文档，但仍**没有**前端工程、API、数据库或账号系统。P4.5 已解锁 Mastery / Review 的 domain consumer；正式 Planner 与前端实现仍按 [`docs/ui/README.md`](docs/ui/README.md) 的 Gate 状态表推进。

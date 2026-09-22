@@ -213,8 +213,8 @@ Progress Events
 P4.3/P4.4 policy kernel 的 `PolicyEvidence` 使用 `success / failure / insufficient` primitive；本 contract 刻意不把这些 policy/outcome 结论写入 Evidence。两层之间必须有显式 adapter：
 
 - `comprehensive_correctness.correct=true/false` 是明确二值事实，adapter 可以确定性地映射为 success/failure；`insufficient_evidence` 只能映射为 insufficient。
-- `case_score` 与 `case_capability_score` 只保存 score pair。v0.1 没有冻结 score threshold、采分点 rubric 或 success mapping，因此 **BLOCKING_DECISION**：P4.5 在消费案例/能力 evidence 前必须先冻结独立、版本化的 outcome mapping。
-- adapter 不能由 AI、自由文本或当前时间产生，也不能把 score 缺失改写成 failure/zero；mapping 的 policy version 和解释由下游记录。
+- `case_score` 与 `case_capability_score` 只保存 score pair。v0.1 没有冻结 score threshold、采分点 rubric 或 success mapping，因此 P4.5 使用独立、版本化的保守 adapter（[`REVIEW_OUTCOME_ADAPTER_V01.md`](REVIEW_OUTCOME_ADAPTER_V01.md)）：score 保留为 raw fact，policy outcome 为 `insufficient`，不产生 success/failure。
+- adapter 不能由 AI、自由文本或当前时间产生，也不能把 score 缺失改写成 failure/zero；adapter version 和解释由 replay 输出记录。未来 score rubric 必须使用新的 adapter version。
 
 本 contract 不回答：
 

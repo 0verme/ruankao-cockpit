@@ -15,12 +15,13 @@ data/review/     Review evidence / Mastery state / Review scheduling 的 fixture
 
 ```text
 TEST_DESIGN_READY
-WAITING_FOR_CONTRACT_FREEZE（P4.1 / P4.2 / P4.3 / P4.4 / P4.5）
+WAITING_FOR_FIXTURE_MATRIX_FINALIZATION（P4.6 / P4.7）
 ```
 
-本目录当前**不包含**任何 `expected` 值或 fixture 文件，因为
-`review_item_id` 格式、success 判定、mastery 状态名、interval ladder 和
-failure reset 策略尚未冻结。提前写死 expected 等于自行发明 production policy。
+本目录当前**不包含**任何 fixture 文件，因为 P4.6/P4.7 的 policy-dependent
+expected、edge-case matrix 与 synthetic asset 仍未收口。P4.1～P4.5 的
+`review_item_id`、evidence contract、状态名、interval ladder、failure reset
+和 replay schema 已由对应 contract / engine 实现；fixture 不得再定义一套规则。
 
 ## 文件
 
@@ -28,7 +29,7 @@ failure reset 策略尚未冻结。提前写死 expected 等于自行发明 prod
 | --- | --- |
 | `fixture-plan.json` | 机器可读测试 / fixture 设计 manifest，含 policy symbol 注册表 |
 | `fixture-schema.draft.json` | draft fixture contract；`frozen: false`，freeze 后升级版本 |
-| `fixtures/` | contract freeze 后按 manifest 填充 synthetic fixture |
+| `fixtures/` | fixture matrix freeze 后按 manifest 填充 synthetic fixture |
 
 ## 关联文档与骨架
 
@@ -37,7 +38,7 @@ failure reset 策略尚未冻结。提前写死 expected 等于自行发明 prod
 * [`tests/test_review_fixture_plan.py`](../../tests/test_review_fixture_plan.py)：manifest / draft schema 一致性
 * [`tests/test_review_determinism_harness.py`](../../tests/test_review_determinism_harness.py)：harness 自测与 wall-clock 扫描
 * [`tests/test_progress_v01_regression.py`](../../tests/test_progress_v01_regression.py)：Phase 3 语义冻结基线
-* [`scripts/validate_review.py`](../../scripts/validate_review.py)：review 域 validator（当前输出 PENDING）
+* [`scripts/validate_review.py`](../../scripts/validate_review.py)：review 域 validator（fixture matrix 未收口时输出 PENDING）
 
 ## 运行
 
@@ -46,4 +47,4 @@ python3 scripts/validate_review.py
 python3 -m unittest discover -s tests -v
 ```
 
-`validate_review.py` 输出 `PENDING` 是正常结果，不代表 Phase 4 完成。
+`validate_review.py` 输出 `PENDING_REVIEW_FIXTURE_MATRIX` 是当前预期结果，不代表 Phase 4 已完成。

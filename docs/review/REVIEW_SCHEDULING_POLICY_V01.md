@@ -370,11 +370,11 @@ due_count == count(item for item in items if item.review_status in {due, overdue
 
 ---
 
-## 9. Item-level projection fields（供 P4.5 / P4.6 冻结 schema 使用）
+## 9. Item-level projection fields（供 P4.5 replay / P4.6 fixtures 使用）
 
 以下是 policy kernel 目前输出的字段。**语义与字段名已由本窗口（P4.3 / P4.4）冻结**；
-`MasteryReviewState v0.1` 的 `schema_version` 字符串、顶层对象名与额外 replay metadata 由
-P4.5 / P4.6 命名。重命名这些 policy 字段需要新的 policy version。
+`MasteryReviewState v0.1` 的 schema、顶层对象名与 replay metadata 已由 P4.5 命名为
+`mastery-review-state/v0.1`。重命名这些 policy 字段需要新的 policy version。
 
 ```text
 review_item_id
