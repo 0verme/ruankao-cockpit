@@ -1,0 +1,74 @@
+{
+  "description": "evidence occurred_at 晚于显式 as_of，fail-closed 拒绝。",
+  "as_of": "2026-03-01T10:00:00+08:00",
+  "timezone": "Asia/Shanghai",
+  "input": {
+    "progress_events": [
+      {
+        "event_id": "future-attempt",
+        "schema_version": "progress-event/v0.1",
+        "event_type": "comprehensive_attempt",
+        "occurred_at": "2026-03-02T10:00:00+08:00",
+        "question": {
+          "source_id": "synthetic-bank",
+          "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "source_path": "fixtures/question-index.json",
+          "source_question_id": "q-001"
+        },
+        "topics": [
+          "DATA.DATABASE.RELATIONAL"
+        ],
+        "correct": true
+      }
+    ],
+    "review_events": [
+      {
+        "schema_version": "review-event/v0.1",
+        "event_id": "ctx-future-attempt",
+        "event_type": "review_context",
+        "source_event_id": "future-attempt",
+        "review_item_id": "review/question/synthetic-bank/q-001",
+        "attempt_context": "review",
+        "occurred_at": "2026-03-02T10:00:00+08:00"
+      }
+    ],
+    "items": [
+      {
+        "schema_version": "review-item/v0.1",
+        "review_item_id": "review/question/synthetic-bank/q-001",
+        "item_kind": "question",
+        "canonical_ref": {
+          "source_id": "synthetic-bank",
+          "source_question_id": "q-001"
+        },
+        "source_reference": {
+          "source_id": "synthetic-bank",
+          "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "source_path": "fixtures/question-index.json",
+          "source_question_id": "q-001"
+        },
+        "display_name": "synthetic q-001"
+      }
+    ]
+  },
+  "variants": [],
+  "expected_error": "future_evidence",
+  "schema_version": "mastery-review-fixture/v0.1",
+  "fixture_id": "invalid-future-evidence",
+  "policies": {
+    "mastery": "mastery-policy/spaced-consecutive/v0.1",
+    "review": "review-policy/simple-ladder/v0.1",
+    "outcome_adapter": "review-outcome/raw-facts/v0.1"
+  },
+  "contract_refs": [
+    "data/review/mastery-review-state.schema.json",
+    "docs/PHASE4_TEST_MATRIX.md",
+    "docs/review/REVIEW_EVIDENCE_V01.md",
+    "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+    "engine/review/replay.py"
+  ],
+  "policy_symbols": [
+    "REPLAY_FUTURE_EVIDENCE_POLICY",
+    "STATE_ERROR_CATEGORIES"
+  ]
+}

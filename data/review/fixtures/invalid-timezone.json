@@ -1,0 +1,47 @@
+{
+  "description": "timezone 不是可解析的 IANA timezone。",
+  "as_of": "2026-03-01T10:00:00Z",
+  "timezone": "Mars/Olympus",
+  "input": {
+    "progress_events": [],
+    "review_events": [],
+    "items": [
+      {
+        "schema_version": "review-item/v0.1",
+        "review_item_id": "review/question/synthetic-bank/q-001",
+        "item_kind": "question",
+        "canonical_ref": {
+          "source_id": "synthetic-bank",
+          "source_question_id": "q-001"
+        },
+        "source_reference": {
+          "source_id": "synthetic-bank",
+          "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "source_path": "fixtures/question-index.json",
+          "source_question_id": "q-001"
+        },
+        "display_name": "synthetic q-001"
+      }
+    ]
+  },
+  "variants": [],
+  "expected_error": "invalid_timezone",
+  "schema_version": "mastery-review-fixture/v0.1",
+  "fixture_id": "invalid-timezone",
+  "policies": {
+    "mastery": "mastery-policy/spaced-consecutive/v0.1",
+    "review": "review-policy/simple-ladder/v0.1",
+    "outcome_adapter": "review-outcome/raw-facts/v0.1"
+  },
+  "contract_refs": [
+    "data/review/mastery-review-state.schema.json",
+    "docs/PHASE4_TEST_MATRIX.md",
+    "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+    "docs/review/REVIEW_SCHEDULING_POLICY_V01.md",
+    "engine/review/replay.py"
+  ],
+  "policy_symbols": [
+    "SCHED_DATE_BOUNDARY_TIMEZONE",
+    "STATE_ERROR_CATEGORIES"
+  ]
+}

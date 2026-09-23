@@ -1,0 +1,157 @@
+{
+  "description": "case capability 被引用但没有 capability score：insufficient，不是 failure 或零分。",
+  "as_of": "2026-03-01T10:00:00+08:00",
+  "timezone": "Asia/Shanghai",
+  "input": {
+    "progress_events": [
+      {
+        "event_id": "case-missing-cap",
+        "schema_version": "progress-event/v0.1",
+        "event_type": "case_attempt",
+        "occurred_at": "2026-03-01T10:00:00+08:00",
+        "question": {
+          "source_id": "synthetic-bank",
+          "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "source_path": "fixtures/question-index.json",
+          "source_question_id": "q-003"
+        },
+        "topics": [
+          "DATA.DATABASE.RELATIONAL"
+        ],
+        "capabilities": [
+          "CASE.DATA_DESIGN"
+        ],
+        "score_earned": 0,
+        "score_possible": 10
+      }
+    ],
+    "review_events": [
+      {
+        "schema_version": "review-event/v0.1",
+        "event_id": "ctx-case-missing-cap",
+        "event_type": "review_context",
+        "source_event_id": "case-missing-cap",
+        "review_item_id": "review/case_capability/CASE.DATA_DESIGN",
+        "attempt_context": "review",
+        "occurred_at": "2026-03-01T10:00:00+08:00"
+      }
+    ],
+    "items": [
+      {
+        "schema_version": "review-item/v0.1",
+        "review_item_id": "review/case_capability/CASE.DATA_DESIGN",
+        "item_kind": "case_capability",
+        "canonical_ref": {
+          "capability_id": "CASE.DATA_DESIGN",
+          "taxonomy_version": "0.1"
+        },
+        "source_reference": {
+          "source_id": "synthetic-catalog",
+          "source_commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "source_path": "fixtures/capability-index.json",
+          "source_value": "CASE.DATA_DESIGN"
+        }
+      }
+    ]
+  },
+  "variants": [],
+  "expected": {
+    "schema_version": "mastery-review-state/v0.1",
+    "review_model_version": "review-model/v0.1",
+    "review_event_schema_version": "review-event/v0.1",
+    "review_evidence_version": "review-evidence/v0.1",
+    "progress_event_schema_version": "progress-event/v0.1",
+    "progress_replay_version": "progress-replay/v0.1",
+    "mastery_policy_version": "mastery-policy/spaced-consecutive/v0.1",
+    "review_policy_version": "review-policy/simple-ladder/v0.1",
+    "policy_projection_schema_version": "review-policy-projection/v0.1",
+    "as_of": "2026-03-01T02:00:00+00:00",
+    "timezone": "Asia/Shanghai",
+    "schedule_timezone": "Asia/Shanghai",
+    "outcome_adapter": {
+      "adapter_id": "review-outcome/raw-facts",
+      "adapter_version": "v0.1",
+      "adapter": "review-outcome/raw-facts/v0.1"
+    },
+    "progress_replayed_event_count": 1,
+    "items": {
+      "review/case_capability/CASE.DATA_DESIGN": {
+        "review_item_id": "review/case_capability/CASE.DATA_DESIGN",
+        "item_kind": "case_capability",
+        "canonical_ref": {
+          "capability_id": "CASE.DATA_DESIGN",
+          "taxonomy_version": "0.1"
+        },
+        "mastery_state": "new",
+        "mastery_reason": "no_evaluated_evidence",
+        "evaluated_evidence_count": 0,
+        "successful_review_count": 0,
+        "failure_count": 0,
+        "insufficient_evidence_count": 1,
+        "consecutive_success_count": 0,
+        "consecutive_success_day_count": 0,
+        "last_review_at": null,
+        "last_evidence_id": "evidence/case-missing-cap/review/case_capability/CASE.DATA_DESIGN",
+        "review_interval_days": null,
+        "next_due_at": null,
+        "next_due_local_date": null,
+        "review_status": "not_scheduled",
+        "review_status_reason": "not_scheduled_no_evaluated_evidence",
+        "scheduling_reason": "no_evidence_not_scheduled",
+        "evidence_ids": [
+          "evidence/case-missing-cap/review/case_capability/CASE.DATA_DESIGN"
+        ],
+        "evidence": [
+          {
+            "evidence_id": "evidence/case-missing-cap/review/case_capability/CASE.DATA_DESIGN",
+            "source_event_id": "case-missing-cap",
+            "review_event_id": "ctx-case-missing-cap",
+            "occurred_at": "2026-03-01T02:00:00Z",
+            "attempt_context": "review",
+            "evidence_kind": "case_capability_score_missing",
+            "evidence_status": "insufficient_evidence",
+            "evidence_value": null,
+            "source_reference": {
+              "source_id": "synthetic-bank",
+              "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "source_path": "fixtures/question-index.json",
+              "source_question_id": "q-003"
+            },
+            "policy_outcome": "insufficient",
+            "policy_outcome_reason": "insufficient_evidence"
+          }
+        ]
+      }
+    },
+    "review": {
+      "total_items": 1,
+      "not_scheduled_count": 1,
+      "scheduled_count": 0,
+      "due_today_count": 0,
+      "overdue_count": 0,
+      "due_count": 0
+    },
+    "mastery": {
+      "new_count": 1,
+      "learning_count": 0,
+      "mastered_count": 0
+    }
+  },
+  "schema_version": "mastery-review-fixture/v0.1",
+  "fixture_id": "mastery-insufficient-evidence",
+  "policies": {
+    "mastery": "mastery-policy/spaced-consecutive/v0.1",
+    "review": "review-policy/simple-ladder/v0.1",
+    "outcome_adapter": "review-outcome/raw-facts/v0.1"
+  },
+  "contract_refs": [
+    "data/review/mastery-review-state.schema.json",
+    "docs/PHASE4_TEST_MATRIX.md",
+    "docs/review/MASTERY_POLICY_V01.md",
+    "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+    "engine/review/replay.py"
+  ],
+  "policy_symbols": [
+    "MASTERY_INSUFFICIENT_EVIDENCE_STATE"
+  ]
+}

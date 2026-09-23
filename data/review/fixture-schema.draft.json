@@ -1,15 +1,17 @@
 {
   "contract": "review-test-fixtures",
   "schema_version": "review-fixture/v0.1-draft",
-  "status": "draft",
+  "status": "superseded",
   "frozen": false,
+  "superseded_by": "data/review/fixture-schema.v0.1.json",
+  "superseded_on": "P4.6 fixture matrix freeze",
   "owner": "P4.6",
   "depends_on": [
     "P4.1 Review Model v0.1 contract",
     "P4.2 Review Event / Evidence contract",
     "P4.5 Mastery / Review deterministic replay"
   ],
-  "purpose": "定义 Phase 4 synthetic fixture 的字段骨架；P4.1~P4.5 contract 已可供 replay 消费，P4.6/P4.7 仍需收口 expected / expected_error 与 edge-case matrix。",
+  "purpose": "Historical P4.6 fixture design draft; superseded by the frozen mastery-review-fixture/v0.1 schema. Retained for design provenance only.",
   "required": [
     "schema_version",
     "fixture_id",

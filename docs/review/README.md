@@ -25,7 +25,7 @@
 | 窗口 | 关系 |
 | --- | --- |
 | P4.1 / P4.2（Review Model / Evidence） | 已冻结本目录的上游 contract；policy kernel 只能通过显式 adapter 消费 Evidence，不能反向改变 Evidence 事实。 |
-| `test/p4-review-matrix`（P4.6 / P4.7 测试设计，已由 PR #6 合并） | 提供 fixture plan、policy symbol 和 determinism harness；P4.5 replay 已可用，policy-dependent fixture expected / edge-case matrix 仍待收口。 |
+| P4.6 / P4.7（本轮） | 冻结 `mastery-review-fixture/v0.1` synthetic matrix；36 个正式 fixtures、validator 与边界测试已通过。P4.8 / P4.9 仍待后续阶段。 |
 | P4.5（Mastery / Review replay） | `engine.review.replay.replay(...)` 消费 Review Evidence、显式 outcome adapter、policy kernel 和 `as_of` / timezone，输出 `MasteryReviewState v0.1`。 |
 
 ## 机器可读入口
@@ -38,8 +38,9 @@ engine/rules/review_policy_v01.py       policy kernel + 冻结常量
 engine/review/replay.py                  P4.5 MasteryReviewState deterministic replay
 
 data/review/mastery-review-state.schema.json  P4.5 machine-readable output schema
-scripts/validate_review.py               fixture plan validator；P4.6/P4.7 未收口时保持 PENDING
-data/review/fixture-plan.json            policy fixture plan；不与 contract-fixtures 混用
+scripts/validate_review.py               加载正式 replay fixtures 并报告 REVIEW_FIXTURE_MATRIX_PASS
+data/review/fixture-plan.json            冻结 matrix / symbols / fixture provenance
+data/review/fixture-schema.v0.1.json     mastery-review-fixture/v0.1 machine-readable schema
 ```
 
 ## 边界
@@ -48,7 +49,8 @@ data/review/fixture-plan.json            policy fixture plan；不与 contract-f
 Review Model / Evidence contract
    != Mastery / Scheduling policy
    != MasteryReviewState replay（P4.5，已实现）
-   != synthetic policy fixtures / validation report（P4.6 / P4.7 / P4.9）
+   != synthetic replay fixtures（P4.6 / P4.7，已通过）
+   != Phase 4 validation report（P4.9，待完成）
    != Planner / 30-Day Plan / UI
 ```
 

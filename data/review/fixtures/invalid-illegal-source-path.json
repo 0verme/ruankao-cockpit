@@ -1,0 +1,46 @@
+{
+  "description": "source_path 含目录穿越，不接受本地/逃逸路径。",
+  "as_of": "2026-03-01T10:00:00+08:00",
+  "timezone": "Asia/Shanghai",
+  "input": {
+    "progress_events": [],
+    "review_events": [],
+    "items": [
+      {
+        "schema_version": "review-item/v0.1",
+        "review_item_id": "review/question/synthetic-bank/q-005",
+        "item_kind": "question",
+        "canonical_ref": {
+          "source_id": "synthetic-bank",
+          "source_question_id": "q-005"
+        },
+        "source_reference": {
+          "source_id": "synthetic-bank",
+          "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "source_path": "../outside.json",
+          "source_question_id": "q-005"
+        },
+        "display_name": "synthetic q-005"
+      }
+    ]
+  },
+  "variants": [],
+  "expected_error": "forbidden_path",
+  "schema_version": "mastery-review-fixture/v0.1",
+  "fixture_id": "invalid-illegal-source-path",
+  "policies": {
+    "mastery": "mastery-policy/spaced-consecutive/v0.1",
+    "review": "review-policy/simple-ladder/v0.1",
+    "outcome_adapter": "review-outcome/raw-facts/v0.1"
+  },
+  "contract_refs": [
+    "data/review/mastery-review-state.schema.json",
+    "docs/PHASE4_TEST_MATRIX.md",
+    "docs/review/REVIEW_EVIDENCE_V01.md",
+    "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+    "engine/review/replay.py"
+  ],
+  "policy_symbols": [
+    "STATE_ERROR_CATEGORIES"
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "description": "source_commit 不是 40 位 immutable lowercase revision。",
+  "as_of": "2026-03-01T10:00:00+08:00",
+  "timezone": "Asia/Shanghai",
+  "input": {
+    "progress_events": [],
+    "review_events": [],
+    "items": [
+      {
+        "schema_version": "review-item/v0.1",
+        "review_item_id": "review/question/synthetic-bank/q-006",
+        "item_kind": "question",
+        "canonical_ref": {
+          "source_id": "synthetic-bank",
+          "source_question_id": "q-006"
+        },
+        "source_reference": {
+          "source_id": "synthetic-bank",
+          "source_commit": "not-a-40-char-revision",
+          "source_path": "fixtures/question-index.json",
+          "source_question_id": "q-006"
+        },
+        "display_name": "synthetic q-006"
+      }
+    ]
+  },
+  "variants": [],
+  "expected_error": "invalid_source_reference",
+  "schema_version": "mastery-review-fixture/v0.1",
+  "fixture_id": "invalid-source-reference",
+  "policies": {
+    "mastery": "mastery-policy/spaced-consecutive/v0.1",
+    "review": "review-policy/simple-ladder/v0.1",
+    "outcome_adapter": "review-outcome/raw-facts/v0.1"
+  },
+  "contract_refs": [
+    "data/review/mastery-review-state.schema.json",
+    "docs/PHASE4_TEST_MATRIX.md",
+    "docs/review/REVIEW_MODEL_V01.md",
+    "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+    "engine/review/replay.py"
+  ],
+  "policy_symbols": [
+    "REVIEW_ITEM_REGISTRY",
+    "STATE_ERROR_CATEGORIES"
+  ]
+}
