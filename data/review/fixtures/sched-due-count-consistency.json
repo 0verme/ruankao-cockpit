@@ -1,0 +1,425 @@
+{
+  "description": "多 item 汇总：scheduled/due/overdue/new 分类与 item-level projection、due/mastery aggregate 一致。",
+  "as_of": "2026-03-05T00:00:00+08:00",
+  "timezone": "Asia/Shanghai",
+  "input": {
+    "progress_events": [
+      {
+        "event_id": "agg-due",
+        "schema_version": "progress-event/v0.1",
+        "event_type": "comprehensive_attempt",
+        "occurred_at": "2026-03-04T10:00:00+08:00",
+        "question": {
+          "source_id": "synthetic-bank",
+          "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "source_path": "fixtures/question-index.json",
+          "source_question_id": "q-001"
+        },
+        "topics": [
+          "DATA.DATABASE.RELATIONAL"
+        ],
+        "correct": true
+      },
+      {
+        "event_id": "agg-overdue",
+        "schema_version": "progress-event/v0.1",
+        "event_type": "comprehensive_attempt",
+        "occurred_at": "2026-03-03T10:00:00+08:00",
+        "question": {
+          "source_id": "synthetic-bank",
+          "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "source_path": "fixtures/question-index.json",
+          "source_question_id": "q-002"
+        },
+        "topics": [
+          "DATA.DATABASE.RELATIONAL"
+        ],
+        "correct": true
+      },
+      {
+        "event_id": "agg-scheduled-1",
+        "schema_version": "progress-event/v0.1",
+        "event_type": "comprehensive_attempt",
+        "occurred_at": "2026-03-03T10:00:00+08:00",
+        "question": {
+          "source_id": "synthetic-bank",
+          "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "source_path": "fixtures/question-index.json",
+          "source_question_id": "q-003"
+        },
+        "topics": [
+          "DATA.DATABASE.RELATIONAL"
+        ],
+        "correct": true
+      },
+      {
+        "event_id": "agg-scheduled-2",
+        "schema_version": "progress-event/v0.1",
+        "event_type": "comprehensive_attempt",
+        "occurred_at": "2026-03-04T10:00:00+08:00",
+        "question": {
+          "source_id": "synthetic-bank",
+          "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "source_path": "fixtures/question-index.json",
+          "source_question_id": "q-003"
+        },
+        "topics": [
+          "DATA.DATABASE.RELATIONAL"
+        ],
+        "correct": true
+      }
+    ],
+    "review_events": [
+      {
+        "schema_version": "review-event/v0.1",
+        "event_id": "ctx-agg-due",
+        "event_type": "review_context",
+        "source_event_id": "agg-due",
+        "review_item_id": "review/question/synthetic-bank/q-001",
+        "attempt_context": "review",
+        "occurred_at": "2026-03-04T10:00:00+08:00"
+      },
+      {
+        "schema_version": "review-event/v0.1",
+        "event_id": "ctx-agg-overdue",
+        "event_type": "review_context",
+        "source_event_id": "agg-overdue",
+        "review_item_id": "review/question/synthetic-bank/q-002",
+        "attempt_context": "review",
+        "occurred_at": "2026-03-03T10:00:00+08:00"
+      },
+      {
+        "schema_version": "review-event/v0.1",
+        "event_id": "ctx-agg-scheduled-1",
+        "event_type": "review_context",
+        "source_event_id": "agg-scheduled-1",
+        "review_item_id": "review/question/synthetic-bank/q-003",
+        "attempt_context": "review",
+        "occurred_at": "2026-03-03T10:00:00+08:00"
+      },
+      {
+        "schema_version": "review-event/v0.1",
+        "event_id": "ctx-agg-scheduled-2",
+        "event_type": "review_context",
+        "source_event_id": "agg-scheduled-2",
+        "review_item_id": "review/question/synthetic-bank/q-003",
+        "attempt_context": "review",
+        "occurred_at": "2026-03-04T10:00:00+08:00"
+      }
+    ],
+    "items": [
+      {
+        "schema_version": "review-item/v0.1",
+        "review_item_id": "review/question/synthetic-bank/q-001",
+        "item_kind": "question",
+        "canonical_ref": {
+          "source_id": "synthetic-bank",
+          "source_question_id": "q-001"
+        },
+        "source_reference": {
+          "source_id": "synthetic-bank",
+          "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "source_path": "fixtures/question-index.json",
+          "source_question_id": "q-001"
+        },
+        "display_name": "synthetic q-001"
+      },
+      {
+        "schema_version": "review-item/v0.1",
+        "review_item_id": "review/question/synthetic-bank/q-002",
+        "item_kind": "question",
+        "canonical_ref": {
+          "source_id": "synthetic-bank",
+          "source_question_id": "q-002"
+        },
+        "source_reference": {
+          "source_id": "synthetic-bank",
+          "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "source_path": "fixtures/question-index.json",
+          "source_question_id": "q-002"
+        },
+        "display_name": "synthetic q-002"
+      },
+      {
+        "schema_version": "review-item/v0.1",
+        "review_item_id": "review/question/synthetic-bank/q-003",
+        "item_kind": "question",
+        "canonical_ref": {
+          "source_id": "synthetic-bank",
+          "source_question_id": "q-003"
+        },
+        "source_reference": {
+          "source_id": "synthetic-bank",
+          "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "source_path": "fixtures/question-index.json",
+          "source_question_id": "q-003"
+        },
+        "display_name": "synthetic q-003"
+      },
+      {
+        "schema_version": "review-item/v0.1",
+        "review_item_id": "review/question/synthetic-bank/q-004",
+        "item_kind": "question",
+        "canonical_ref": {
+          "source_id": "synthetic-bank",
+          "source_question_id": "q-004"
+        },
+        "source_reference": {
+          "source_id": "synthetic-bank",
+          "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "source_path": "fixtures/question-index.json",
+          "source_question_id": "q-004"
+        },
+        "display_name": "synthetic q-004"
+      }
+    ]
+  },
+  "variants": [],
+  "expected": {
+    "schema_version": "mastery-review-state/v0.1",
+    "review_model_version": "review-model/v0.1",
+    "review_event_schema_version": "review-event/v0.1",
+    "review_evidence_version": "review-evidence/v0.1",
+    "progress_event_schema_version": "progress-event/v0.1",
+    "progress_replay_version": "progress-replay/v0.1",
+    "mastery_policy_version": "mastery-policy/spaced-consecutive/v0.1",
+    "review_policy_version": "review-policy/simple-ladder/v0.1",
+    "policy_projection_schema_version": "review-policy-projection/v0.1",
+    "as_of": "2026-03-04T16:00:00+00:00",
+    "timezone": "Asia/Shanghai",
+    "schedule_timezone": "Asia/Shanghai",
+    "outcome_adapter": {
+      "adapter_id": "review-outcome/raw-facts",
+      "adapter_version": "v0.1",
+      "adapter": "review-outcome/raw-facts/v0.1"
+    },
+    "progress_replayed_event_count": 4,
+    "items": {
+      "review/question/synthetic-bank/q-001": {
+        "review_item_id": "review/question/synthetic-bank/q-001",
+        "item_kind": "question",
+        "canonical_ref": {
+          "source_id": "synthetic-bank",
+          "source_question_id": "q-001"
+        },
+        "mastery_state": "learning",
+        "mastery_reason": "success_enters_learning",
+        "evaluated_evidence_count": 1,
+        "successful_review_count": 1,
+        "failure_count": 0,
+        "insufficient_evidence_count": 0,
+        "consecutive_success_count": 1,
+        "consecutive_success_day_count": 1,
+        "last_review_at": "2026-03-04T02:00:00+00:00",
+        "last_evidence_id": "evidence/agg-due/review/question/synthetic-bank/q-001",
+        "review_interval_days": 1,
+        "next_due_at": "2026-03-04T16:00:00+00:00",
+        "next_due_local_date": "2026-03-05",
+        "review_status": "due",
+        "review_status_reason": "due_on_due_local_date",
+        "scheduling_reason": "success_schedules_ladder_interval",
+        "evidence_ids": [
+          "evidence/agg-due/review/question/synthetic-bank/q-001"
+        ],
+        "evidence": [
+          {
+            "evidence_id": "evidence/agg-due/review/question/synthetic-bank/q-001",
+            "source_event_id": "agg-due",
+            "review_event_id": "ctx-agg-due",
+            "occurred_at": "2026-03-04T02:00:00Z",
+            "attempt_context": "review",
+            "evidence_kind": "comprehensive_correctness",
+            "evidence_status": "supported",
+            "evidence_value": {
+              "correct": true
+            },
+            "source_reference": {
+              "source_id": "synthetic-bank",
+              "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "source_path": "fixtures/question-index.json",
+              "source_question_id": "q-001"
+            },
+            "policy_outcome": "success",
+            "policy_outcome_reason": "comprehensive_correctness_fact"
+          }
+        ]
+      },
+      "review/question/synthetic-bank/q-002": {
+        "review_item_id": "review/question/synthetic-bank/q-002",
+        "item_kind": "question",
+        "canonical_ref": {
+          "source_id": "synthetic-bank",
+          "source_question_id": "q-002"
+        },
+        "mastery_state": "learning",
+        "mastery_reason": "success_enters_learning",
+        "evaluated_evidence_count": 1,
+        "successful_review_count": 1,
+        "failure_count": 0,
+        "insufficient_evidence_count": 0,
+        "consecutive_success_count": 1,
+        "consecutive_success_day_count": 1,
+        "last_review_at": "2026-03-03T02:00:00+00:00",
+        "last_evidence_id": "evidence/agg-overdue/review/question/synthetic-bank/q-002",
+        "review_interval_days": 1,
+        "next_due_at": "2026-03-03T16:00:00+00:00",
+        "next_due_local_date": "2026-03-04",
+        "review_status": "overdue",
+        "review_status_reason": "overdue_since_next_local_date",
+        "scheduling_reason": "success_schedules_ladder_interval",
+        "evidence_ids": [
+          "evidence/agg-overdue/review/question/synthetic-bank/q-002"
+        ],
+        "evidence": [
+          {
+            "evidence_id": "evidence/agg-overdue/review/question/synthetic-bank/q-002",
+            "source_event_id": "agg-overdue",
+            "review_event_id": "ctx-agg-overdue",
+            "occurred_at": "2026-03-03T02:00:00Z",
+            "attempt_context": "review",
+            "evidence_kind": "comprehensive_correctness",
+            "evidence_status": "supported",
+            "evidence_value": {
+              "correct": true
+            },
+            "source_reference": {
+              "source_id": "synthetic-bank",
+              "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "source_path": "fixtures/question-index.json",
+              "source_question_id": "q-002"
+            },
+            "policy_outcome": "success",
+            "policy_outcome_reason": "comprehensive_correctness_fact"
+          }
+        ]
+      },
+      "review/question/synthetic-bank/q-003": {
+        "review_item_id": "review/question/synthetic-bank/q-003",
+        "item_kind": "question",
+        "canonical_ref": {
+          "source_id": "synthetic-bank",
+          "source_question_id": "q-003"
+        },
+        "mastery_state": "learning",
+        "mastery_reason": "learning_success_below_mastery",
+        "evaluated_evidence_count": 2,
+        "successful_review_count": 2,
+        "failure_count": 0,
+        "insufficient_evidence_count": 0,
+        "consecutive_success_count": 2,
+        "consecutive_success_day_count": 2,
+        "last_review_at": "2026-03-04T02:00:00+00:00",
+        "last_evidence_id": "evidence/agg-scheduled-2/review/question/synthetic-bank/q-003",
+        "review_interval_days": 3,
+        "next_due_at": "2026-03-06T16:00:00+00:00",
+        "next_due_local_date": "2026-03-07",
+        "review_status": "scheduled",
+        "review_status_reason": "scheduled_due_in_future",
+        "scheduling_reason": "success_schedules_ladder_interval",
+        "evidence_ids": [
+          "evidence/agg-scheduled-1/review/question/synthetic-bank/q-003",
+          "evidence/agg-scheduled-2/review/question/synthetic-bank/q-003"
+        ],
+        "evidence": [
+          {
+            "evidence_id": "evidence/agg-scheduled-1/review/question/synthetic-bank/q-003",
+            "source_event_id": "agg-scheduled-1",
+            "review_event_id": "ctx-agg-scheduled-1",
+            "occurred_at": "2026-03-03T02:00:00Z",
+            "attempt_context": "review",
+            "evidence_kind": "comprehensive_correctness",
+            "evidence_status": "supported",
+            "evidence_value": {
+              "correct": true
+            },
+            "source_reference": {
+              "source_id": "synthetic-bank",
+              "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "source_path": "fixtures/question-index.json",
+              "source_question_id": "q-003"
+            },
+            "policy_outcome": "success",
+            "policy_outcome_reason": "comprehensive_correctness_fact"
+          },
+          {
+            "evidence_id": "evidence/agg-scheduled-2/review/question/synthetic-bank/q-003",
+            "source_event_id": "agg-scheduled-2",
+            "review_event_id": "ctx-agg-scheduled-2",
+            "occurred_at": "2026-03-04T02:00:00Z",
+            "attempt_context": "review",
+            "evidence_kind": "comprehensive_correctness",
+            "evidence_status": "supported",
+            "evidence_value": {
+              "correct": true
+            },
+            "source_reference": {
+              "source_id": "synthetic-bank",
+              "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "source_path": "fixtures/question-index.json",
+              "source_question_id": "q-003"
+            },
+            "policy_outcome": "success",
+            "policy_outcome_reason": "comprehensive_correctness_fact"
+          }
+        ]
+      },
+      "review/question/synthetic-bank/q-004": {
+        "review_item_id": "review/question/synthetic-bank/q-004",
+        "item_kind": "question",
+        "canonical_ref": {
+          "source_id": "synthetic-bank",
+          "source_question_id": "q-004"
+        },
+        "mastery_state": "new",
+        "mastery_reason": "no_evaluated_evidence",
+        "evaluated_evidence_count": 0,
+        "successful_review_count": 0,
+        "failure_count": 0,
+        "insufficient_evidence_count": 0,
+        "consecutive_success_count": 0,
+        "consecutive_success_day_count": 0,
+        "last_review_at": null,
+        "last_evidence_id": null,
+        "review_interval_days": null,
+        "next_due_at": null,
+        "next_due_local_date": null,
+        "review_status": "not_scheduled",
+        "review_status_reason": "not_scheduled_no_evaluated_evidence",
+        "scheduling_reason": "no_evidence_not_scheduled",
+        "evidence_ids": [],
+        "evidence": []
+      }
+    },
+    "review": {
+      "total_items": 4,
+      "not_scheduled_count": 1,
+      "scheduled_count": 1,
+      "due_today_count": 1,
+      "overdue_count": 1,
+      "due_count": 2
+    },
+    "mastery": {
+      "new_count": 1,
+      "learning_count": 3,
+      "mastered_count": 0
+    }
+  },
+  "schema_version": "mastery-review-fixture/v0.1",
+  "fixture_id": "sched-due-count-consistency",
+  "policies": {
+    "mastery": "mastery-policy/spaced-consecutive/v0.1",
+    "review": "review-policy/simple-ladder/v0.1",
+    "outcome_adapter": "review-outcome/raw-facts/v0.1"
+  },
+  "contract_refs": [
+    "data/review/mastery-review-state.schema.json",
+    "docs/PHASE4_TEST_MATRIX.md",
+    "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+    "docs/review/REVIEW_SCHEDULING_POLICY_V01.md",
+    "engine/review/replay.py"
+  ],
+  "policy_symbols": [
+    "SCHED_DUE_COUNT_DEFINITION",
+    "STATE_DUE_PROJECTION_NAMES"
+  ]
+}

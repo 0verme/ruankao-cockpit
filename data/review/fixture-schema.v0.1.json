@@ -1,0 +1,209 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/0verme/ruankao-cockpit/blob/main/data/review/fixture-schema.v0.1.json",
+  "title": "Mastery / Review Fixture v0.1",
+  "contract": "mastery-review-fixture",
+  "schema_version": "mastery-review-fixture/v0.1",
+  "status": "FROZEN",
+  "frozen": true,
+  "owner": "P4.6",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "fixture_id",
+    "description",
+    "as_of",
+    "timezone",
+    "policies",
+    "contract_refs",
+    "input"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "mastery-review-fixture/v0.1"
+    },
+    "fixture_id": {
+      "type": "string",
+      "pattern": "^(?:id|evidence|mastery|sched|determinism|time|compat|invalid)-[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "as_of": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "timezone": {
+      "type": "string",
+      "minLength": 1
+    },
+    "policies": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mastery",
+        "review",
+        "outcome_adapter"
+      ],
+      "properties": {
+        "mastery": {
+          "const": "mastery-policy/spaced-consecutive/v0.1"
+        },
+        "review": {
+          "const": "review-policy/simple-ladder/v0.1"
+        },
+        "outcome_adapter": {
+          "const": "review-outcome/raw-facts/v0.1"
+        }
+      }
+    },
+    "contract_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "policy_symbols": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "input": {
+      "$ref": "#/$defs/replayInput"
+    },
+    "expected": {
+      "$ref": "#/$defs/expectedProjection"
+    },
+    "expected_error": {
+      "type": "string",
+      "minLength": 1
+    },
+    "variants": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/variant"
+      }
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "oneOf": [
+    {
+      "required": [
+        "expected"
+      ],
+      "not": {
+        "required": [
+          "expected_error"
+        ]
+      }
+    },
+    {
+      "required": [
+        "expected_error"
+      ],
+      "not": {
+        "required": [
+          "expected"
+        ]
+      }
+    }
+  ],
+  "$defs": {
+    "replayInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "progress_events",
+        "review_events",
+        "items"
+      ],
+      "properties": {
+        "progress_events": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "review_events": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "expectedProjection": {
+      "type": "object",
+      "description": "Recursive subset of MasteryReviewState v0.1; omitted volatile tzdata_version is still schema-checked by the validator."
+    },
+    "variant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "variant_id"
+      ],
+      "properties": {
+        "variant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "as_of": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "timezone": {
+          "type": "string",
+          "minLength": 1
+        },
+        "input": {
+          "$ref": "#/$defs/replayInput"
+        },
+        "expected": {
+          "$ref": "#/$defs/expectedProjection"
+        },
+        "expected_error": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "expected"
+          ],
+          "not": {
+            "required": [
+              "expected_error"
+            ]
+          }
+        },
+        {
+          "required": [
+            "expected_error"
+          ],
+          "not": {
+            "required": [
+              "expected"
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,156 @@
+{
+  "description": "America/Santiago 2019-09-08 的午夜 DST gap：due anchor 是该日期最早存在 instant。",
+  "as_of": "2019-09-07T13:00:00-04:00",
+  "timezone": "America/Santiago",
+  "input": {
+    "progress_events": [
+      {
+        "event_id": "dst-gap-attempt",
+        "schema_version": "progress-event/v0.1",
+        "event_type": "comprehensive_attempt",
+        "occurred_at": "2019-09-07T12:00:00-04:00",
+        "question": {
+          "source_id": "synthetic-bank",
+          "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "source_path": "fixtures/question-index.json",
+          "source_question_id": "q-001"
+        },
+        "topics": [
+          "DATA.DATABASE.RELATIONAL"
+        ],
+        "correct": true
+      }
+    ],
+    "review_events": [
+      {
+        "schema_version": "review-event/v0.1",
+        "event_id": "ctx-dst-gap-attempt",
+        "event_type": "review_context",
+        "source_event_id": "dst-gap-attempt",
+        "review_item_id": "review/question/synthetic-bank/q-001",
+        "attempt_context": "review",
+        "occurred_at": "2019-09-07T12:00:00-04:00"
+      }
+    ],
+    "items": [
+      {
+        "schema_version": "review-item/v0.1",
+        "review_item_id": "review/question/synthetic-bank/q-001",
+        "item_kind": "question",
+        "canonical_ref": {
+          "source_id": "synthetic-bank",
+          "source_question_id": "q-001"
+        },
+        "source_reference": {
+          "source_id": "synthetic-bank",
+          "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "source_path": "fixtures/question-index.json",
+          "source_question_id": "q-001"
+        },
+        "display_name": "synthetic q-001"
+      }
+    ]
+  },
+  "variants": [],
+  "expected": {
+    "schema_version": "mastery-review-state/v0.1",
+    "review_model_version": "review-model/v0.1",
+    "review_event_schema_version": "review-event/v0.1",
+    "review_evidence_version": "review-evidence/v0.1",
+    "progress_event_schema_version": "progress-event/v0.1",
+    "progress_replay_version": "progress-replay/v0.1",
+    "mastery_policy_version": "mastery-policy/spaced-consecutive/v0.1",
+    "review_policy_version": "review-policy/simple-ladder/v0.1",
+    "policy_projection_schema_version": "review-policy-projection/v0.1",
+    "as_of": "2019-09-07T17:00:00+00:00",
+    "timezone": "America/Santiago",
+    "schedule_timezone": "America/Santiago",
+    "outcome_adapter": {
+      "adapter_id": "review-outcome/raw-facts",
+      "adapter_version": "v0.1",
+      "adapter": "review-outcome/raw-facts/v0.1"
+    },
+    "progress_replayed_event_count": 1,
+    "items": {
+      "review/question/synthetic-bank/q-001": {
+        "review_item_id": "review/question/synthetic-bank/q-001",
+        "item_kind": "question",
+        "canonical_ref": {
+          "source_id": "synthetic-bank",
+          "source_question_id": "q-001"
+        },
+        "mastery_state": "learning",
+        "mastery_reason": "success_enters_learning",
+        "evaluated_evidence_count": 1,
+        "successful_review_count": 1,
+        "failure_count": 0,
+        "insufficient_evidence_count": 0,
+        "consecutive_success_count": 1,
+        "consecutive_success_day_count": 1,
+        "last_review_at": "2019-09-07T16:00:00+00:00",
+        "last_evidence_id": "evidence/dst-gap-attempt/review/question/synthetic-bank/q-001",
+        "review_interval_days": 1,
+        "next_due_at": "2019-09-08T04:00:00+00:00",
+        "next_due_local_date": "2019-09-08",
+        "review_status": "scheduled",
+        "review_status_reason": "scheduled_due_in_future",
+        "scheduling_reason": "success_schedules_ladder_interval",
+        "evidence_ids": [
+          "evidence/dst-gap-attempt/review/question/synthetic-bank/q-001"
+        ],
+        "evidence": [
+          {
+            "evidence_id": "evidence/dst-gap-attempt/review/question/synthetic-bank/q-001",
+            "source_event_id": "dst-gap-attempt",
+            "review_event_id": "ctx-dst-gap-attempt",
+            "occurred_at": "2019-09-07T16:00:00Z",
+            "attempt_context": "review",
+            "evidence_kind": "comprehensive_correctness",
+            "evidence_status": "supported",
+            "evidence_value": {
+              "correct": true
+            },
+            "source_reference": {
+              "source_id": "synthetic-bank",
+              "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "source_path": "fixtures/question-index.json",
+              "source_question_id": "q-001"
+            },
+            "policy_outcome": "success",
+            "policy_outcome_reason": "comprehensive_correctness_fact"
+          }
+        ]
+      }
+    },
+    "review": {
+      "total_items": 1,
+      "not_scheduled_count": 0,
+      "scheduled_count": 1,
+      "due_today_count": 0,
+      "overdue_count": 0,
+      "due_count": 0
+    },
+    "mastery": {
+      "new_count": 0,
+      "learning_count": 1,
+      "mastered_count": 0
+    }
+  },
+  "schema_version": "mastery-review-fixture/v0.1",
+  "fixture_id": "time-dst-sensitive",
+  "policies": {
+    "mastery": "mastery-policy/spaced-consecutive/v0.1",
+    "review": "review-policy/simple-ladder/v0.1",
+    "outcome_adapter": "review-outcome/raw-facts/v0.1"
+  },
+  "contract_refs": [
+    "data/review/mastery-review-state.schema.json",
+    "docs/PHASE4_TEST_MATRIX.md",
+    "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+    "docs/review/REVIEW_SCHEDULING_POLICY_V01.md",
+    "engine/review/replay.py"
+  ],
+  "policy_symbols": [
+    "SCHED_DATE_BOUNDARY_TIMEZONE"
+  ]
+}

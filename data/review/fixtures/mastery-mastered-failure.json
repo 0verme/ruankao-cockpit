@@ -1,0 +1,295 @@
+{
+  "description": "mastered failure 降级 learning，计 failure 并重置 success run / interval。",
+  "as_of": "2026-03-12T10:00:00+08:00",
+  "timezone": "Asia/Shanghai",
+  "input": {
+    "progress_events": [
+      {
+        "event_id": "attempt-001",
+        "schema_version": "progress-event/v0.1",
+        "event_type": "comprehensive_attempt",
+        "occurred_at": "2026-03-01T10:00:00+08:00",
+        "question": {
+          "source_id": "synthetic-bank",
+          "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "source_path": "fixtures/question-index.json",
+          "source_question_id": "q-001"
+        },
+        "topics": [
+          "DATA.DATABASE.RELATIONAL"
+        ],
+        "correct": true
+      },
+      {
+        "event_id": "attempt-002",
+        "schema_version": "progress-event/v0.1",
+        "event_type": "comprehensive_attempt",
+        "occurred_at": "2026-03-02T10:00:00+08:00",
+        "question": {
+          "source_id": "synthetic-bank",
+          "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "source_path": "fixtures/question-index.json",
+          "source_question_id": "q-001"
+        },
+        "topics": [
+          "DATA.DATABASE.RELATIONAL"
+        ],
+        "correct": true
+      },
+      {
+        "event_id": "attempt-003",
+        "schema_version": "progress-event/v0.1",
+        "event_type": "comprehensive_attempt",
+        "occurred_at": "2026-03-05T10:00:00+08:00",
+        "question": {
+          "source_id": "synthetic-bank",
+          "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "source_path": "fixtures/question-index.json",
+          "source_question_id": "q-001"
+        },
+        "topics": [
+          "DATA.DATABASE.RELATIONAL"
+        ],
+        "correct": true
+      },
+      {
+        "event_id": "attempt-004",
+        "schema_version": "progress-event/v0.1",
+        "event_type": "comprehensive_attempt",
+        "occurred_at": "2026-03-12T10:00:00+08:00",
+        "question": {
+          "source_id": "synthetic-bank",
+          "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "source_path": "fixtures/question-index.json",
+          "source_question_id": "q-001"
+        },
+        "topics": [
+          "DATA.DATABASE.RELATIONAL"
+        ],
+        "correct": false,
+        "error_cause": "knowledge_gap"
+      }
+    ],
+    "review_events": [
+      {
+        "schema_version": "review-event/v0.1",
+        "event_id": "ctx-attempt-001",
+        "event_type": "review_context",
+        "source_event_id": "attempt-001",
+        "review_item_id": "review/question/synthetic-bank/q-001",
+        "attempt_context": "review",
+        "occurred_at": "2026-03-01T10:00:00+08:00"
+      },
+      {
+        "schema_version": "review-event/v0.1",
+        "event_id": "ctx-attempt-002",
+        "event_type": "review_context",
+        "source_event_id": "attempt-002",
+        "review_item_id": "review/question/synthetic-bank/q-001",
+        "attempt_context": "review",
+        "occurred_at": "2026-03-02T10:00:00+08:00"
+      },
+      {
+        "schema_version": "review-event/v0.1",
+        "event_id": "ctx-attempt-003",
+        "event_type": "review_context",
+        "source_event_id": "attempt-003",
+        "review_item_id": "review/question/synthetic-bank/q-001",
+        "attempt_context": "review",
+        "occurred_at": "2026-03-05T10:00:00+08:00"
+      },
+      {
+        "schema_version": "review-event/v0.1",
+        "event_id": "ctx-attempt-004",
+        "event_type": "review_context",
+        "source_event_id": "attempt-004",
+        "review_item_id": "review/question/synthetic-bank/q-001",
+        "attempt_context": "review",
+        "occurred_at": "2026-03-12T10:00:00+08:00"
+      }
+    ],
+    "items": [
+      {
+        "schema_version": "review-item/v0.1",
+        "review_item_id": "review/question/synthetic-bank/q-001",
+        "item_kind": "question",
+        "canonical_ref": {
+          "source_id": "synthetic-bank",
+          "source_question_id": "q-001"
+        },
+        "source_reference": {
+          "source_id": "synthetic-bank",
+          "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "source_path": "fixtures/question-index.json",
+          "source_question_id": "q-001"
+        },
+        "display_name": "synthetic q-001"
+      }
+    ]
+  },
+  "variants": [],
+  "expected": {
+    "schema_version": "mastery-review-state/v0.1",
+    "review_model_version": "review-model/v0.1",
+    "review_event_schema_version": "review-event/v0.1",
+    "review_evidence_version": "review-evidence/v0.1",
+    "progress_event_schema_version": "progress-event/v0.1",
+    "progress_replay_version": "progress-replay/v0.1",
+    "mastery_policy_version": "mastery-policy/spaced-consecutive/v0.1",
+    "review_policy_version": "review-policy/simple-ladder/v0.1",
+    "policy_projection_schema_version": "review-policy-projection/v0.1",
+    "as_of": "2026-03-12T02:00:00+00:00",
+    "timezone": "Asia/Shanghai",
+    "schedule_timezone": "Asia/Shanghai",
+    "outcome_adapter": {
+      "adapter_id": "review-outcome/raw-facts",
+      "adapter_version": "v0.1",
+      "adapter": "review-outcome/raw-facts/v0.1"
+    },
+    "progress_replayed_event_count": 4,
+    "items": {
+      "review/question/synthetic-bank/q-001": {
+        "review_item_id": "review/question/synthetic-bank/q-001",
+        "item_kind": "question",
+        "canonical_ref": {
+          "source_id": "synthetic-bank",
+          "source_question_id": "q-001"
+        },
+        "mastery_state": "learning",
+        "mastery_reason": "mastered_failure_demotes_learning",
+        "evaluated_evidence_count": 4,
+        "successful_review_count": 3,
+        "failure_count": 1,
+        "insufficient_evidence_count": 0,
+        "consecutive_success_count": 0,
+        "consecutive_success_day_count": 0,
+        "last_review_at": "2026-03-12T02:00:00+00:00",
+        "last_evidence_id": "evidence/attempt-004/review/question/synthetic-bank/q-001",
+        "review_interval_days": 1,
+        "next_due_at": "2026-03-12T16:00:00+00:00",
+        "next_due_local_date": "2026-03-13",
+        "review_status": "scheduled",
+        "review_status_reason": "scheduled_due_in_future",
+        "scheduling_reason": "failure_schedules_retry_interval",
+        "evidence_ids": [
+          "evidence/attempt-001/review/question/synthetic-bank/q-001",
+          "evidence/attempt-002/review/question/synthetic-bank/q-001",
+          "evidence/attempt-003/review/question/synthetic-bank/q-001",
+          "evidence/attempt-004/review/question/synthetic-bank/q-001"
+        ],
+        "evidence": [
+          {
+            "evidence_id": "evidence/attempt-001/review/question/synthetic-bank/q-001",
+            "source_event_id": "attempt-001",
+            "review_event_id": "ctx-attempt-001",
+            "occurred_at": "2026-03-01T02:00:00Z",
+            "attempt_context": "review",
+            "evidence_kind": "comprehensive_correctness",
+            "evidence_status": "supported",
+            "evidence_value": {
+              "correct": true
+            },
+            "source_reference": {
+              "source_id": "synthetic-bank",
+              "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "source_path": "fixtures/question-index.json",
+              "source_question_id": "q-001"
+            },
+            "policy_outcome": "success",
+            "policy_outcome_reason": "comprehensive_correctness_fact"
+          },
+          {
+            "evidence_id": "evidence/attempt-002/review/question/synthetic-bank/q-001",
+            "source_event_id": "attempt-002",
+            "review_event_id": "ctx-attempt-002",
+            "occurred_at": "2026-03-02T02:00:00Z",
+            "attempt_context": "review",
+            "evidence_kind": "comprehensive_correctness",
+            "evidence_status": "supported",
+            "evidence_value": {
+              "correct": true
+            },
+            "source_reference": {
+              "source_id": "synthetic-bank",
+              "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "source_path": "fixtures/question-index.json",
+              "source_question_id": "q-001"
+            },
+            "policy_outcome": "success",
+            "policy_outcome_reason": "comprehensive_correctness_fact"
+          },
+          {
+            "evidence_id": "evidence/attempt-003/review/question/synthetic-bank/q-001",
+            "source_event_id": "attempt-003",
+            "review_event_id": "ctx-attempt-003",
+            "occurred_at": "2026-03-05T02:00:00Z",
+            "attempt_context": "review",
+            "evidence_kind": "comprehensive_correctness",
+            "evidence_status": "supported",
+            "evidence_value": {
+              "correct": true
+            },
+            "source_reference": {
+              "source_id": "synthetic-bank",
+              "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "source_path": "fixtures/question-index.json",
+              "source_question_id": "q-001"
+            },
+            "policy_outcome": "success",
+            "policy_outcome_reason": "comprehensive_correctness_fact"
+          },
+          {
+            "evidence_id": "evidence/attempt-004/review/question/synthetic-bank/q-001",
+            "source_event_id": "attempt-004",
+            "review_event_id": "ctx-attempt-004",
+            "occurred_at": "2026-03-12T02:00:00Z",
+            "attempt_context": "review",
+            "evidence_kind": "comprehensive_correctness",
+            "evidence_status": "supported",
+            "evidence_value": {
+              "correct": false
+            },
+            "source_reference": {
+              "source_id": "synthetic-bank",
+              "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "source_path": "fixtures/question-index.json",
+              "source_question_id": "q-001"
+            },
+            "policy_outcome": "failure",
+            "policy_outcome_reason": "comprehensive_correctness_fact"
+          }
+        ]
+      }
+    },
+    "review": {
+      "total_items": 1,
+      "not_scheduled_count": 0,
+      "scheduled_count": 1,
+      "due_today_count": 0,
+      "overdue_count": 0,
+      "due_count": 0
+    },
+    "mastery": {
+      "new_count": 0,
+      "learning_count": 1,
+      "mastered_count": 0
+    }
+  },
+  "schema_version": "mastery-review-fixture/v0.1",
+  "fixture_id": "mastery-mastered-failure",
+  "policies": {
+    "mastery": "mastery-policy/spaced-consecutive/v0.1",
+    "review": "review-policy/simple-ladder/v0.1",
+    "outcome_adapter": "review-outcome/raw-facts/v0.1"
+  },
+  "contract_refs": [
+    "data/review/mastery-review-state.schema.json",
+    "docs/PHASE4_TEST_MATRIX.md",
+    "docs/review/MASTERY_POLICY_V01.md",
+    "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+    "engine/review/replay.py"
+  ],
+  "policy_symbols": [
+    "MASTERY_MASTERED_FAILURE_TRANSITION"
+  ]
+}

@@ -1,22 +1,15 @@
 #!/usr/bin/env python3
-"""Validate Review / Mastery scaffolding and report replay capability honestly.
+"""Validate and replay the frozen P4.6/P4.7 Review fixture matrix.
 
-当前职责：
-
-1. 校验 `data/review/fixture-plan.json` 与 `fixture-schema.draft.json` 自洽；
-2. 校验盘上 fixture 与 planned / ready 状态一致；
-3. 识别 P4.5 replay 与 `MasteryReviewState` schema 是否存在；
-4. 只有正式 ready fixture 到位后才执行 fixture replay / expected 比对。
-
-本脚本不会打印 `PASS Phase 4`：PENDING 只表示 fixture / edge-case / validation
-收口仍未完成，不代表 Phase 4 完成。
+This validator reports fixture-matrix status only. P4.8 documentation sync and
+P4.9 validation report remain separate; it never claims the Phase 4 Gate passed.
 """
 from __future__ import annotations
 
 import argparse
 from pathlib import Path
 import sys
-from typing import Any, Callable
+from typing import Any, Callable, Mapping
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -24,15 +17,12 @@ if str(ROOT) not in sys.path:
 if str(ROOT / "tests") not in sys.path:
     sys.path.insert(0, str(ROOT / "tests"))
 
-import reviewkit  # noqa: E402  (tests/ 下的共享测试工具)
+import reviewkit  # noqa: E402
 
-PENDING_STATUS = "PENDING_REVIEW_FIXTURE_MATRIX"
-REPLAY_PENDING_STATUS = "PENDING_REPLAY_IMPLEMENTATION"
-TEST_DESIGN_STATUS = "TEST_DESIGN_READY"
+FIXTURE_PASS_STATUS = "REVIEW_FIXTURE_MATRIX_PASS"
 
 
 def load_review_replay(root: Path) -> Callable[..., Any] | None:
-    """Load the P4.5 replay entry point when the implementation is present."""
     if str(root) not in sys.path:
         sys.path.insert(0, str(root))
     try:
@@ -42,49 +32,102 @@ def load_review_replay(root: Path) -> Callable[..., Any] | None:
     return review_replay
 
 
-def verify_fixture(entry: dict[str, Any], fixture_dir: Path, replay_fn: Callable[..., Any] | None) -> str:
-    fixture = reviewkit.load_review_fixture(fixture_dir / entry["file"])
-    if replay_fn is None:
-        return "shape-only"
-
-    as_of = fixture["as_of"]
-    timezone_name = fixture["timezone"]
-    events = fixture.get("events", [])
-
-    if "expected_error" in fixture:
-        # 拒绝样本：只验证“必须失败且 category 稳定”，不跑确定性性质检查。
-        try:
-            replay_fn(events, as_of=as_of, timezone=timezone_name)
-        except Exception as exc:  # noqa: BLE001 - category naming is policy-dependent
-            category = getattr(exc, "category", None)
-            if category is None:
-                raise reviewkit.FixtureContractError(
-                    f"{entry['fixture_id']}: replay raised {exc.__class__.__name__} without a stable category; "
-                    "error categories must freeze before expected_error can be verified"
-                ) from exc
-            if category != fixture["expected_error"]:
-                raise reviewkit.FixtureContractError(
-                    f"{entry['fixture_id']}: expected error {fixture['expected_error']!r}, got {category!r}"
-                ) from exc
-            return "expected-error-matched"
-        raise reviewkit.FixtureContractError(
-            f"{entry['fixture_id']}: expected_error {fixture['expected_error']!r} but replay succeeded"
-        )
-
-    result = reviewkit.assert_replay_properties(
-        replay_fn,
-        events,
+def _replay_case(
+    replay_fn: Callable[..., Any],
+    input_data: Mapping[str, Any],
+    fixture: Mapping[str, Any],
+    *,
+    as_of: Any,
+    timezone_name: str,
+    taxonomy: Mapping[str, Any],
+    capabilities: Mapping[str, Any],
+) -> Any:
+    policies = fixture["policies"]
+    return replay_fn(
+        input_data["progress_events"],
+        input_data["review_events"],
+        input_data["items"],
+        taxonomy,
+        capabilities,
         as_of=as_of,
-        timezone_name=timezone_name,
-        label=entry["fixture_id"],
+        timezone=timezone_name,
+        mastery_policy=policies["mastery"],
+        review_policy=policies["review"],
     )
-    if "expected" in fixture:
-        expected = reviewkit.canonical_json(fixture["expected"])
-        actual = reviewkit.canonical_json(result)
-        if expected != actual:
-            raise reviewkit.FixtureContractError(f"{entry['fixture_id']}: expected mismatch")
-        return "expected-matched"
-    return "replay-only"
+
+
+def verify_fixture(
+    entry: Mapping[str, Any],
+    fixture_dir: Path,
+    replay_fn: Callable[..., Any],
+    *,
+    root: Path,
+    fixture_schema: Mapping[str, Any],
+    state_schema: Mapping[str, Any],
+    taxonomy: Mapping[str, Any],
+    capabilities: Mapping[str, Any],
+) -> dict[str, int]:
+    path = fixture_dir / entry["file"]
+    fixture = reviewkit.load_review_fixture(path, schema=fixture_schema)
+    if fixture["fixture_id"] != entry["fixture_id"]:
+        raise reviewkit.FixtureContractError(f"{path.name}: fixture id does not match manifest")
+    if fixture.get("policy_symbols", []) != entry.get("policy_symbols", []):
+        raise reviewkit.FixtureContractError(f"{path.name}: policy_symbols differ from the frozen manifest")
+    if fixture.get("contract_refs") != entry.get("contract_refs"):
+        raise reviewkit.FixtureContractError(f"{path.name}: contract_refs differ from the frozen manifest")
+    for ref in fixture["contract_refs"]:
+        if not (root / ref.split("#", 1)[0]).is_file():
+            raise reviewkit.FixtureContractError(f"{path.name}: missing contract reference {ref!r}")
+
+    outcomes = {"expected-matched": 0, "expected-error-matched": 0}
+    for case in reviewkit.fixture_cases(fixture):
+        label = f"{entry['fixture_id']}[{case['case_id']}]"
+        try:
+            state = _replay_case(
+                replay_fn,
+                case["input"],
+                fixture,
+                as_of=case["as_of"],
+                timezone_name=case["timezone"],
+                taxonomy=taxonomy,
+                capabilities=capabilities,
+            )
+        except Exception as exc:  # noqa: BLE001 - category is the frozen rejection contract
+            category = getattr(exc, "category", None)
+            if case["expected_error"] is None:
+                raise reviewkit.FixtureContractError(
+                    f"{label}: replay raised {exc.__class__.__name__} [{category}]: {exc}"
+                ) from exc
+            if category != case["expected_error"]:
+                raise reviewkit.FixtureContractError(
+                    f"{label}: expected error {case['expected_error']!r}, got {category!r}"
+                ) from exc
+            outcomes["expected-error-matched"] += 1
+            continue
+
+        if case["expected_error"] is not None:
+            raise reviewkit.FixtureContractError(
+                f"{label}: expected rejection {case['expected_error']!r}, but replay succeeded"
+            )
+        reviewkit.validate_mastery_review_state(
+            state,
+            as_of=case["as_of"],
+            timezone_name=case["timezone"],
+            state_schema=state_schema,
+        )
+        reviewkit.assert_expected_projection(state, case["expected"], label)
+        reviewkit.assert_review_replay_properties(
+            replay_fn,
+            case["input"],
+            as_of=case["as_of"],
+            timezone_name=case["timezone"],
+            policies=fixture["policies"],
+            taxonomy=taxonomy,
+            capabilities=capabilities,
+            label=label,
+        )
+        outcomes["expected-matched"] += 1
+    return outcomes
 
 
 def main() -> int:
@@ -95,83 +138,81 @@ def main() -> int:
 
     try:
         plan = reviewkit.load_fixture_plan(root)
-        draft = reviewkit.load_fixture_schema_draft(root)
         errors = reviewkit.validate_fixture_plan(plan, root)
         if errors:
             for error in errors:
                 print(f"FAIL: {error}", file=sys.stderr)
             return 1
-        if draft.get("status") != "draft" or draft.get("frozen") is not False:
-            print("FAIL: fixture schema draft must stay draft until fixture matrix freeze", file=sys.stderr)
-            return 1
 
-        state_schema = root / "data/review/mastery-review-state.schema.json"
-        if not state_schema.is_file():
-            print(f"FAIL: missing MasteryReviewState schema {state_schema}", file=sys.stderr)
-            return 1
-        state_schema_doc = reviewkit.load_json(state_schema)
+        fixture_schema_path = root / "data/review/fixture-schema.v0.1.json"
+        fixture_schema = reviewkit.load_json(fixture_schema_path)
         if (
-            state_schema_doc.get("title") != "MasteryReviewState v0.1"
-            or state_schema_doc.get("properties", {}).get("schema_version", {}).get("const")
+            fixture_schema.get("title") != "Mastery / Review Fixture v0.1"
+            or fixture_schema.get("schema_version") != reviewkit.FIXTURE_SCHEMA_VERSION
+            or fixture_schema.get("contract") != "mastery-review-fixture"
+            or fixture_schema.get("status") != "FROZEN"
+            or fixture_schema.get("frozen") is not True
+            or fixture_schema.get("owner") != "P4.6"
+            or fixture_schema.get("properties", {}).get("schema_version", {}).get("const")
+            != reviewkit.FIXTURE_SCHEMA_VERSION
+        ):
+            raise reviewkit.FixtureContractError("formal mastery-review-fixture/v0.1 schema metadata is missing or inconsistent")
+
+        state_schema_path = root / "data/review/mastery-review-state.schema.json"
+        state_schema = reviewkit.load_json(state_schema_path)
+        if (
+            state_schema.get("title") != "MasteryReviewState v0.1"
+            or state_schema.get("properties", {}).get("schema_version", {}).get("const")
             != "mastery-review-state/v0.1"
         ):
-            print(f"FAIL: invalid MasteryReviewState schema {state_schema}", file=sys.stderr)
-            return 1
+            raise reviewkit.FixtureContractError("MasteryReviewState v0.1 schema is missing or inconsistent")
+
         design_doc = root / plan["design_doc"]
         if not design_doc.is_file():
-            print(f"FAIL: design doc {design_doc} is missing", file=sys.stderr)
-            return 1
+            raise reviewkit.FixtureContractError(f"design doc {design_doc} is missing")
         missing_refs = reviewkit.cross_check_matrix_refs(plan, design_doc.read_text(encoding="utf-8"))
         if missing_refs:
-            for item in missing_refs:
-                print(f"FAIL: {item}", file=sys.stderr)
-            return 1
+            raise reviewkit.FixtureContractError("undocumented matrix refs: " + "; ".join(missing_refs))
 
-        entries = plan["fixtures"]
-        fixture_dir = root / plan["fixture_root"]
-        shipped = sorted(fixture_dir.glob("*.json"))
-        ready = [entry for entry in entries if entry.get("status") == "ready"]
         replay_fn = load_review_replay(root)
+        if replay_fn is None:
+            raise reviewkit.FixtureContractError("engine.review.replay is required for a frozen fixture matrix")
+        taxonomy = reviewkit.load_json(root / "taxonomy/taxonomy.json")
+        capabilities = reviewkit.load_json(root / "taxonomy/capabilities.json")
+        fixture_dir = root / plan["fixture_root"]
+        ready = [entry for entry in plan["fixtures"] if entry.get("implementation") == "fixture"]
 
-        print(f"PASS review test scaffolding consistency: {len(entries)} planned entries")
-        print(f"  implementation mix: {_mix(entries)}")
-        print(f"  contract-independent: {sum(1 for e in entries if e['contract_independence'] == 'contract_independent')}"
-              f" / policy-dependent: {sum(1 for e in entries if e['contract_independence'] == 'policy_dependent')}")
-        print(f"  policy symbols registered: {len(plan['policy_symbols'])}"
-              f" (unfrozen: {sum(1 for s in plan['policy_symbols'].values() if s['status'] == 'unfrozen')})")
-        print(f"  fixtures on disk: {len(shipped)} (ready in plan: {len(ready)})")
-        print(f"  replay capability: {'available' if replay_fn is not None else 'missing'}")
-        print("  MasteryReviewState schema: available")
-
-        outcomes: dict[str, int] = {}
+        totals = {"expected-matched": 0, "expected-error-matched": 0}
         for entry in ready:
             try:
-                outcome = verify_fixture(entry, fixture_dir, replay_fn)
+                outcomes = verify_fixture(
+                    entry,
+                    fixture_dir,
+                    replay_fn,
+                    root=root,
+                    fixture_schema=fixture_schema,
+                    state_schema=state_schema,
+                    taxonomy=taxonomy,
+                    capabilities=capabilities,
+                )
             except (reviewkit.FixtureContractError, reviewkit.DeterminismViolation) as exc:
-                print(f"FAIL: {entry['fixture_id']}: {exc}", file=sys.stderr)
+                print(f"FAIL: {exc}", file=sys.stderr)
                 return 1
-            outcomes[outcome] = outcomes.get(outcome, 0) + 1
-        for outcome, count in sorted(outcomes.items()):
-            print(f"  verified {outcome}: {count}")
+            for key, count in outcomes.items():
+                totals[key] += count
 
-        if replay_fn is None:
-            print(f"{REPLAY_PENDING_STATUS}: engine.review replay is not available yet")
-            return 0
-        if not ready:
-            print(f"{PENDING_STATUS}: replay exists; P4.6/P4.7 ready fixtures are not complete")
-            return 0
-        print("PASS ready review fixtures replayed deterministically")
+        print("PASS frozen Review fixture schema and manifest")
+        print(f"  policy symbols frozen: {len(plan['policy_symbols'])}")
+        print(f"  fixtures replayed: {len(ready)}")
+        print(f"  expected states matched: {totals['expected-matched']}")
+        print(f"  expected rejection categories matched: {totals['expected-error-matched']}")
+        print("PASS output schema, version metadata, as_of/timezone, evidence trace and aggregate invariants")
+        print("PASS repeatability, input-order independence, same-instant offsets and future-evidence rejection")
+        print(f"{FIXTURE_PASS_STATUS}: P4.6/P4.7 fixture matrix only; P4.8/P4.9 remain pending")
         return 0
     except reviewkit.FixtureContractError as exc:
         print(f"FAIL: {exc}", file=sys.stderr)
         return 1
-
-
-def _mix(entries: list[dict[str, Any]]) -> str:
-    counts: dict[str, int] = {}
-    for entry in entries:
-        counts[entry["implementation"]] = counts.get(entry["implementation"], 0) + 1
-    return ", ".join(f"{key}={value}" for key, value in sorted(counts.items()))
 
 
 if __name__ == "__main__":

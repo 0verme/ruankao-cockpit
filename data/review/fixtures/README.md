@@ -1,28 +1,14 @@
-# Review Fixtures（当前为空）
+# Frozen Mastery / Review Fixtures
 
-本目录预留给 Phase 4 synthetic review fixtures，命名规则见
-[`../fixture-plan.json`](../fixture-plan.json) 与
-[`docs/PHASE4_TEST_MATRIX.md`](../../../docs/PHASE4_TEST_MATRIX.md)。
+本目录包含 P4.6/P4.7 冻结的 36 个 synthetic replay fixtures，schema 为 `mastery-review-fixture/v0.1`，结构由 [`../fixture-schema.v0.1.json`](../fixture-schema.v0.1.json) 定义。
 
-当前状态：
+每个 fixture 都记录显式 `as_of`、IANA timezone、冻结的 policy/adapter identities、事实输入、contract provenance，以及 expected state projection 或 rejection category。无效样本仅使用正式 replay/Review contract 定义的 rejection category。
 
-```text
-TEST_DESIGN_READY
-WAITING_FOR_FIXTURE_MATRIX_FINALIZATION（P4.6 / P4.7）
+fixture-plan status、policy symbols 与磁盘文件由以下入口交叉验证：
+
+```bash
+python3 scripts/validate_review.py
+python3 -m unittest tests.test_review_fixture_plan tests.test_review_fixture_matrix
 ```
 
-因此这里**暂时没有** `*.json` fixture。原因不是遗漏，而是：
-
-- P4.1～P4.5 的 item / evidence / policy / replay contract 已冻结；
-- fixture manifest 的 policy-dependent expected、edge-case matrix 与 synthetic
-  fixture 文件仍未收口，避免在 fixture 资产中悄然扩展业务规则。
-
-fixture matrix finalization 后按以下顺序补齐：
-
-1. 在 `../fixture-plan.json` 中把对应条目从 `status: planned` 改为 `status: ready`；
-2. 新增 `data/review/fixtures/<fixture_id>.json`，按
-   `data/review/fixture-schema.draft.json` 填充事实与 `expected` / `expected_error`；
-3. 运行 `python3 scripts/validate_review.py` 与
-   `python3 -m unittest discover -s tests -v`。
-
-约束：fixture 必须是 synthetic，不得复制第三方题干、选项、答案、解析、OCR 或 PDF 正文。
+fixtures 只含 synthetic facts 和来源索引，不含第三方题干、选项、答案、解析、OCR 或 PDF 正文。P4.6/P4.7 已收口；P4.8/P4.9 尚未完成。

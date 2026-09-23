@@ -1,7 +1,7 @@
 {
-  "manifest_version": "review-fixture-plan/v0.1",
-  "stage": "P4.6 synthetic fixtures + P4.7 unit tests / edge cases — design stage",
-  "status": "TEST_DESIGN_READY_WAITING_FOR_FIXTURE_MATRIX_FREEZE",
+  "manifest_version": "review-fixture-plan/v0.2",
+  "stage": "P4.6 frozen synthetic fixture matrix + P4.7 edge-case suite",
+  "status": "REVIEW_FIXTURE_MATRIX_FROZEN",
   "owner": "P4.6",
   "contract_freeze_owners": [
     "P4.1",
@@ -10,7 +10,6 @@
     "P4.4",
     "P4.5"
   ],
-  "fixture_schema_draft": "review-fixture/v0.1-draft",
   "fixture_root": "data/review/fixtures",
   "design_doc": "docs/PHASE4_TEST_MATRIX.md",
   "naming": {
@@ -42,79 +41,138 @@
     "REVIEW_ITEM_ID_NAMESPACE": {
       "owner": "P4.1",
       "description": "review_item_id 的稳定组成 / namespace 规则",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": {
+        "namespace": "review",
+        "formats": {
+          "topic": "review/topic/<topic_id>",
+          "question": "review/question/<source_id>/<source_question_id>",
+          "case_capability": "review/case_capability/<capability_id>"
+        }
+      },
+      "frozen_by": "docs/review/REVIEW_MODEL_V01.md (P4.1 frozen contract)"
     },
     "REVIEW_ITEM_KIND_ENUM": {
       "owner": "P4.1",
       "description": "支持的 review item kind 集合",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": [
+        "topic",
+        "question",
+        "case_capability"
+      ],
+      "frozen_by": "docs/review/REVIEW_MODEL_V01.md (P4.1 frozen contract)"
     },
     "REVIEW_ITEM_REGISTRY": {
       "owner": "P4.1",
       "description": "合法 review item 注册来源与未知 item 的判定",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": {
+        "input": "explicit review item catalog",
+        "validation": "canonical reference against taxonomy/capability catalog",
+        "active_state": "one per active canonical item",
+        "unknown_item": "reject; no implicit creation"
+      },
+      "frozen_by": "docs/review/REVIEW_MODEL_V01.md (P4.1 frozen contract)"
     },
     "REVIEW_ITEM_ALIAS_RULE": {
       "owner": "P4.1",
       "description": "alias / 合并 / 重复 item 的解析规则",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": {
+        "alias_resolution": "before catalog validation",
+        "duplicate_canonical_item": "reject",
+        "merge_split": "retired item plus explicit migration",
+        "automatic_evidence_merge": false
+      },
+      "frozen_by": "docs/review/REVIEW_MODEL_V01.md (P4.1 frozen contract)"
     },
     "REVIEW_EVIDENCE_SOURCE": {
       "owner": "P4.2",
       "description": "review evidence 是事件投影还是新事件类型",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": {
+        "facts": "progress-event/v0.1 comprehensive_attempt or case_attempt",
+        "context": "review-event/v0.1 review_context",
+        "projection": "one policy-neutral evidence per source_event_id + review_item_id"
+      },
+      "frozen_by": "docs/review/REVIEW_EVIDENCE_V01.md (P4.2 frozen contract)"
     },
     "REVIEW_EVENT_TYPE": {
       "owner": "P4.2",
       "description": "review evidence 的 event type 与 schema version",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": {
+        "schema_version": "review-event/v0.1",
+        "event_type": "review_context",
+        "attempt_context": [
+          "initial_learning",
+          "review"
+        ],
+        "occurred_at": "same instant as source event"
+      },
+      "frozen_by": "docs/review/REVIEW_EVIDENCE_V01.md (P4.2 frozen contract)"
     },
     "EVIDENCE_SUFFICIENCY_RULE": {
       "owner": "P4.2",
       "description": "insufficient_evidence 与 failure 的边界",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": {
+        "statuses": [
+          "supported",
+          "insufficient_evidence",
+          "unsupported"
+        ],
+        "non_supported_policy_outcome": "insufficient",
+        "failure_from_missing_or_unavailable_fact": false
+      },
+      "frozen_by": "docs/review/REVIEW_EVIDENCE_V01.md (P4.2 frozen contract)"
     },
     "SUCCESS_DERIVATION_COMPREHENSIVE": {
       "owner": "P4.2",
       "description": "综合题 evidence 的 success/failure 推导",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": {
+        "supported_correct_true": "success",
+        "supported_correct_false": "failure",
+        "non_supported": "insufficient"
+      },
+      "frozen_by": "engine/review/replay.py (P4.5 frozen contract)"
     },
     "SUCCESS_DERIVATION_CASE_SCORE": {
       "owner": "P4.2",
       "description": "案例总分 evidence 的 success/failure 推导",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": {
+        "adapter": "review-outcome/raw-facts/v0.1",
+        "supported_score": "insufficient",
+        "reason": "score_outcome_mapping_unfrozen",
+        "threshold_frozen": false
+      },
+      "frozen_by": "engine/review/replay.py (P4.5 frozen contract)"
     },
     "SUCCESS_DERIVATION_CAPABILITY": {
       "owner": "P4.2",
       "description": "capability evidence 的 success/failure 推导",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": {
+        "adapter": "review-outcome/raw-facts/v0.1",
+        "supported_capability_score": "insufficient",
+        "reason": "score_outcome_mapping_unfrozen",
+        "threshold_frozen": false
+      },
+      "frozen_by": "engine/review/replay.py (P4.5 frozen contract)"
     },
     "EVIDENCE_DEDUP_RULE": {
       "owner": "P4.2",
       "description": "同一 source event 是否可重复计入",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": {
+        "unique_context": "(source_event_id, review_item_id)",
+        "evidence_id": "evidence/<source_event_id>/<review_item_id>",
+        "duplicates": "reject"
+      },
+      "frozen_by": "docs/review/REVIEW_EVIDENCE_V01.md (P4.2 frozen contract)"
     },
     "MASTERY_STATE_ENUM": {
       "owner": "P4.3",
@@ -338,30 +396,58 @@
     "REPLAY_AS_OF_PARAMETER": {
       "owner": "P4.5",
       "description": "replay 的 as_of 参数形态与必填性",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": {
+        "required": true,
+        "type": "timezone-aware ISO 8601 instant",
+        "future_evidence": "reject",
+        "category": "future_evidence",
+        "equal_to_event": "include"
+      },
+      "frozen_by": "engine/review/replay.py (P4.5 frozen contract)"
     },
     "REPLAY_TIE_BREAKER": {
       "owner": "P4.5",
       "description": "同 timestamp 事件的稳定排序/tie-breaker",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": {
+        "key": [
+          "occurred_at_utc",
+          "evidence_id"
+        ],
+        "order": "ascending",
+        "input_order_independent": true
+      },
+      "frozen_by": "engine/review/replay.py (P4.5 frozen contract)"
     },
     "REPLAY_FUTURE_EVIDENCE_POLICY": {
       "owner": "P4.5",
       "description": "as_of 早于事件的 future-evidence 语义（reject / exclude）",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": {
+        "policy": "reject",
+        "category": "future_evidence",
+        "silent_exclusion": false
+      },
+      "frozen_by": "engine/review/replay.py (P4.5 frozen contract)"
     },
     "REPLAY_OUTPUT_VERSION_FIELDS": {
       "owner": "P4.5",
       "description": "输出中的 contract / policy version 与 as_of 字段",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": [
+        "schema_version",
+        "review_model_version",
+        "review_event_schema_version",
+        "review_evidence_version",
+        "progress_event_schema_version",
+        "progress_replay_version",
+        "mastery_policy_version",
+        "review_policy_version",
+        "policy_projection_schema_version",
+        "outcome_adapter"
+      ],
+      "frozen_by": "engine/review/replay.py (P4.5 frozen contract)"
     },
     "STATE_FIELD_NAMES": {
       "owner": "P4.3",
@@ -434,9 +520,25 @@
     "STATE_ERROR_CATEGORIES": {
       "owner": "P4.5",
       "description": "review replay 的 validation error category 命名",
-      "status": "unfrozen",
-      "value": null,
-      "frozen_by": null
+      "status": "frozen",
+      "value": {
+        "duplicate_progress_event_id": "duplicate_event_id",
+        "unknown_review_item": "unknown_review_item",
+        "unknown_topic": "unknown_topic_id",
+        "unknown_capability": "unknown_capability_id",
+        "timezone_naive": "invalid_timestamp",
+        "invalid_timezone": "invalid_timezone",
+        "future_evidence": "future_evidence",
+        "source_timestamp_mismatch": "source_timestamp_mismatch",
+        "evidence_item_mismatch": "evidence_item_mismatch",
+        "malformed_review_item": "invalid_review_contract",
+        "invalid_source_reference": "invalid_source_reference",
+        "forbidden_source_path": "forbidden_path",
+        "duplicate_review_item": "duplicate_review_item",
+        "duplicate_review_context": "duplicate_review_context",
+        "unsupported_policy_parameters": "invalid_policy_input"
+      },
+      "frozen_by": "engine/review/replay.py (P4.5 frozen contract)"
     }
   },
   "fixtures": [
@@ -445,111 +547,130 @@
       "matrix_refs": [
         "A1"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "contract_independent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.1"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "REVIEW_ITEM_ID_NAMESPACE"
       ],
       "intent": "同一个 canonical 对象在不同输入顺序/不同 fixture 中必须得到同一个 review_item_id（只断言相等关系，不断言字面量）",
-      "status": "planned",
-      "file": "id-same-canonical-object.json"
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_MODEL_V01.md"
+      ],
+      "skeleton": "tests/test_review_contract.py"
     },
     {
       "fixture_id": "id-display-name-change",
       "matrix_refs": [
         "A2"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "contract_independent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.1"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "REVIEW_ITEM_ID_NAMESPACE"
       ],
       "intent": "只改变 display name / 标签时 review_item_id 与 mastery 状态保持不变（metamorphic）",
-      "status": "planned",
-      "file": "id-display-name-change.json"
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_MODEL_V01.md"
+      ],
+      "skeleton": "tests/test_review_contract.py"
     },
     {
       "fixture_id": "id-question-text-change",
       "matrix_refs": [
         "A3"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "contract_independent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.1"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "REVIEW_ITEM_ID_NAMESPACE",
         "REVIEW_ITEM_REGISTRY"
       ],
       "intent": "只改变题干引用（同一 source_question_id 下的文本变化/不带正文）时身份不变",
-      "status": "planned",
-      "file": "id-question-text-change.json"
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_MODEL_V01.md"
+      ],
+      "skeleton": "tests/test_review_contract.py"
     },
     {
       "fixture_id": "id-policy-version-change",
       "matrix_refs": [
         "A4"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "contract_independent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.1"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "REVIEW_ITEM_ID_NAMESPACE",
         "REPLAY_OUTPUT_VERSION_FIELDS"
       ],
       "intent": "mastery/review policy version 升级不改变 review_item_id",
-      "status": "planned",
-      "file": "id-policy-version-change.json"
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_MODEL_V01.md",
+        "engine/review/replay.py"
+      ],
+      "skeleton": "tests/test_review_contract.py"
     },
     {
       "fixture_id": "id-alias-resolution",
       "matrix_refs": [
         "A7"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.1"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "REVIEW_ITEM_ALIAS_RULE",
         "REVIEW_ITEM_ID_NAMESPACE"
       ],
       "intent": "alias 解析到唯一 canonical item；alias 不得产生第二个独立 state",
-      "status": "planned",
-      "file": "id-alias-resolution.json"
+      "status": "not_applicable",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_MODEL_V01.md"
+      ],
+      "resolution": "P4.1 requires alias resolution before Review Item catalog validation; replay has no alias input contract."
     },
     {
       "fixture_id": "id-kind-isolation",
       "matrix_refs": [
         "A10"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "contract_independent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.1"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "REVIEW_ITEM_KIND_ENUM"
       ],
       "intent": "topic / question / case_capability 三类 item 各自独立：同名不同 kind 不得共享状态",
-      "status": "planned",
-      "file": "id-kind-isolation.json"
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_MODEL_V01.md"
+      ],
+      "skeleton": "tests/test_review_contract.py"
     },
     {
       "fixture_id": "invalid-unknown-review-item",
@@ -559,16 +680,21 @@
       "implementation": "fixture",
       "contract_independence": "policy_dependent",
       "expected_kind": "error",
-      "blocked_by": [
-        "P4.1"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "REVIEW_ITEM_REGISTRY",
         "STATE_ERROR_CATEGORIES"
       ],
       "intent": "evidence 指向未注册 review item 时必须拒绝，不能静默创建 item",
-      "status": "planned",
-      "file": "invalid-unknown-review-item.json"
+      "status": "ready",
+      "file": "invalid-unknown-review-item.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_MODEL_V01.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "engine/review/replay.py"
+      ]
     },
     {
       "fixture_id": "invalid-duplicate-item",
@@ -578,93 +704,114 @@
       "implementation": "fixture",
       "contract_independence": "policy_dependent",
       "expected_kind": "error",
-      "blocked_by": [
-        "P4.1"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "REVIEW_ITEM_ALIAS_RULE",
         "STATE_ERROR_CATEGORIES"
       ],
       "intent": "同一 review_item_id 的重复 item 声明必须拒绝（不静默去重）",
-      "status": "planned",
-      "file": "invalid-duplicate-item.json"
+      "status": "ready",
+      "file": "invalid-duplicate-item.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_MODEL_V01.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "engine/review/replay.py"
+      ]
     },
     {
       "fixture_id": "invalid-missing-canonical-reference",
       "matrix_refs": [
         "A8"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "policy_dependent",
       "expected_kind": "error",
-      "blocked_by": [
-        "P4.1",
-        "P4.2"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "REVIEW_ITEM_REGISTRY",
         "STATE_ERROR_CATEGORIES"
       ],
       "intent": "缺少 canonical reference（topic/question/capability）时拒绝，不复制正文补洞",
-      "status": "planned",
-      "file": "invalid-missing-canonical-reference.json"
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_EVIDENCE_V01.md",
+        "docs/review/REVIEW_MODEL_V01.md",
+        "engine/review/replay.py"
+      ],
+      "skeleton": "tests/test_review_contract.py"
     },
     {
       "fixture_id": "invalid-unsupported-item-kind",
       "matrix_refs": [
         "A9"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "policy_dependent",
       "expected_kind": "error",
-      "blocked_by": [
-        "P4.1"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "REVIEW_ITEM_KIND_ENUM",
         "STATE_ERROR_CATEGORIES"
       ],
       "intent": "未支持的 item kind 必须被拒绝，不能降级成 topic 或忽略",
-      "status": "planned",
-      "file": "invalid-unsupported-item-kind.json"
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_MODEL_V01.md",
+        "engine/review/replay.py"
+      ],
+      "skeleton": "tests/test_review_contract.py"
     },
     {
       "fixture_id": "evidence-comprehensive-correct",
       "matrix_refs": [
         "B1"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.2"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "REVIEW_EVIDENCE_SOURCE",
         "SUCCESS_DERIVATION_COMPREHENSIVE"
       ],
       "intent": "综合题 correct=true 作为 review evidence 的唯一成功事实来源",
-      "status": "planned",
-      "file": "evidence-comprehensive-correct.json"
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_EVIDENCE_V01.md",
+        "engine/review/replay.py"
+      ],
+      "skeleton": "tests/test_review_contract.py"
     },
     {
       "fixture_id": "evidence-comprehensive-incorrect",
       "matrix_refs": [
         "B2"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.2"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "REVIEW_EVIDENCE_SOURCE",
         "SUCCESS_DERIVATION_COMPREHENSIVE"
       ],
       "intent": "综合题 correct=false 作为 failure evidence；不能等同于 unanswered",
-      "status": "planned",
-      "file": "evidence-comprehensive-incorrect.json"
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_EVIDENCE_V01.md",
+        "engine/review/replay.py"
+      ],
+      "skeleton": "tests/test_review_contract.py"
     },
     {
       "fixture_id": "evidence-case-score",
@@ -674,72 +821,87 @@
       "implementation": "fixture",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.2"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "SUCCESS_DERIVATION_CASE_SCORE",
         "EVIDENCE_SUFFICIENCY_RULE"
       ],
       "intent": "案例总分 evidence 的 success 判定（阈值属于 policy symbol，不在本窗口冻结）",
-      "status": "planned",
-      "file": "evidence-case-score.json"
+      "status": "ready",
+      "file": "evidence-case-score.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_EVIDENCE_V01.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "engine/review/replay.py"
+      ]
     },
     {
       "fixture_id": "evidence-capability-score",
       "matrix_refs": [
         "B4"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.2"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "SUCCESS_DERIVATION_CAPABILITY"
       ],
       "intent": "capability-level score evidence 只影响对应 capability item，不复制案例总分",
-      "status": "planned",
-      "file": "evidence-capability-score.json"
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_EVIDENCE_V01.md",
+        "engine/review/replay.py"
+      ],
+      "skeleton": "tests/test_review_contract.py"
     },
     {
       "fixture_id": "evidence-capability-missing",
       "matrix_refs": [
         "B5"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.2"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "EVIDENCE_SUFFICIENCY_RULE"
       ],
       "intent": "只引用 capability 而没有 score evidence → insufficient_evidence，不得当作 failure",
-      "status": "planned",
-      "file": "evidence-capability-missing.json"
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_EVIDENCE_V01.md"
+      ],
+      "skeleton": "tests/test_review_contract.py"
     },
     {
       "fixture_id": "evidence-insufficient",
       "matrix_refs": [
         "B6"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.2",
-        "P4.3"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "EVIDENCE_SUFFICIENCY_RULE",
         "MASTERY_INSUFFICIENT_EVIDENCE_STATE"
       ],
       "intent": "insufficient evidence 有独立表示，不能伪装成 new / learning / mastered",
-      "status": "planned",
-      "file": "evidence-insufficient.json"
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/MASTERY_POLICY_V01.md",
+        "docs/review/REVIEW_EVIDENCE_V01.md"
+      ],
+      "skeleton": "tests/test_review_contract.py"
     },
     {
       "fixture_id": "evidence-zero-score",
@@ -749,54 +911,65 @@
       "implementation": "fixture",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.2"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "SUCCESS_DERIVATION_CASE_SCORE",
         "EVIDENCE_SUFFICIENCY_RULE"
       ],
       "intent": "真实 0 分是 sufficient evidence，不能与 insufficient_evidence 合并",
-      "status": "planned",
-      "file": "evidence-zero-score.json"
+      "status": "ready",
+      "file": "evidence-zero-score.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_EVIDENCE_V01.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "engine/review/replay.py"
+      ]
     },
     {
       "fixture_id": "evidence-unanswered",
       "matrix_refs": [
         "B8"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.2"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "REVIEW_EVIDENCE_SOURCE",
         "EVIDENCE_SUFFICIENCY_RULE"
       ],
       "intent": "未作答不得产生 failure evidence，也不得改变 mastery state",
-      "status": "planned",
-      "file": "evidence-unanswered.json"
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_EVIDENCE_V01.md"
+      ],
+      "skeleton": "tests/test_review_contract.py"
     },
     {
       "fixture_id": "evidence-null-not-conflated",
       "matrix_refs": [
         "B16"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "contract_independent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.2",
-        "P4.3"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "EVIDENCE_SUFFICIENCY_RULE"
       ],
       "intent": "zero / failure / unanswered / insufficient / null 五种语义两两可区分（相对性质）",
-      "status": "planned",
-      "file": "evidence-null-not-conflated.json"
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/MASTERY_POLICY_V01.md",
+        "docs/review/REVIEW_EVIDENCE_V01.md"
+      ],
+      "skeleton": "tests/test_review_contract.py"
     },
     {
       "fixture_id": "invalid-unknown-topic",
@@ -806,15 +979,20 @@
       "implementation": "fixture",
       "contract_independence": "policy_dependent",
       "expected_kind": "error",
-      "blocked_by": [
-        "P4.2"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "STATE_ERROR_CATEGORIES"
       ],
       "intent": "evidence 引用未知 topic 时拒绝",
-      "status": "planned",
-      "file": "invalid-unknown-topic.json"
+      "status": "ready",
+      "file": "invalid-unknown-topic.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_EVIDENCE_V01.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "engine/review/replay.py"
+      ]
     },
     {
       "fixture_id": "invalid-unknown-capability",
@@ -824,15 +1002,20 @@
       "implementation": "fixture",
       "contract_independence": "policy_dependent",
       "expected_kind": "error",
-      "blocked_by": [
-        "P4.2"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "STATE_ERROR_CATEGORIES"
       ],
       "intent": "evidence 引用未知 capability 时拒绝",
-      "status": "planned",
-      "file": "invalid-unknown-capability.json"
+      "status": "ready",
+      "file": "invalid-unknown-capability.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_EVIDENCE_V01.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "engine/review/replay.py"
+      ]
     },
     {
       "fixture_id": "invalid-evidence-kind-mismatch",
@@ -842,35 +1025,44 @@
       "implementation": "fixture",
       "contract_independence": "policy_dependent",
       "expected_kind": "error",
-      "blocked_by": [
-        "P4.2"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "SUCCESS_DERIVATION_CAPABILITY",
         "STATE_ERROR_CATEGORIES"
       ],
       "intent": "case/capability evidence 指向 question item（或反之）时拒绝",
-      "status": "planned",
-      "file": "invalid-evidence-kind-mismatch.json"
+      "status": "ready",
+      "file": "invalid-evidence-kind-mismatch.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_EVIDENCE_V01.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "engine/review/replay.py"
+      ]
     },
     {
       "fixture_id": "invalid-duplicate-source-event",
       "matrix_refs": [
         "B12"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "policy_dependent",
       "expected_kind": "error",
-      "blocked_by": [
-        "P4.2"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "EVIDENCE_DEDUP_RULE",
         "STATE_ERROR_CATEGORIES"
       ],
       "intent": "同一 source event 重复计入必须拒绝或按显式规则处理，不能重复计数",
-      "status": "planned",
-      "file": "invalid-duplicate-source-event.json"
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_EVIDENCE_V01.md",
+        "engine/review/replay.py"
+      ],
+      "skeleton": "tests/test_review_contract.py"
     },
     {
       "fixture_id": "invalid-missing-source-reference",
@@ -880,16 +1072,21 @@
       "implementation": "fixture",
       "contract_independence": "policy_dependent",
       "expected_kind": "error",
-      "blocked_by": [
-        "P4.1",
-        "P4.2"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "STATE_ERROR_CATEGORIES"
       ],
       "intent": "缺少必要 source reference 时拒绝",
-      "status": "planned",
-      "file": "invalid-missing-source-reference.json"
+      "status": "ready",
+      "file": "invalid-missing-source-reference.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_EVIDENCE_V01.md",
+        "docs/review/REVIEW_MODEL_V01.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "engine/review/replay.py"
+      ]
     },
     {
       "fixture_id": "invalid-illegal-source-path",
@@ -899,15 +1096,20 @@
       "implementation": "fixture",
       "contract_independence": "policy_dependent",
       "expected_kind": "error",
-      "blocked_by": [
-        "P4.2"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "STATE_ERROR_CATEGORIES"
       ],
       "intent": "非法 source path（绝对路径 / 目录穿越 / 本地路径）继续被拒绝",
-      "status": "planned",
-      "file": "invalid-illegal-source-path.json"
+      "status": "ready",
+      "file": "invalid-illegal-source-path.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_EVIDENCE_V01.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "engine/review/replay.py"
+      ]
     },
     {
       "fixture_id": "invalid-naive-timestamp",
@@ -917,15 +1119,20 @@
       "implementation": "fixture",
       "contract_independence": "policy_dependent",
       "expected_kind": "error",
-      "blocked_by": [
-        "P4.2"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "STATE_ERROR_CATEGORIES"
       ],
       "intent": "timezone-naive timestamp 继续被拒绝",
-      "status": "planned",
-      "file": "invalid-naive-timestamp.json"
+      "status": "ready",
+      "file": "invalid-naive-timestamp.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_EVIDENCE_V01.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "engine/review/replay.py"
+      ]
     },
     {
       "fixture_id": "mastery-new-item",
@@ -935,34 +1142,42 @@
       "implementation": "fixture",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.3"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "MASTERY_INITIAL_STATE",
         "MASTERY_STATE_ENUM"
       ],
       "intent": "无 evidence 的 review item 的初始状态",
-      "status": "planned",
-      "file": "mastery-new-item.json"
+      "status": "ready",
+      "file": "mastery-new-item.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/MASTERY_POLICY_V01.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "engine/review/replay.py"
+      ]
     },
     {
       "fixture_id": "mastery-first-evidence",
       "matrix_refs": [
         "C2"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.3"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "MASTERY_STATE_ENUM"
       ],
       "intent": "首次 evidence 后的状态（符号化：不写死状态名）",
-      "status": "planned",
-      "file": "mastery-first-evidence.json"
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/MASTERY_POLICY_V01.md"
+      ],
+      "skeleton": "tests/test_review_policy.py"
     },
     {
       "fixture_id": "mastery-first-success",
@@ -972,15 +1187,20 @@
       "implementation": "fixture",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.3"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "MASTERY_SUCCESS_STREAK_TO_MASTERED"
       ],
       "intent": "首次成功后的状态与计数",
-      "status": "planned",
-      "file": "mastery-first-success.json"
+      "status": "ready",
+      "file": "mastery-first-success.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/MASTERY_POLICY_V01.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "engine/review/replay.py"
+      ]
     },
     {
       "fixture_id": "mastery-repeated-success",
@@ -990,15 +1210,20 @@
       "implementation": "fixture",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.3"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "MASTERY_SUCCESS_STREAK_TO_MASTERED"
       ],
       "intent": "连续成功推进（阈值符号化）",
-      "status": "planned",
-      "file": "mastery-repeated-success.json"
+      "status": "ready",
+      "file": "mastery-repeated-success.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/MASTERY_POLICY_V01.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "engine/review/replay.py"
+      ]
     },
     {
       "fixture_id": "mastery-learning-failure",
@@ -1008,15 +1233,20 @@
       "implementation": "fixture",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.3"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "MASTERY_FAILURE_TRANSITION"
       ],
       "intent": "learning 状态失败后的降级/计数/transition reason",
-      "status": "planned",
-      "file": "mastery-learning-failure.json"
+      "status": "ready",
+      "file": "mastery-learning-failure.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/MASTERY_POLICY_V01.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "engine/review/replay.py"
+      ]
     },
     {
       "fixture_id": "mastery-mastered",
@@ -1026,16 +1256,21 @@
       "implementation": "fixture",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.3"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "MASTERY_SUCCESS_STREAK_TO_MASTERED",
         "MASTERY_MASTERED_PERSISTENCE"
       ],
       "intent": "达到 mastered 的条件与状态",
-      "status": "planned",
-      "file": "mastery-mastered.json"
+      "status": "ready",
+      "file": "mastery-mastered.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/MASTERY_POLICY_V01.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "engine/review/replay.py"
+      ]
     },
     {
       "fixture_id": "mastery-mastered-success",
@@ -1045,15 +1280,20 @@
       "implementation": "fixture",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.3"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "MASTERY_MASTERED_PERSISTENCE"
       ],
       "intent": "mastered 后再次 success 的行为",
-      "status": "planned",
-      "file": "mastery-mastered-success.json"
+      "status": "ready",
+      "file": "mastery-mastered-success.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/MASTERY_POLICY_V01.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "engine/review/replay.py"
+      ]
     },
     {
       "fixture_id": "mastery-mastered-failure",
@@ -1063,15 +1303,20 @@
       "implementation": "fixture",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.3"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "MASTERY_MASTERED_FAILURE_TRANSITION"
       ],
       "intent": "mastered 后 failure 的行为（是否降级、是否影响 maintenance）",
-      "status": "planned",
-      "file": "mastery-mastered-failure.json"
+      "status": "ready",
+      "file": "mastery-mastered-failure.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/MASTERY_POLICY_V01.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "engine/review/replay.py"
+      ]
     },
     {
       "fixture_id": "mastery-insufficient-evidence",
@@ -1081,53 +1326,65 @@
       "implementation": "fixture",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.3"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "MASTERY_INSUFFICIENT_EVIDENCE_STATE"
       ],
       "intent": "证据不足时的状态表示",
-      "status": "planned",
-      "file": "mastery-insufficient-evidence.json"
+      "status": "ready",
+      "file": "mastery-insufficient-evidence.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/MASTERY_POLICY_V01.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "engine/review/replay.py"
+      ]
     },
     {
       "fixture_id": "invalid-illegal-transition",
       "matrix_refs": [
         "C10"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "policy_dependent",
       "expected_kind": "error",
-      "blocked_by": [
-        "P4.3"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "MASTERY_ILLEGAL_TRANSITION_POLICY",
         "STATE_ERROR_CATEGORIES"
       ],
       "intent": "非法状态跃迁被拒绝或按显式规则记录",
-      "status": "planned",
-      "file": "invalid-illegal-transition.json"
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/MASTERY_POLICY_V01.md",
+        "engine/review/replay.py"
+      ],
+      "skeleton": "tests/test_review_policy.py"
     },
     {
       "fixture_id": "sched-first-due",
       "matrix_refs": [
         "D1"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.4"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "SCHED_FIRST_DUE_RULE",
         "SCHED_INTERVAL_LADDER"
       ],
       "intent": "首次复习的 due 时间基准（interval 值符号化）",
-      "status": "planned",
-      "file": "sched-first-due.json"
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_SCHEDULING_POLICY_V01.md"
+      ],
+      "skeleton": "tests/test_review_policy.py"
     },
     {
       "fixture_id": "sched-before-due",
@@ -1137,165 +1394,196 @@
       "implementation": "fixture",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.4"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "SCHED_DUE_GRANULARITY",
         "STATE_DUE_PROJECTION_NAMES"
       ],
       "intent": "as_of < due 时的 projection（not due）",
-      "status": "planned",
-      "file": "sched-before-due.json"
+      "status": "ready",
+      "file": "sched-before-due.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "docs/review/REVIEW_SCHEDULING_POLICY_V01.md",
+        "engine/review/replay.py"
+      ]
     },
     {
       "fixture_id": "sched-exact-due",
       "matrix_refs": [
         "D3"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.4"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "SCHED_DUE_GRANULARITY",
         "STATE_DUE_PROJECTION_NAMES"
       ],
       "intent": "as_of == due 的边界语义（包含性必须冻结）",
-      "status": "planned",
-      "file": "sched-exact-due.json"
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_SCHEDULING_POLICY_V01.md"
+      ],
+      "skeleton": "tests/test_review_policy.py"
     },
     {
       "fixture_id": "sched-after-due",
       "matrix_refs": [
         "D4"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.4"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "STATE_DUE_PROJECTION_NAMES"
       ],
       "intent": "as_of > due 时的 projection",
-      "status": "planned",
-      "file": "sched-after-due.json"
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_SCHEDULING_POLICY_V01.md"
+      ],
+      "skeleton": "tests/test_review_policy.py"
     },
     {
       "fixture_id": "sched-overdue",
       "matrix_refs": [
         "D5"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.4"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "SCHED_OVERDUE_RULE",
         "STATE_DUE_PROJECTION_NAMES"
       ],
       "intent": "overdue 的表示与是否改变下一次 interval",
-      "status": "planned",
-      "file": "sched-overdue.json"
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_SCHEDULING_POLICY_V01.md"
+      ],
+      "skeleton": "tests/test_review_policy.py"
     },
     {
       "fixture_id": "sched-success-advance",
       "matrix_refs": [
         "D6"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.4"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "SCHED_SUCCESS_ADVANCE_RULE",
         "SCHED_INTERVAL_LADDER"
       ],
       "intent": "success 后 interval 推进（1/3/7/15 或替代 policy 仅以符号引用）",
-      "status": "planned",
-      "file": "sched-success-advance.json"
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_SCHEDULING_POLICY_V01.md"
+      ],
+      "skeleton": "tests/test_review_policy.py"
     },
     {
       "fixture_id": "sched-failure-reset",
       "matrix_refs": [
         "D7"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.4"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "SCHED_FAILURE_RESET_RULE"
       ],
       "intent": "failure 后 interval reset / downgrade",
-      "status": "planned",
-      "file": "sched-failure-reset.json"
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_SCHEDULING_POLICY_V01.md"
+      ],
+      "skeleton": "tests/test_review_policy.py"
     },
     {
       "fixture_id": "sched-mastered-maintenance",
       "matrix_refs": [
         "D8"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.4"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "SCHED_MASTERED_MAINTENANCE_RULE"
       ],
       "intent": "mastered 后是否继续 maintenance review",
-      "status": "planned",
-      "file": "sched-mastered-maintenance.json"
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_SCHEDULING_POLICY_V01.md"
+      ],
+      "skeleton": "tests/test_review_policy.py"
     },
     {
       "fixture_id": "invalid-negative-interval",
       "matrix_refs": [
         "D9"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "policy_dependent",
       "expected_kind": "error",
-      "blocked_by": [
-        "P4.4"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "SCHED_INTERVAL_LADDER",
         "STATE_ERROR_CATEGORIES"
       ],
       "intent": "malformed / negative interval 必须拒绝",
-      "status": "planned",
-      "file": "invalid-negative-interval.json"
+      "status": "not_applicable",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_SCHEDULING_POLICY_V01.md",
+        "engine/review/replay.py"
+      ],
+      "resolution": "v0.1 has immutable policy constants and accepts no runtime interval parameter; a negative interval is not a valid replay input shape."
     },
     {
       "fixture_id": "invalid-overflow-interval",
       "matrix_refs": [
         "D10"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "policy_dependent",
       "expected_kind": "error",
-      "blocked_by": [
-        "P4.4"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "SCHED_INTERVAL_LADDER",
         "STATE_ERROR_CATEGORIES"
       ],
       "intent": "overflow / 越界 interval 必须拒绝",
-      "status": "planned",
-      "file": "invalid-overflow-interval.json"
+      "status": "not_applicable",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_SCHEDULING_POLICY_V01.md",
+        "engine/review/replay.py"
+      ],
+      "resolution": "v0.1 has immutable policy constants and accepts no runtime interval parameter; overflow parameter validation is not defined by this contract."
     },
     {
       "fixture_id": "determinism-repeat-replay",
@@ -1305,15 +1593,17 @@
       "implementation": "harness",
       "contract_independence": "contract_independent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.5"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "REPLAY_AS_OF_PARAMETER"
       ],
       "intent": "replay(x) == replay(x)：同一输入重复调用结果完全一致",
-      "status": "planned",
-      "skeleton": "tests/test_review_determinism_harness.py"
+      "status": "implemented",
+      "skeleton": "tests/test_review_fixture_matrix.py",
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "engine/review/replay.py"
+      ]
     },
     {
       "fixture_id": "determinism-shuffled-input",
@@ -1323,15 +1613,17 @@
       "implementation": "harness",
       "contract_independence": "contract_independent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.5"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "REPLAY_TIE_BREAKER"
       ],
       "intent": "shuffle(events) 后结果不变（多个固定 seed）",
-      "status": "planned",
-      "skeleton": "tests/test_review_determinism_harness.py"
+      "status": "implemented",
+      "skeleton": "tests/test_review_fixture_matrix.py",
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "engine/review/replay.py"
+      ]
     },
     {
       "fixture_id": "determinism-same-timestamp-ordering",
@@ -1341,15 +1633,19 @@
       "implementation": "fixture",
       "contract_independence": "contract_independent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.5"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "REPLAY_TIE_BREAKER"
       ],
       "intent": "同一 timestamp 多事件：由 (UTC instant, event_id) tie-breaker 决定，输入顺序无关",
-      "status": "planned",
-      "file": "determinism-same-timestamp-ordering.json"
+      "status": "ready",
+      "file": "determinism-same-timestamp-ordering.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "engine/review/replay.py"
+      ]
     },
     {
       "fixture_id": "determinism-utc-equivalent-timestamps",
@@ -1359,15 +1655,17 @@
       "implementation": "harness",
       "contract_independence": "contract_independent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.5"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "REPLAY_AS_OF_PARAMETER"
       ],
       "intent": "同一 instant 的不同 offset 表示得到相同结果",
-      "status": "planned",
-      "skeleton": "tests/test_review_determinism_harness.py"
+      "status": "implemented",
+      "skeleton": "tests/test_review_fixture_matrix.py",
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "engine/review/replay.py"
+      ]
     },
     {
       "fixture_id": "determinism-same-instant-timezones",
@@ -1377,15 +1675,19 @@
       "implementation": "fixture",
       "contract_independence": "contract_independent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.5"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "REPLAY_AS_OF_PARAMETER"
       ],
       "intent": "fixture 级验证同一 instant 的 UTC / +08:00 / +09:00 表示",
-      "status": "planned",
-      "file": "determinism-same-instant-timezones.json"
+      "status": "ready",
+      "file": "determinism-same-instant-timezones.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "engine/review/replay.py"
+      ]
     },
     {
       "fixture_id": "determinism-derived-state-rebuild",
@@ -1395,13 +1697,15 @@
       "implementation": "harness",
       "contract_independence": "contract_independent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.5"
-      ],
+      "blocked_by": [],
       "policy_symbols": [],
       "intent": "删除派生 state 后由同一组 events + policy + as_of 重建结果一致",
-      "status": "planned",
-      "skeleton": "tests/test_review_determinism_harness.py"
+      "status": "implemented",
+      "skeleton": "tests/test_review_fixture_matrix.py",
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "engine/review/replay.py"
+      ]
     },
     {
       "fixture_id": "determinism-no-hidden-state",
@@ -1411,32 +1715,37 @@
       "implementation": "harness",
       "contract_independence": "contract_independent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.5"
-      ],
+      "blocked_by": [],
       "policy_symbols": [],
       "intent": "重新实例化 engine 后结果一致；replay 不得修改输入",
-      "status": "planned",
-      "skeleton": "tests/test_review_determinism_harness.py"
+      "status": "implemented",
+      "skeleton": "tests/test_review_fixture_matrix.py",
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "engine/review/replay.py"
+      ]
     },
     {
       "fixture_id": "determinism-asof-before-all-evidence",
       "matrix_refs": [
         "F1"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "contract_independent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.5"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "REPLAY_AS_OF_PARAMETER",
         "REPLAY_FUTURE_EVIDENCE_POLICY"
       ],
       "intent": "as_of 早于全部 evidence：按冻结语义拒绝或排除，不得泄漏未来事实",
-      "status": "planned",
-      "file": "determinism-asof-before-all-evidence.json"
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "engine/review/replay.py"
+      ],
+      "skeleton": "tests/test_review_fixture_matrix.py"
     },
     {
       "fixture_id": "determinism-asof-exactly-at-event",
@@ -1446,51 +1755,61 @@
       "implementation": "fixture",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.5"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "REPLAY_AS_OF_PARAMETER"
       ],
-      "intent": "as_of == event occurred_at 的包含性语义",
-      "status": "planned",
-      "file": "determinism-asof-exactly-at-event.json"
+      "intent": "as_of 与 evidence occurred_at 同 instant 时接受并纳入 replay。",
+      "status": "ready",
+      "file": "determinism-asof-exactly-at-event.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "engine/review/replay.py"
+      ]
     },
     {
       "fixture_id": "determinism-asof-after-event",
       "matrix_refs": [
         "F3"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.5"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "REPLAY_AS_OF_PARAMETER"
       ],
       "intent": "as_of 晚于事件：该证据必须被计入",
-      "status": "planned",
-      "file": "determinism-asof-after-event.json"
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "engine/review/replay.py"
+      ],
+      "skeleton": "tests/test_review_fixture_matrix.py"
     },
     {
       "fixture_id": "determinism-asof-before-future-event",
       "matrix_refs": [
         "F4"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.5"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "REPLAY_FUTURE_EVIDENCE_POLICY"
       ],
       "intent": "as_of 位于既有事件与未来事件之间：未来事实不得泄漏进结果",
-      "status": "planned",
-      "file": "determinism-asof-before-future-event.json"
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "engine/review/replay.py"
+      ],
+      "skeleton": "tests/test_review_fixture_matrix.py"
     },
     {
       "fixture_id": "invalid-future-evidence",
@@ -1500,17 +1819,21 @@
       "implementation": "fixture",
       "contract_independence": "policy_dependent",
       "expected_kind": "error",
-      "blocked_by": [
-        "P4.2",
-        "P4.5"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "REPLAY_FUTURE_EVIDENCE_POLICY",
         "STATE_ERROR_CATEGORIES"
       ],
       "intent": "as_of 早于事件时间时按冻结语义拒绝（若最终选择 exclude 语义，则改用 harness 断言不泄漏未来事实）",
-      "status": "planned",
-      "file": "invalid-future-evidence.json"
+      "status": "ready",
+      "file": "invalid-future-evidence.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_EVIDENCE_V01.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "engine/review/replay.py"
+      ]
     },
     {
       "fixture_id": "determinism-no-system-clock",
@@ -1520,13 +1843,15 @@
       "implementation": "static",
       "contract_independence": "contract_independent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.5"
-      ],
+      "blocked_by": [],
       "policy_symbols": [],
       "intent": "静态扫描：replay / policy 路径不得出现 datetime.now()/utcnow()/today()/time.time()",
-      "status": "planned",
-      "skeleton": "tests/test_review_determinism_harness.py"
+      "status": "implemented",
+      "skeleton": "tests/test_review_determinism_harness.py",
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "engine/review/replay.py"
+      ]
     },
     {
       "fixture_id": "time-utc-baseline",
@@ -1536,13 +1861,17 @@
       "implementation": "fixture",
       "contract_independence": "contract_independent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.5"
-      ],
+      "blocked_by": [],
       "policy_symbols": [],
-      "intent": "UTC 基线：显式 timezone=UTC 的结果",
-      "status": "planned",
-      "file": "time-utc-baseline.json"
+      "intent": "以 UTC timezone replay aware UTC evidence，验证版本、as_of 与时间投影。",
+      "status": "ready",
+      "file": "time-utc-baseline.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "engine/review/replay.py"
+      ]
     },
     {
       "fixture_id": "time-same-instant-timezones",
@@ -1551,19 +1880,22 @@
         "G3",
         "G4"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "contract_independent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.4",
-        "P4.5"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "SCHED_DATE_BOUNDARY_TIMEZONE"
       ],
       "intent": "UTC / Asia/Shanghai / Asia/Tokyo 对同一 instant 的表示与日期边界语义",
-      "status": "planned",
-      "file": "time-same-instant-timezones.json"
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_SCHEDULING_POLICY_V01.md",
+        "engine/review/replay.py"
+      ],
+      "skeleton": "tests/test_review_fixture_matrix.py"
     },
     {
       "fixture_id": "time-local-date-boundary",
@@ -1573,52 +1905,63 @@
       "implementation": "fixture",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.4"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "SCHED_DATE_BOUNDARY_TIMEZONE",
         "SCHED_DUE_GRANULARITY"
       ],
       "intent": "local date 边界：同一 instant 在不同 timezone 下可能属于不同 local day",
-      "status": "planned",
-      "file": "time-local-date-boundary.json"
+      "status": "ready",
+      "file": "time-local-date-boundary.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "docs/review/REVIEW_SCHEDULING_POLICY_V01.md",
+        "engine/review/replay.py"
+      ]
     },
     {
       "fixture_id": "time-end-of-day",
       "matrix_refs": [
         "G6"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.4"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "SCHED_DATE_BOUNDARY_TIMEZONE"
       ],
       "intent": "23:59:59 边界",
-      "status": "planned",
-      "file": "time-end-of-day.json"
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_SCHEDULING_POLICY_V01.md"
+      ],
+      "skeleton": "tests/test_review_fixture_matrix.py"
     },
     {
       "fixture_id": "time-start-of-day",
       "matrix_refs": [
         "G7"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.4"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "SCHED_DATE_BOUNDARY_TIMEZONE"
       ],
       "intent": "00:00:00 边界",
-      "status": "planned",
-      "file": "time-start-of-day.json"
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_SCHEDULING_POLICY_V01.md"
+      ],
+      "skeleton": "tests/test_review_fixture_matrix.py"
     },
     {
       "fixture_id": "time-dst-sensitive",
@@ -1628,70 +1971,86 @@
       "implementation": "fixture",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.4"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "SCHED_DATE_BOUNDARY_TIMEZONE"
       ],
       "intent": "DST-sensitive timezone（如 America/New_York）下不得依赖本机 timezone",
-      "status": "planned",
-      "file": "time-dst-sensitive.json"
+      "status": "ready",
+      "file": "time-dst-sensitive.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "docs/review/REVIEW_SCHEDULING_POLICY_V01.md",
+        "engine/review/replay.py"
+      ]
     },
     {
       "fixture_id": "sched-due-count-consistency",
       "matrix_refs": [
         "H1"
       ],
-      "implementation": "harness",
+      "implementation": "fixture",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.4"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "SCHED_DUE_COUNT_DEFINITION",
         "STATE_DUE_PROJECTION_NAMES"
       ],
       "intent": "性质：due_count == len(items where due projection ∈ due/overdue)",
-      "status": "planned",
-      "skeleton": "tests/test_review_determinism_harness.py"
+      "status": "ready",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "docs/review/REVIEW_SCHEDULING_POLICY_V01.md",
+        "engine/review/replay.py"
+      ],
+      "file": "sched-due-count-consistency.json"
     },
     {
       "fixture_id": "sched-due-count-item-level",
       "matrix_refs": [
         "H2"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.4"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "SCHED_DUE_COUNT_DEFINITION"
       ],
       "intent": "同一 item 多条 evidence 只能计一次 due_count",
-      "status": "planned",
-      "file": "sched-due-count-item-level.json"
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_SCHEDULING_POLICY_V01.md"
+      ],
+      "skeleton": "tests/test_review_policy.py"
     },
     {
       "fixture_id": "sched-due-count-as-of",
       "matrix_refs": [
         "H3"
       ],
-      "implementation": "fixture",
+      "implementation": "harness",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.4"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "SCHED_DUE_COUNT_DEFINITION"
       ],
       "intent": "due_count 是截至 as_of 的 item 数，而不是事件数或未来项",
-      "status": "planned",
-      "file": "sched-due-count-as-of.json"
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_SCHEDULING_POLICY_V01.md"
+      ],
+      "skeleton": "tests/test_review_policy.py"
     },
     {
       "fixture_id": "sched-due-projection-membership",
@@ -1701,15 +2060,17 @@
       "implementation": "harness",
       "contract_independence": "policy_dependent",
       "expected_kind": "state",
-      "blocked_by": [
-        "P4.4"
-      ],
+      "blocked_by": [],
       "policy_symbols": [
         "STATE_DUE_PROJECTION_NAMES"
       ],
       "intent": "性质：due 集合成员与 item 级 projection 状态一致（无孤立计数）",
-      "status": "planned",
-      "skeleton": "tests/test_review_determinism_harness.py"
+      "status": "implemented",
+      "skeleton": "tests/test_review_policy.py",
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_SCHEDULING_POLICY_V01.md"
+      ]
     },
     {
       "fixture_id": "compat-progress-basic",
@@ -1723,7 +2084,11 @@
       "policy_symbols": [],
       "intent": "basic fixture 的 ProgressState 语义不漂移",
       "status": "implemented",
-      "skeleton": "tests/test_progress_v01_regression.py"
+      "skeleton": "tests/test_progress_v01_regression.py",
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "tests/test_review_fixture_matrix.py"
+      ]
     },
     {
       "fixture_id": "compat-progress-case-score",
@@ -1737,7 +2102,11 @@
       "policy_symbols": [],
       "intent": "案例加权分数语义不漂移",
       "status": "implemented",
-      "skeleton": "tests/test_progress_v01_regression.py"
+      "skeleton": "tests/test_progress_v01_regression.py",
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "tests/test_review_fixture_matrix.py"
+      ]
     },
     {
       "fixture_id": "compat-progress-errors",
@@ -1751,7 +2120,11 @@
       "policy_symbols": [],
       "intent": "错误归因与 unclassified 语义不漂移",
       "status": "implemented",
-      "skeleton": "tests/test_progress_v01_regression.py"
+      "skeleton": "tests/test_progress_v01_regression.py",
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "tests/test_review_fixture_matrix.py"
+      ]
     },
     {
       "fixture_id": "compat-progress-study",
@@ -1765,7 +2138,11 @@
       "policy_symbols": [],
       "intent": "study_minutes 语义不漂移",
       "status": "implemented",
-      "skeleton": "tests/test_progress_v01_regression.py"
+      "skeleton": "tests/test_progress_v01_regression.py",
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "tests/test_review_fixture_matrix.py"
+      ]
     },
     {
       "fixture_id": "compat-progress-ordering",
@@ -1779,7 +2156,11 @@
       "policy_symbols": [],
       "intent": "确定性排序语义不漂移",
       "status": "implemented",
-      "skeleton": "tests/test_progress_v01_regression.py"
+      "skeleton": "tests/test_progress_v01_regression.py",
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "tests/test_review_fixture_matrix.py"
+      ]
     },
     {
       "fixture_id": "compat-progress-zero-and-null",
@@ -1793,7 +2174,11 @@
       "policy_symbols": [],
       "intent": "zero 与 null 语义不漂移",
       "status": "implemented",
-      "skeleton": "tests/test_progress_v01_regression.py"
+      "skeleton": "tests/test_progress_v01_regression.py",
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "tests/test_review_fixture_matrix.py"
+      ]
     },
     {
       "fixture_id": "compat-progress-rejections",
@@ -1807,7 +2192,11 @@
       "policy_symbols": [],
       "intent": "duplicate / unknown topic / unknown capability / naive timestamp 拒绝语义不漂移",
       "status": "implemented",
-      "skeleton": "tests/test_progress_v01_regression.py"
+      "skeleton": "tests/test_progress_v01_regression.py",
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "tests/test_review_fixture_matrix.py"
+      ]
     },
     {
       "fixture_id": "compat-progress-state-policy-free",
@@ -1821,7 +2210,11 @@
       "policy_symbols": [],
       "intent": "ProgressState 不得出现 mastery/review_* 等 Phase 4 字段",
       "status": "implemented",
-      "skeleton": "tests/test_progress_v01_regression.py"
+      "skeleton": "tests/test_progress_v01_regression.py",
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "tests/test_review_fixture_matrix.py"
+      ]
     },
     {
       "fixture_id": "compat-validators",
@@ -1835,7 +2228,249 @@
       "policy_symbols": [],
       "intent": "scripts/validate_progress.py 与 validate_taxonomy.py 继续 PASS",
       "status": "implemented",
-      "skeleton": "tests/test_progress_v01_regression.py"
+      "skeleton": "tests/test_progress_v01_regression.py",
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "tests/test_review_fixture_matrix.py"
+      ]
+    },
+    {
+      "fixture_id": "mastery-first-failure",
+      "matrix_refs": [
+        "C2"
+      ],
+      "implementation": "fixture",
+      "contract_independence": "policy_dependent",
+      "expected_kind": "state",
+      "blocked_by": [],
+      "policy_symbols": [
+        "MASTERY_FAILURE_TRANSITION",
+        "SCHED_FAILURE_RESET_RULE"
+      ],
+      "intent": "新 item 首次明确失败进入 learning，failure_count=1，并按 1 天安排 retry。",
+      "status": "ready",
+      "file": "mastery-first-failure.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/MASTERY_POLICY_V01.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "docs/review/REVIEW_SCHEDULING_POLICY_V01.md",
+        "engine/review/replay.py"
+      ]
+    },
+    {
+      "fixture_id": "invalid-duplicate-event-id",
+      "matrix_refs": [
+        "B12"
+      ],
+      "implementation": "fixture",
+      "contract_independence": "policy_dependent",
+      "expected_kind": "error",
+      "blocked_by": [],
+      "policy_symbols": [
+        "STATE_ERROR_CATEGORIES"
+      ],
+      "intent": "Progress source event ID 重复时按 progress-event/v0.1 category 拒绝。",
+      "status": "ready",
+      "file": "invalid-duplicate-event-id.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "engine/review/replay.py"
+      ]
+    },
+    {
+      "fixture_id": "invalid-timezone",
+      "matrix_refs": [
+        "G2"
+      ],
+      "implementation": "fixture",
+      "contract_independence": "policy_dependent",
+      "expected_kind": "error",
+      "blocked_by": [],
+      "policy_symbols": [
+        "SCHED_DATE_BOUNDARY_TIMEZONE",
+        "STATE_ERROR_CATEGORIES"
+      ],
+      "intent": "未知 IANA timezone 按 invalid_timezone 拒绝。",
+      "status": "ready",
+      "file": "invalid-timezone.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "docs/review/REVIEW_SCHEDULING_POLICY_V01.md",
+        "engine/review/replay.py"
+      ]
+    },
+    {
+      "fixture_id": "invalid-source-event-mismatch",
+      "matrix_refs": [
+        "B11"
+      ],
+      "implementation": "fixture",
+      "contract_independence": "policy_dependent",
+      "expected_kind": "error",
+      "blocked_by": [],
+      "policy_symbols": [
+        "REVIEW_EVENT_TYPE",
+        "STATE_ERROR_CATEGORIES"
+      ],
+      "intent": "Review context occurred_at 与 source event instant 不一致时拒绝。",
+      "status": "ready",
+      "file": "invalid-source-event-mismatch.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_EVIDENCE_V01.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "engine/review/replay.py"
+      ]
+    },
+    {
+      "fixture_id": "invalid-malformed-review-item",
+      "matrix_refs": [
+        "A8"
+      ],
+      "implementation": "fixture",
+      "contract_independence": "policy_dependent",
+      "expected_kind": "error",
+      "blocked_by": [],
+      "policy_symbols": [
+        "REVIEW_ITEM_REGISTRY",
+        "STATE_ERROR_CATEGORIES"
+      ],
+      "intent": "Review item 含契约未定义字段时按 invalid_review_contract 拒绝。",
+      "status": "ready",
+      "file": "invalid-malformed-review-item.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_MODEL_V01.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "engine/review/replay.py"
+      ]
+    },
+    {
+      "fixture_id": "invalid-source-reference",
+      "matrix_refs": [
+        "B13"
+      ],
+      "implementation": "fixture",
+      "contract_independence": "policy_dependent",
+      "expected_kind": "error",
+      "blocked_by": [],
+      "policy_symbols": [
+        "REVIEW_ITEM_REGISTRY",
+        "STATE_ERROR_CATEGORIES"
+      ],
+      "intent": "无效 immutable source commit 按 invalid_source_reference 拒绝。",
+      "status": "ready",
+      "file": "invalid-source-reference.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_MODEL_V01.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "engine/review/replay.py"
+      ]
+    },
+    {
+      "fixture_id": "invalid-duplicate-review-context",
+      "matrix_refs": [
+        "B12"
+      ],
+      "implementation": "fixture",
+      "contract_independence": "policy_dependent",
+      "expected_kind": "error",
+      "blocked_by": [],
+      "policy_symbols": [
+        "EVIDENCE_DEDUP_RULE",
+        "STATE_ERROR_CATEGORIES"
+      ],
+      "intent": "相同 source event 与 item 出现重复 Review Context 时拒绝。",
+      "status": "ready",
+      "file": "invalid-duplicate-review-context.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_EVIDENCE_V01.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "engine/review/replay.py"
+      ]
+    },
+    {
+      "fixture_id": "evidence-case-score-high",
+      "matrix_refs": [
+        "B3"
+      ],
+      "implementation": "fixture",
+      "contract_independence": "policy_dependent",
+      "expected_kind": "state",
+      "blocked_by": [],
+      "policy_symbols": [
+        "SUCCESS_DERIVATION_CASE_SCORE"
+      ],
+      "intent": "支持的高分仍因 outcome mapping 未冻结而保持 insufficient。",
+      "status": "ready",
+      "file": "evidence-case-score-high.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "engine/review/replay.py"
+      ]
+    },
+    {
+      "fixture_id": "invalid-unsupported-policy-parameters",
+      "matrix_refs": [
+        "D9",
+        "D10"
+      ],
+      "implementation": "harness",
+      "contract_independence": "policy_dependent",
+      "expected_kind": "error",
+      "blocked_by": [],
+      "policy_symbols": [
+        "STATE_ERROR_CATEGORIES"
+      ],
+      "intent": "运行时 interval 参数不属于 frozen v0.1 API；测试 policy input 仅接受已冻结 identity，额外参数以 invalid_policy_input 拒绝。",
+      "status": "implemented",
+      "file": null,
+      "contract_refs": [
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/REVIEW_SCHEDULING_POLICY_V01.md",
+        "engine/review/replay.py",
+        "engine/rules/review_policy_v01.py"
+      ],
+      "skeleton": "tests/test_review_fixture_matrix.py"
+    },
+    {
+      "fixture_id": "mastery-same-day-repeat",
+      "matrix_refs": [
+        "C4"
+      ],
+      "implementation": "fixture",
+      "contract_independence": "policy_dependent",
+      "expected_kind": "state",
+      "blocked_by": [],
+      "policy_symbols": [
+        "MASTERY_SUCCESS_STREAK_TO_MASTERED",
+        "SCHED_SAME_DAY_REPEAT_RULE"
+      ],
+      "intent": "同一本地日期重复 success 计入成功条数但不推进跨日计数、interval 或 due date。",
+      "status": "ready",
+      "file": "mastery-same-day-repeat.json",
+      "contract_refs": [
+        "data/review/mastery-review-state.schema.json",
+        "docs/PHASE4_TEST_MATRIX.md",
+        "docs/review/MASTERY_POLICY_V01.md",
+        "docs/review/REVIEW_OUTCOME_ADAPTER_V01.md",
+        "docs/review/REVIEW_SCHEDULING_POLICY_V01.md",
+        "engine/review/replay.py"
+      ]
     }
   ],
   "backward_compatibility": {
@@ -1868,5 +2503,42 @@
       "ProgressState 不得出现 mastery / mastered / review_due / review_interval / forgetting_curve / sm2 / fsrs / planner 等 Phase 4 字段。",
       "scripts/validate_progress.py 与 scripts/validate_taxonomy.py 必须继续 PASS。"
     ]
-  }
+  },
+  "fixture_schema": "mastery-review-fixture/v0.1",
+  "frozen_contracts": {
+    "review_model": "review-model/v0.1",
+    "review_event": "review-event/v0.1",
+    "review_evidence": "review-evidence/v0.1",
+    "mastery_policy": "mastery-policy/spaced-consecutive/v0.1",
+    "review_policy": "review-policy/simple-ladder/v0.1",
+    "outcome_adapter": "review-outcome/raw-facts/v0.1",
+    "replay_state": "mastery-review-state/v0.1"
+  },
+  "p4_6": {
+    "status": "FROZEN",
+    "fixture_schema": "mastery-review-fixture/v0.1",
+    "synthetic_fixtures": 36
+  },
+  "p4_7": {
+    "status": "COMPLETE",
+    "test_module": "tests/test_review_fixture_matrix.py",
+    "scope": "fixture replay, deterministic properties, edge and aggregate invariants"
+  },
+  "known_contract_boundaries": [
+    {
+      "id": "alias-catalog-boundary",
+      "status": "NOT_APPLICABLE",
+      "contract": "aliases must resolve before catalog validation; no alias input API"
+    },
+    {
+      "id": "runtime-interval-validation",
+      "status": "NOT_APPLICABLE",
+      "contract": "frozen v0.1 policy accepts no custom interval parameters; unsupported policy parameters reject as invalid_policy_input"
+    },
+    {
+      "id": "score-outcome-mapping",
+      "status": "FROZEN_CONSERVATIVE",
+      "contract": "raw score remains policy_outcome=insufficient; no threshold/rubric is introduced"
+    }
+  ]
 }

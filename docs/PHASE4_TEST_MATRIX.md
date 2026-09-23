@@ -1,14 +1,12 @@
-# Phase 4 Test Matrix（P4.6 / P4.7 设计稿）
+# Phase 4 Test Matrix（P4.6 / P4.7）
 
-> 状态：`TEST_DESIGN_READY` / `WAITING_FOR_FIXTURE_MATRIX_FREEZE`
+> 状态：`REVIEW_FIXTURE_MATRIX_FROZEN` / `P4.7_COMPLETE`
 >
-> 本文件定义 **P4.6（synthetic fixtures）** 与 **P4.7（unit tests / edge cases）** 的
-> 完整验证矩阵、fixture 结构、测试骨架和 contract 缺口。
+> P4.6 已冻结 36 个 `mastery-review-fixture/v0.1` fixtures；P4.7 已补足边界、rejection、determinism、timezone 与 aggregate invariant tests。`scripts/validate_review.py` 报告 `REVIEW_FIXTURE_MATRIX_PASS`。
 >
-> 本窗口**不重新冻结**任何 mastery / scheduling 业务规则：
-> `review_item_id`、Review Evidence、success adapter、连续成功次数、interval ladder、
-> failure reset、mastered maintenance 已由 P4.1～P4.5 对应 contract / engine 决定。
-> 本文档只保证 fixture matrix freeze 后可以**直接填充 expected 值**，而不需要重写测试结构。
+> 本轮没有改变 P4.1～P4.5 的 Review Model、Evidence、mastery/scheduling policy 或 replay contract；P4.8 documentation sync、P4.9 validation report 和 Phase 4 Gate 仍待完成。
+>
+> 下方矩阵表保留 PR #6 的设计条目与原始设计时状态。**最终实现状态以 `data/review/fixture-plan.json`、当前 fixtures 和 unittest 为准**；表中 `SYMBOLIC` / `BLOCKED` 是历史设计快照，不代表当前仍待 freeze。
 
 ---
 
@@ -54,42 +52,13 @@ Progress Replay v0.1       → 语义不漂移
 
 这些断言不引用任何具体阈值、天数或状态名字面量。
 
-### 1.2 contract-dependent expectations（等 freeze）
+### 1.2 contract-dependent expectations（已由 P4.1～P4.5 freeze）
 
-需要具体状态名、阈值、interval 或错误 category 的断言。这类条目：
+依赖状态名、interval 或 rejection category 的断言，现在都从正式 contract / replay contract 取得 expected。manifest 中的 `policy_symbols` 已全部冻结并带 `frozen_by`；P4.6 fixture 同时记录 `policy_symbols` 与 `contract_refs`。没有新阈值或 outcome 规则在本轮加入。
 
-* 在 manifest 中标记 `contract_independence: policy_dependent`；
-* 必须引用至少一个 `policy_symbols` 条目（`blocked_by` 指明 owner）；
-* 在 fixture matrix freeze 前**不得**出现在任何 fixture 文件里；
-* 由 `tests/test_review_fixture_plan.py` 强制检查（planned fixture 不允许在
-  `data/review/fixtures/` 中出现同名文件）。
+### 1.3 Policy symbol 机制（当前状态）
 
-### 1.3 Policy symbol 机制
-
-fixture / 测试只引用符号，不硬编码数值。例如：
-
-```text
-SCHED_INTERVAL_LADDER = 1/3/7/15 或其他            （P4.4）
-MASTERY_SUCCESS_STREAK_TO_MASTERED = ?             （P4.3）
-REPLAY_FUTURE_EVIDENCE_POLICY = reject | exclude   （P4.5）
-```
-
-freeze 时只更新 `fixture-plan.json` 的 `policy_symbols`：
-
-```json
-{
-  "status": "frozen",
-  "value": 3,
-  "frozen_by": "docs/... (P4.3 contract)",
-  "owner": "P4.3"
-}
-```
-
-测试保证：`unfrozen` 的 symbol 必须 `value = null`，`frozen` 的 symbol 必须同时有
-`value` 与 `frozen_by`。这样“是否已经冻结”是可执行的事实，而不是口头约定。
-
-policy symbol 同时充当早期草案中的 `EXPECTED_AFTER_P4_1` 一类占位标记：
-fixture 与断言只引用 symbol 名，freeze 时才在当前窗口之外填入具体值。
+`fixture-plan.json` 的 36 个 symbols 均为 `status: frozen`。P4.3/P4.4 值来自冻结 policy；P4.1/P4.2/P4.5 值来自 Review Model、Evidence、raw-facts adapter 和 replay contract。score adapter 继续把 supported score 映射为 `insufficient`，没有 threshold/rubric。
 
 ---
 
@@ -229,9 +198,9 @@ fixture 与断言只引用 symbol 名，freeze 时才在当前窗口之外填入
 ```text
 data/review/                       ← Phase 4 独立域，不与 progress fixture 混放
 ├── TEST_ASSETS.md                 ← 本目录边界与当前状态
-├── fixture-plan.json              ← fixture 设计 manifest（机器可读）
-├── fixture-schema.draft.json      ← draft fixture contract（未冻结）
-└── fixtures/                      ← fixture matrix freeze 后填写
+├── fixture-plan.json              ← P4.6/P4.7 冻结 manifest
+├── fixture-schema.v0.1.json       ← mastery-review-fixture/v0.1 正式 schema
+└── fixtures/                      ← 36 个 ready synthetic replay fixtures
     └── <fixture_id>.json
 ```
 
@@ -239,29 +208,11 @@ data/review/                       ← Phase 4 独立域，不与 progress fixtu
 policy version、`as_of` 和 fixture schema；放在 progress 目录下会被误认为
 `progress-model/v0.1` 的一部分。
 
-### 3.2 fixture 字段（draft）
+### 3.2 fixture 字段（正式 `mastery-review-fixture/v0.1`）
 
-```json
-{
-  "schema_version": "review-fixture/v0.1-draft",
-  "fixture_id": "mastery-first-success",
-  "description": "...",
-  "as_of": "2026-01-03T00:00:00Z",
-  "timezone": "UTC",
-  "items": ["..."],
-  "references": ["..."],
-  "policies": {"mastery": "...", "review": "..."},
-  "events": ["..."],
-  "variants": [{"variant_id": "boundary", "as_of": "...", "expected": "..."}],
-  "expected": "{{SYMBOLIC}}",
-  "expected_error": "{{SYMBOLIC}}"
-}
-```
+正式 schema 位于 `data/review/fixture-schema.v0.1.json`。fixture 包含显式 `as_of` / IANA timezone、frozen policy identities、`contract_refs`、Progress / Review events 与 Review Items；`expected` 是 `MasteryReviewState` 的递归子集，`expected_error` 是正式 rejection category，二者互斥。`variants` 可改变 `as_of` / timezone 或完整 replay input，以覆盖共享事实下的边界。
 
-* `expected` 与 `expected_error` 互斥；
-* fixture matrix freeze 前**不创建**任何 fixture 文件，只维护 manifest；
-* `variants` 用于 `as_of` / timezone / due 边界族，避免复制同一组 events；
-* item / event 字段以 P4.1 / P4.2 contract 为准，expected state 以 P4.5 schema 为准；本 draft 只保证 harness 不需重写。
+P4.1/P4.2 的 contract fixtures 仍独立使用 `review-fixture/v0.1`，不与本 schema 混用。
 
 ### 3.3 命名规则
 
@@ -302,7 +253,7 @@ loader 会拒绝 `stem` / `prompt` / `options` / `answer` / `analysis` /
 
 ## 4. Determinism 测试（本窗口重点）
 
-`tests/reviewkit.py::assert_replay_properties` 一次性检查：
+`tests/reviewkit.py::assert_replay_properties` 保留用于 harness 自测；真实 Review replay 由 `assert_review_replay_properties` 检查：
 
 ```text
 1. input immutability       replay 不得修改输入事件
@@ -342,8 +293,7 @@ date.today()    time.time()        time.monotonic()
 datetime.fromtimestamp()
 ```
 
-当前扫描目标已包含 Phase 3 的 `engine/progress/replay.py` 与 `model.py`；
-一旦并行窗口落地 `engine/review/`，该守卫自动覆盖。
+当前扫描目标包含 `engine/progress/`、`engine/review/` 与 policy modules；P4.5 Review replay 已在静态 wall-clock guard 覆盖范围内。
 
 ---
 
@@ -353,8 +303,8 @@ datetime.fromtimestamp()
 instant 语义     : 所有时间必须是 timezone-aware instant，UTC 归一化后比较
 UTC 等价         : 2026-09-21T10:00:00+00:00 == 2026-09-21T18:00:00+08:00
 timezone 输入    : 显式参数（fixture 的 timezone 字段），禁止读取本机时区
-local date 语义  : due 是否按 local date 计算由 P4.4 决定，测试用 variants 覆盖
-DST             : 使用含 DST 的 timezone 验证模型不依赖本机时区
+local date 语义  : P4.4 冻结为本地日历日边界，fixtures 覆盖 due 前 / exact / overdue
+DST             : America/Santiago 的 midnight gap 有 fixture，timezone 显式传入
 ```
 
 测试不假设产品主要时区；`Asia/Shanghai`、`Asia/Tokyo`、`America/New_York`
@@ -368,19 +318,18 @@ DST             : 使用含 DST 的 timezone 验证模型不依赖本机时区
 
 ```text
 1. 拒绝必须是显式 validation error，不得静默跳过或去重
-2. validation error 必须有稳定 category（命名待 P4.5 冻结）
+2. validation error 必须使用 P4.1/P4.2/P4.5 冻结的稳定 category
 3. 拒绝时不得产出部分 state
 4. null / insufficient / unanswered / zero / failure 不得互相伪装
 ```
 
-`reject` 与 `exclude` 两种 future-evidence 语义都必须可测试；
-最终选择其一，但 harness 同时支持两种模式。
+v0.1 选择 `reject`；未来 evidence fixture 验证 category=`future_evidence`。Harness 支持 exclude test double，但 production contract 不提供 exclude 模式。
 
 ---
 
 ## 7. Backward Compatibility
 
-`tests/test_progress_v01_regression.py` 冻结 Phase 3 语义：
+`tests/test_progress_v01_regression.py` 冻结 Phase 3 语义（Phase 4 全量验证继续运行）：
 
 * 基线文件 `tests/baselines/progress_v01_semantics.json`
   记录每个 fixture 的 canonical digest + 无损语义 projection + 拒绝 category；
@@ -404,39 +353,45 @@ REGEN_PROGRESS_BASELINE=1 python3 -m unittest discover -s tests -p 'test_progres
 理由：review 域有独立 contract / policy version 和 fixture schema；
 塞进 progress validator 会让 `progress-model/v0.1` 的边界模糊。
 
-当前阶段 `scripts/validate_review.py` 的职责：
+当前 `scripts/validate_review.py` 的职责：
 
 ```text
-1. 校验 fixture plan 与 draft schema 自洽（复用 tests/reviewkit.py）
-2. 盘上 fixture 的数量与 planned / ready 状态一致
-3. 若 engine.review replay 尚不存在 → 输出 `PENDING_REPLAY_IMPLEMENTATION`，退出码 0
-4. fixture matrix freeze 后且存在 ready fixture：逐个 fixture 执行 replay + 确定性性质检查 + expected 比对；否则输出 `PENDING_REVIEW_FIXTURE_MATRIX`
+1. 校验 frozen fixture schema、manifest、contract refs 与盘上 fixture 一致
+2. 用 P4.5 replay 执行每个 fixture / variant，精确验证 expected state 子集或 rejection category
+3. 校验 MasteryReviewState schema、版本/as_of/timezone、evidence trace 与 item/aggregate invariants
+4. 对成功 fixture 验证 repeatability、输入顺序、同 instant offset 与 future evidence rejection
+5. 仅报告 `REVIEW_FIXTURE_MATRIX_PASS`；不宣布 Phase 4 Gate PASS
 ```
 
-明确：该脚本输出 `PENDING` 不等于 Phase 4 完成，也不得打印 `PASS Phase 4`。
+P4.8 documentation sync 与 P4.9 validation report 仍在本 validator scope 之外。
 
 ---
 
-## 9. Contract Freeze 后的收口步骤（P4.6 / P4.7）
+## 9. P4.6 / P4.7 收口记录
 
 ```text
-1. 更新 fixture-plan.json 的 policy_symbols（status=frozen, value, frozen_by）
-2. 按 manifest 顺序创建 data/review/fixtures/<fixture_id>.json
-   - 每创建一个，把对应条目 status: planned → ready
-3. 填充 expected / expected_error（不得凭感觉猜测）
-4. 把 assert_replay_properties 指向真实 replay 入口
-5. python3 scripts/validate_review.py
-6. python3 -m unittest discover -s tests -v（全量）
-7. python3 scripts/validate_progress.py 与 validate_taxonomy.py（Phase 3 回归）
-8. 更新本文档状态为 TEST_MATRIX_CLOSED，并写入 P4.9 validation report
+1. 36 个 policy symbols 均冻结并记录 frozen_by
+2. 36 个 ready fixtures 已落盘，fixture schema 为 mastery-review-fixture/v0.1
+3. success / rejection expected 均由 P4.1～P4.5 frozen contract 支撑
+4. validator 已对 fixtures/variants 执行 schema、expected、category 与 determinism 检查
+5. P4.7 补足 due/calendar/timezone/DST/tie-order/failure/score/aggregate edge tests
+6. Progress v0.1 regression 保持独立执行；Phase 4 Gate 未在本轮声明
 ```
+
+P4.8 architecture/documentation sync 与 P4.9 validation report 仍待后续阶段。
 
 ---
 
-## 10. CONTRACT GAP 清单
+## 10. CONTRACT GAP 清单（历史设计登记，按 P4.1～P4.7 结论更新）
 
-以下缺口会阻止确定性测试，需要窗口 A / B 决策后才能补齐 expected 值。
-本窗口不越权修改 contract。
+PR #6 合并时登记的 GAP-01～GAP-17 原始描述保留作审计历史，不再代表当前阻塞。状态汇总：
+
+- GAP-01～04、06：P4.1/P4.2 已冻结 Review Item identity/catalog、context/evidence projection 与去重边界。
+- GAP-05：综合题 boolean 已有 raw-facts adapter；case/capability score 保持 `insufficient`，score threshold/rubric 有意留给未来 adapter，未猜测规则。
+- GAP-07～13：P4.3/P4.4 policy、interval、failure、timezone、due projection 与 aggregate 字段已冻结。
+- GAP-14～16：P4.5 已冻结 `as_of`、版本 metadata、tie-break 与 rejection categories。
+- GAP-17：P4.6 已冻结 `mastery-review-fixture/v0.1`，contract fixtures 仍保持独立 schema。
+- Alias catalog input 与 runtime interval override 不属于 frozen v0.1 replay API；manifest 标记为 `not_applicable`，不发明额外业务规则。
 
 ### GAP-01 review_item_id 组成未冻结
 
@@ -584,5 +539,4 @@ python3 scripts/validate_taxonomy.py
 python3 -m unittest discover -s tests -v
 ```
 
-当前阶段（未修改 production code）不需要每次跑全量；validator / fixture 结构变化时
-才需要扩大到 Phase 3 回归与全量测试。
+当前矩阵状态以 manifest 和 `scripts/validate_review.py` 为准。P4.9 validation report 尚未创建；Phase 4 Gate 不在本轮宣布。
