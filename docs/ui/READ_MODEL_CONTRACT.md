@@ -2,7 +2,7 @@
 
 > **状态**：PLANNING CONTRACT（Issue #5 · UI Read Model Requirements）
 > **边界**：本文件只定义**消费契约（consumer contract）**。**不定义 API、不定义传输协议、不写实现、不产生 fixture。**
-> **顺序声明**：本文件不是 Cockpit 实现的前置冻结条件。它描述「未来 UI 期望收到什么形状的只读视图」，实现仍需 Gate B / C / D 全部通过。
+> **顺序声明**：本文件定义未来 UI 的只读 consumer contract，不是 Cockpit 整体实现已经就绪的证明。Gate B（Review / Mastery）已 PASS；各 consumer 仍须满足其适用 Gate：Planner-bound Today / Plan 需 Gate C，正式前端还受 Read Model / Gate D 范围约束。
 
 ---
 
@@ -28,7 +28,7 @@ Read Model 不能产生新的业务事实
 
 | 允许 | 禁止 |
 |---|---|
-| 从 replay 输出投影出 UI 友好字段 | 在 read model 中计算 domain 未定义的指标（如 mastery / due / plan completion） |
+| 从 replay 输出投影出 UI 友好字段（包括已由 Phase 4 定义的 mastery / due） | 在 read model 中计算 domain 未定义的指标（如 Planner 未冻结时的计划完成度） |
 | 为性能缓存 read model | 把缓存当作唯一事实来源 |
 | 删除后从 events 重建 | 把 read model 写回 events / ProgressState / MasteryReviewState |
 | 重命名 / 聚合已有字段用于展示 | 生成新的「业务事实」（例如把「有事件」升级为「已完成」） |
@@ -73,7 +73,7 @@ read model 字段语义 ≠ domain 字段语义时 → 视为新事实，禁止
 
 ```text
 1. `as_of` 与 `timezone` 缺失时，read model 视为无效（不得回退到系统时间）
-2. `phase4` / `future` 版本字段在对应契约冻结前允许为空，但必须在 `unavailable[]` 中显式声明
+2. 当视图包含 Phase 4 数据时，`mastery_policy_version` / `review_policy_version` 必须使用 replay 输出的版本；Planner / Future 版本在对应契约冻结前仍允许为空，并须在 `unavailable[]` 中声明
 3. 版本字段只读，不得由 UI 覆写
 4. UI 必须展示（至少在 Explain / Footer 层）`as_of` + `replay_rule_version`
 ```
@@ -134,12 +134,12 @@ read model 字段语义 ≠ domain 字段语义时 → 视为新事实，禁止
 
 | Read Model | 主要 consumer | 依赖 | 当前可否实现 |
 |---|---|---|---|
-| `CockpitDashboardView` | Dashboard `/` | Gate A + User Config + Gate B + Gate C | 🟡 部分（不含 Today / Review 区块） |
-| `TodayPlanView` | `/today`、`TodayFocusCard` | Gate C + Gate B | ❌ 未冻结 |
+| `CockpitDashboardView` | Dashboard `/` | Gate A + User Config + Gate B + Gate C | 🟡 Progress 可用；Review domain inputs Available（Gate B PASS），Today 仍受 Gate C 阻塞；View 未实现 |
+| `TodayPlanView` | `/today`、`TodayFocusCard` | Gate C（Planner）+ Gate B（Review data 可消费） | ❌ Planner contract 未冻结；Review domain data Available |
 | `SubjectStatusView` | `SubjectStatusGrid` | Gate A + Gate B + essay contract | 🟡 部分（论文不可用） |
-| `ReviewQueueView` | `/review`、`ReviewQueue` | Gate B（Issue #4） | 🟡 domain replay available；UI read model / frontend 未实现 |
+| `ReviewQueueView` | `/review`、`ReviewQueue` | Gate B（Issue #4） | ✅ Gate B PASS、所有 domain inputs Available；UI Read Model / frontend 未实现 |
 | `CalendarView` | `StudyCalendar` | Gate A + Gate B + assessment contract | 🟡 部分（只有「有学习记录」） |
-| `ProgressSummaryView` | `/progress` | Gate A + Gate B | 🟡 部分（mastery domain output available；UI 未实现） |
+| `ProgressSummaryView` | `/progress` | Gate A + Gate B | ✅ Gate A / B PASS、Progress 与 mastery domain inputs Available；UI Read Model 未实现 |
 | `ExplainView` | `ExplainPanel` / `/explain/:kind/:id` | 取决于被解释对象 | 🟡 部分 |
 
 ---
@@ -503,9 +503,9 @@ data/review/fixture-schema.draft.json → review-fixture/v0.1-draft（status: dr
 | Gate | 解锁的 read model 部分 |
 |---|---|
 | Gate A ✅ | `ProgressSummaryView` 的 aggregate 区块、`CalendarView.has_learning_record`、`SubjectStatusView` 的综合 / 案例区块 |
-| Gate B ✅ | P4.5 domain replay 已提供 `ReviewQueueView` 所需 mastery / scheduling / explain 字段；正式 UI read model 与 frontend 仍未实现 |
+| Gate B ✅ PASS | P4.1～P4.9 全部 Gate 问题已验证；`ReviewQueueView` 所需 mastery / scheduling / explain domain fields Available；正式 UI Read Model 与 frontend 仍未实现 |
 | Gate C ❌ | `TodayPlanView` 全部、`CockpitDashboardView.today`、`ExplainView`（plan 对象） |
-| Gate D 🟡 | 本文件只定义 consumer contract；**Gate D 的完整冻结（字段、来源类别、版本元数据、null / unavailable 语义全部落定）仍依赖 Gate B / C 完成** |
+| Gate D 🟡 | 本文件只定义 consumer contract；Gate B 已 PASS，但完整 Cockpit Read Model 的 Gate D 仍需收口 Planner-bound / Future view fields（Gate C 仍未通过） |
 | Gate 之外 | `essay` / `assessment` / `resources` 相关部分 |
 
 **结论**：
@@ -523,7 +523,7 @@ data/review/fixture-schema.draft.json → review-fixture/v0.1-draft（status: dr
 ❌ 不定义 API endpoint / 传输协议 / 序列化格式
 ❌ 不定义数据库 / 缓存实现
 ❌ 不产生任何 fixture 或 mock 数据
-❌ 不冻结 Phase 4 / Planner 的最终字段名与状态枚举
+❌ 不重新定义或改写已冻结的 Phase 4 字段；Planner / Assessment / Essay 等未冻结 contract 仍不得猜造
 ❌ 不引入任何由 read model 生成的新业务事实
 ❌ 不把 read model 写回 domain
 ```

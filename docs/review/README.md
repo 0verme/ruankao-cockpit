@@ -25,8 +25,10 @@
 | 窗口 | 关系 |
 | --- | --- |
 | P4.1 / P4.2（Review Model / Evidence） | 已冻结本目录的上游 contract；policy kernel 只能通过显式 adapter 消费 Evidence，不能反向改变 Evidence 事实。 |
-| P4.6 / P4.7（本轮） | 冻结 `mastery-review-fixture/v0.1` synthetic matrix；36 个正式 fixtures、validator 与边界测试已通过。P4.8 / P4.9 仍待后续阶段。 |
+| P4.6 / P4.7 | 冻结 `mastery-review-fixture/v0.1` synthetic matrix；36 个正式 fixtures、validator 与边界测试已通过。 |
 | P4.5（Mastery / Review replay） | `engine.review.replay.replay(...)` 消费 Review Evidence、显式 outcome adapter、policy kernel 和 `as_of` / timezone，输出 `MasteryReviewState v0.1`。 |
+
+P4.8 文档 / 架构同步与 P4.9 正式验证报告已完成；Phase 4 Gate 为 PASS。报告记录契约版本、四项 Gate 证据、fixture/test 覆盖与限制：[`docs/PHASE4_VALIDATION_REPORT.md`](../PHASE4_VALIDATION_REPORT.md)。
 
 ## 机器可读入口
 
@@ -50,7 +52,7 @@ Review Model / Evidence contract
    != Mastery / Scheduling policy
    != MasteryReviewState replay（P4.5，已实现）
    != synthetic replay fixtures（P4.6 / P4.7，已通过）
-   != Phase 4 validation report（P4.9，待完成）
+   != Phase 4 validation report（P4.9，Gate PASS；见 `docs/PHASE4_VALIDATION_REPORT.md`）
    != Planner / 30-Day Plan / UI
 ```
 

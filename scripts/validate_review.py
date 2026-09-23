@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Validate and replay the frozen P4.6/P4.7 Review fixture matrix.
 
-This validator reports fixture-matrix status only. P4.8 documentation sync and
-P4.9 validation report remain separate; it never claims the Phase 4 Gate passed.
+P4.8 documentation sync and P4.9 Gate report are separate deliverables. This
+validator reports fixture-matrix status only and never judges the full Phase 4 Gate.
 """
 from __future__ import annotations
 
@@ -208,7 +208,7 @@ def main() -> int:
         print(f"  expected rejection categories matched: {totals['expected-error-matched']}")
         print("PASS output schema, version metadata, as_of/timezone, evidence trace and aggregate invariants")
         print("PASS repeatability, input-order independence, same-instant offsets and future-evidence rejection")
-        print(f"{FIXTURE_PASS_STATUS}: P4.6/P4.7 fixture matrix only; P4.8/P4.9 remain pending")
+        print(f"{FIXTURE_PASS_STATUS}: P4.6/P4.7 fixture matrix only; P4.8/P4.9 status is recorded in docs/PHASE4_VALIDATION_REPORT.md")
         return 0
     except reviewkit.FixtureContractError as exc:
         print(f"FAIL: {exc}", file=sys.stderr)

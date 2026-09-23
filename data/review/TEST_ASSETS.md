@@ -7,9 +7,9 @@
 ```text
 P4.6 Synthetic fixtures: FROZEN
 P4.7 Unit tests / edge cases: COMPLETE
-P4.8 Documentation sync: PENDING
-P4.9 Validation report: PENDING
-Phase 4 Gate: NOT DECLARED
+P4.8 Documentation sync: COMPLETE
+P4.9 Validation report: COMPLETE
+Phase 4 Gate: PASS（见 docs/PHASE4_VALIDATION_REPORT.md）
 ```
 
 ## 文件与 schema 边界
@@ -34,4 +34,4 @@ python3 -m unittest tests.test_review_fixture_plan tests.test_review_determinism
 python3 -m unittest discover -s tests
 ```
 
-`validate_review.py` 成功时报告 `REVIEW_FIXTURE_MATRIX_PASS`，不代表 P4.8/P4.9 或整个 Phase 4 Gate 已通过。
+`validate_review.py` 成功时报告 `REVIEW_FIXTURE_MATRIX_PASS`，该 validator 只判定 fixture matrix；Phase 4 全 Gate 结论由 `docs/PHASE4_VALIDATION_REPORT.md` 汇总，当前结论为 PASS。

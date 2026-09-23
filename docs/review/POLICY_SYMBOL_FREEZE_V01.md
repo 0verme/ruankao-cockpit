@@ -6,8 +6,8 @@
 > PR #6 合并后，`data/review/fixture-plan.json` 已在 main 上。本窗口按该 manifest 自己的
 > freeze 机制，只把 **owner 为 P4.3 / P4.4 的 20 个 symbol** 从 `status: unfrozen` 更新为
 > `status: frozen`。这是 P4.3/P4.4 的历史 freeze record；后续 P4.1/P4.2 contract 与
-> P4.5 replay 已在独立文档和 engine 中收口，fixture manifest 的剩余 symbol 仍由 P4.6/P4.7
-> 统一升级，不在本文件中回写。
+> P4.5 replay 已在独立文档和 engine 中收口，fixture manifest 的剩余 symbol 后由 P4.6/P4.7
+> 冻结；当前 36 个 symbol 均为 frozen，本文件不重复回写。
 
 ## 0. Policy identity
 
@@ -108,7 +108,7 @@
 | GAP-15 同 timestamp tie-breaker | P4.5 | replay 统一按 evidence projection 的 `(occurred_at_utc, evidence_id)` 升序处理；输入事件顺序不影响输出 | **CLOSED (P4.5)** |
 | GAP-16 validation error category 命名 | P4.5 | replay 保持 policy categories（`future_evidence` / `invalid_timezone` / `invalid_policy_input` 等），并对 replay envelope 使用 `invalid_replay_input`；拒绝不会静默降级 | **CLOSED (P4.5)** |
 | GAP-14 replay API 的 `as_of` / version 输出 | P4.5 | `replay(...)` 显式接收 aware `as_of` 与 IANA `timezone`，输出 schema / policy / adapter / replay metadata | **CLOSED (P4.5)** |
-| GAP-17 fixture schema 版本命名 | P4.6 / P4.7 | draft fixture schema 保持 `review-fixture/v0.1-draft`，正式 fixture version 仍待 matrix 收口 | OPEN（P4.6 / P4.7） |
+| GAP-17 fixture schema 版本命名 | P4.6 / P4.7 | contract fixtures 保留 `review-fixture/v0.1`；正式 replay matrix 冻结为 `mastery-review-fixture/v0.1`，见 `data/review/fixture-schema.v0.1.json` | **CLOSED (P4.6 / P4.7)** |
 
 ---
 

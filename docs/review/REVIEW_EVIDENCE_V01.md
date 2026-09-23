@@ -1,6 +1,6 @@
 # Review Evidence Contract v0.1
 
-> 状态：**FROZEN（P4.2）**。本文定义 Review Context Event 和 policy-neutral Review Evidence；不实现 mastery、success/failure policy 或 scheduling。
+> 状态：**FROZEN（P4.2）**。本文定义 Review Context Event 和 policy-neutral Review Evidence；本文自身不实现 mastery、success/failure policy 或 scheduling。下游 P4.3/P4.4 policies 已冻结，P4.5 deterministic replay 已实现在 `engine/review/replay.py`；P4.6～P4.9 与 Gate 证据见 [`../PHASE4_VALIDATION_REPORT.md`](../PHASE4_VALIDATION_REPORT.md)。
 >
 > 上游：`progress-event/v0.1`。机器契约：[`data/review/schema.json`](../../data/review/schema.json)。领域身份和 D1–D12 decision record 见 [`REVIEW_MODEL_V01.md`](REVIEW_MODEL_V01.md)。
 

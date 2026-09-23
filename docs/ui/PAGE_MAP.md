@@ -19,9 +19,9 @@ Not Needed  v0.1 明确不需要的页面
 | 路由 | 页面 | 状态 | user job | data dependency | implementation gate |
 |---|---|---|---|---|---|
 | `/` | Cockpit Dashboard | **MVP** | 一眼知道整体状态、今天做什么、哪些要复习 | `progress-state/v0.1` + User Config | Gate A ✅；Today 区域需 Gate C |
-| `/today` | 今日学习 | **MVP** | 开始今天的任务并记录结果 | Planner 输出 + `MasteryReviewState v0.1` review output | Gate C + Gate B domain replay ✅ |
-| `/review` | 复习队列 | **MVP** | 清掉今天到期的复习 | `MasteryReviewState v0.1`（Issue #4） | Gate B domain replay ✅；UI 未实现 |
-| `/progress` | 学习进度 / 掌握度 | **MVP** | 解释 accuracy / coverage / error / mastery | `progress-state/v0.1` + `MasteryReviewState v0.1` | Gate A ✅ + Gate B domain replay ✅；UI 未实现 |
+| `/today` | 今日学习 | **MVP** | 开始今天的任务并记录结果 | Planner 输出 + `MasteryReviewState v0.1` review output | Gate C ❌（Planner 未冻结）；Gate B ✅ PASS（Review domain Available） |
+| `/review` | 复习队列 | **MVP** | 清掉今天到期的复习 | `MasteryReviewState v0.1`（Issue #4） | Gate B ✅ PASS；UI / Read Model 未实现 |
+| `/progress` | 学习进度 / 掌握度 | **MVP** | 解释 accuracy / coverage / error / mastery | `progress-state/v0.1` + `MasteryReviewState v0.1` | Gate A ✅ + Gate B ✅ PASS；UI / Read Model 未实现 |
 | `/settings` | 配置（考试 / 时间 / 时区） | **MVP（最小）** | 设定考试日期、时区、可用时间、目标 | User Configuration | Gate 0（无账号体系） |
 | `/plan` | 学习计划 | **Later** | 看清 30 天结构与可调整的近期安排 | Planner 输出 | Gate C |
 | `/comprehensive` | 综合知识 | **Later** | 练综合题并查看 topic 级表现 | 题源接入 + 作答交互 + `progress-state/v0.1` | Gate A ✅；题源接入未就绪 |
@@ -42,7 +42,7 @@ Not Needed  v0.1 明确不需要的页面
 | user job | 打开后立刻知道：整体怎么样、今天做什么、哪些要复习、离目标多远 |
 | 状态 | **MVP** |
 | data dependency | `progress-state/v0.1`（Gate A ✅）、User Configuration、Planner（Today 区域）、`MasteryReviewState v0.1`（Review 区域） |
-| implementation gate | 综合 / 案例 / 统计 / 倒计时区域：Gate A；Today 区域：Gate C；Review domain：Gate B ✅（UI/read model 未实现） |
+| implementation gate | 综合 / 案例 / 统计 / 倒计时区域：Gate A；Today 区域：Gate C；Review domain：Gate B ✅ PASS（UI / Read Model 未实现） |
 | 卡片组成 | `OverallProgressCard`、`TodayFocusCard`、`OperationalStatsGrid`、`ExamCountdown`、`StudyCalendar`、`SubjectStatusGrid` |
 | 未实现时的行为 | Today 区域显示 `EmptyState`「Planner contract 尚未冻结」；Review domain 已可用，正式 read model 未接入时显示实现层 unavailable |
 
@@ -72,8 +72,8 @@ Not Needed  v0.1 明确不需要的页面
 |---|---|
 | user job | 今天有哪些内容到期、为什么到期、复习后发生什么 |
 | 状态 | **MVP**（数据依赖 P4.5 domain replay；UI 未实现） |
-| data dependency | **Issue #4**：`MasteryReviewState v0.1` — P4.1～P4.5 contract / replay 已冻结；P4.6/P4.7/P4.9 仍未收口 |
-| implementation gate | **Gate B domain PASS**；正式 UI read model / frontend 仍未实现 |
+| data dependency | **Issue #4**：`MasteryReviewState v0.1` — P4.1～P4.9 已完成，Phase 4 Gate PASS |
+| implementation gate | **Gate B PASS**；Review consumer 已解锁；正式 UI Read Model / frontend 仍未实现 |
 | 排序 | **100% 来自 engine**；UI 不重新排序、不自行计算优先级 |
 | 未接入 UI 时的行为 | 实现层 unavailable；UI 不得绕过 replay 自行计算 due / mastery |
 
@@ -90,7 +90,7 @@ Not Needed  v0.1 明确不需要的页面
 | user job | 解释 accuracy / coverage / error / mastery，而不是只看一个数字 |
 | 状态 | **MVP**（mastery domain output 已由 P4.5 提供；UI 未实现） |
 | data dependency | `progress-state/v0.1`（Gate A ✅）+ `MasteryReviewState v0.1`（mastery domain output） |
-| implementation gate | Gate A ✅（accuracy / coverage / errors）；Gate B domain replay ✅（mastery UI 未实现） |
+| implementation gate | Gate A ✅（accuracy / coverage / errors）；Gate B ✅ PASS（mastery domain available，UI 未实现） |
 | 组成 | `ProgressSummary`、`TopicAccuracyList`、`CoverageBreakdown`、`ErrorCauseBreakdown`、`CapabilityEvidenceList` |
 | 未接入 UI 时的行为 | mastery 区块显示实现层 unavailable；不得用 `topic accuracy` 冒充 mastery |
 

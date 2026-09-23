@@ -1,11 +1,10 @@
 # Policy Test Matrix v0.1
 
-> 本文件把 P4.3 / P4.4 的冻结规则翻译成**可执行案例表**，供 P4.6 / P4.7 生成正式 fixture。
-> 本窗口**不**创建正式 fixture 的 expected outputs（那是 P4.6 的工作）；本文件只冻结
-> `input → expected state / status / reason` 的语义。
+> 本文件是 P4.3 / P4.4 窗口形成的**policy-level 案例设计记录**，曾作为 P4.6 / P4.7 fixture 与边界测试的输入。
+> P4.6 / P4.7 已完成：正式 expected outputs 以 `data/review/fixtures/` 为准，36 个冻结 replay fixtures 由 validator 执行；完整矩阵和 Gate 证据见 [`docs/PHASE4_TEST_MATRIX.md`](../PHASE4_TEST_MATRIX.md) 与 [`docs/PHASE4_VALIDATION_REPORT.md`](../PHASE4_VALIDATION_REPORT.md)。
 >
-> 已在本窗口落地的 policy-level 单测：`tests/test_review_policy.py`（38 个案例）。
-> 默认 `schedule_timezone = Asia/Shanghai`。
+> 历史记录：本文件形成时 `tests/test_review_policy.py` 有 38 个案例；当前全量 test count 以 validation report 的实际运行结果为准。
+> 历史案例示例使用 `schedule_timezone = Asia/Shanghai`；每次 replay 仍须显式传入 IANA timezone，不存在隐式默认值。
 
 符号：
 
@@ -89,9 +88,9 @@ d = consecutive_success_day_count
 | R4 | 未知字段（如把 score 直接塞进 policy 输入） | `invalid_policy_input` |
 | R5 | `schedule_timezone` 为 `null` / `""` / `local` / `system` / 未知名 | `invalid_timezone` |
 | R6 | 非字符串 / 空 `review_item_id` | `invalid_policy_input` |
-| R7 | unknown review item | **由 P4.1 / P4.2 定义**（`DEPENDS_ON_P4_1_P4_2`）：policy kernel 接受调用方声明的 item 集合 |
+| R7 | unknown review item | P4.1 已冻结显式 item catalog；未知 item 在 replay 中按 `unknown_review_item` 拒绝，不隐式创建 |
 | R8 | 缺少 source reference / 违反版权契约 | 由 P4.1 / P4.2 validator 负责，policy kernel 不接触来源字段 |
-| R9 | review evidence 与 item kind 不匹配 | 由 P4.1 / P4.2 负责（`DEPENDS_ON_P4_1_P4_2`） |
+| R9 | review evidence 与 item kind 不匹配 | P4.2 contract/replay 校验；不匹配时按 `evidence_item_mismatch` 拒绝 |
 | R10 | malformed / negative interval 参数 | 常量不可运行时注入；任何参数变化必须新 policy version |
 
 ---

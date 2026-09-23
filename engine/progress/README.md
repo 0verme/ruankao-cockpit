@@ -131,7 +131,7 @@ Review Model / Evidence v0.1 位于独立的 `engine.review` 与 `data/review/` 
 
 ## Boundary
 
-本阶段没有实现：
+`ProgressState v0.1` 本身不包含以下 Review 派生字段；独立的 Phase 4 `MasteryReviewState v0.1` replay 已可用，详见 [`docs/PHASE4_VALIDATION_REPORT.md`](../../docs/PHASE4_VALIDATION_REPORT.md)：
 
 - mastery / mastered；
 - review_due / review_interval；

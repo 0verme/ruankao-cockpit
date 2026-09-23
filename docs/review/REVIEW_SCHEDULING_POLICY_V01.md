@@ -10,7 +10,7 @@ status         FROZEN（本窗口 P4.4）
 可执行转移测试：`tests/test_review_policy.py`
 
 本文件冻结：interval ladder、scheduling transition、时间语义、failure 语义、mastered maintenance、
-`due_count`。它不实现 replay，不定义 Review Item / Review Evidence 契约。
+`due_count`。本文档本身不实现 replay、不定义 Review Item / Review Evidence contract；P4.1/P4.2 contracts 与 P4.5 replay 已分别冻结 / 实现，完整审计见 [`../PHASE4_VALIDATION_REPORT.md`](../PHASE4_VALIDATION_REPORT.md)。
 
 > 这不是自适应复习算法。没有 SM-2、FSRS、forgetting curve、ease factor、难度参数、AI 判断、
 > 个性化权重或 planner。policy 的全部输入是：item 的 policy-eligible evidence、显式 `as_of`、
@@ -195,7 +195,7 @@ new item + 无 evidence -> next_due_at = null, review_status = not_scheduled
 - 首次失败 → `D + 1 天`（reason 不同）。
 
 即 v0.1 不使用“首次暴露 + 1 天”的隐式规则；首次排期由第一条 evidence 决定。
-把“首次学习”是否产生 evidence 交给 P4.1 / P4.2 决定（`DEPENDS_ON_P4_1_P4_2`）。
+Evidence 是否产生由 P4.1/P4.2 的显式 Review Context 与事实契约约束；scheduling policy 不从“首次学习”或日期间隔推断 evidence。无 evidence item 不排期，第一条可评估 evidence 是 v0.1 排期锚点。
 
 ### 5.4 success / failure 后的 due
 
@@ -239,8 +239,7 @@ evidence 排序键 = (occurred_at 转换到 UTC, evidence_id) 升序
 - 同一时间戳的多条 evidence 按 `evidence_id` 词序应用，结果稳定；
 - 同一天多次 review 全部计入计数；对 scheduling 而言同一天重复成功是幂等的；
 - 重复 `evidence_id` 直接被拒绝，v0.1 不做静默去重；
-- `DEPENDS_ON_P4_1_P4_2`：`evidence_id` 的稳定身份定义来自 P4.2；若 P4.2 不提供独立 evidence id，
-  使用 `event_id`。
+- P4.2 已冻结 deterministic `evidence_id = evidence/{source_event_id}/{review_item_id}`；因此排序键中的 ID 稳定且无需 fallback。
 
 ### 5.7 `as_of` 与 future evidence
 
