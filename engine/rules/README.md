@@ -100,4 +100,4 @@ Daily Adaptive Tasks
 - **Rolling 7-Day Plan**：未来根据容量、复习欠债和弱项调整近期配额。
 - **Daily Adaptive Tasks**：未来把当天结果写回并生成下一步任务。
 
-本阶段不实现上述 Planner、数据库、API 或 UI；Mastery / Review 只到达 policy contract 层，未接入 replay。
+本阶段不实现上述 Planner、数据库、API 或 UI。Mastery / Review deterministic replay 已由 `engine/review/` 实现并通过 Phase 4 Gate；此处仍只说明 policy kernel 的职责边界。详见 [`docs/PHASE4_VALIDATION_REPORT.md`](../../docs/PHASE4_VALIDATION_REPORT.md)。

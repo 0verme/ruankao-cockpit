@@ -4,7 +4,7 @@
 >
 > P4.6 已冻结 36 个 `mastery-review-fixture/v0.1` fixtures；P4.7 已补足边界、rejection、determinism、timezone 与 aggregate invariant tests。`scripts/validate_review.py` 报告 `REVIEW_FIXTURE_MATRIX_PASS`。
 >
-> 本轮没有改变 P4.1～P4.5 的 Review Model、Evidence、mastery/scheduling policy 或 replay contract；P4.8 documentation sync、P4.9 validation report 和 Phase 4 Gate 仍待完成。
+> P4.6/P4.7 矩阵本身只验证 fixture 与测试覆盖，不改变 P4.1～P4.5 冻结契约。P4.8 Documentation / Architecture Sync、P4.9 正式验证报告已完成；Phase 4 Gate 结论见 [`docs/PHASE4_VALIDATION_REPORT.md`](PHASE4_VALIDATION_REPORT.md)。
 >
 > 下方矩阵表保留 PR #6 的设计条目与原始设计时状态。**最终实现状态以 `data/review/fixture-plan.json`、当前 fixtures 和 unittest 为准**；表中 `SYMBOLIC` / `BLOCKED` 是历史设计快照，不代表当前仍待 freeze。
 
@@ -363,7 +363,7 @@ REGEN_PROGRESS_BASELINE=1 python3 -m unittest discover -s tests -p 'test_progres
 5. 仅报告 `REVIEW_FIXTURE_MATRIX_PASS`；不宣布 Phase 4 Gate PASS
 ```
 
-P4.8 documentation sync 与 P4.9 validation report 仍在本 validator scope 之外。
+P4.8 documentation sync 与 P4.9 validation report 不属于本 validator 的检查范围；二者已单独完成，Phase 4 Gate 结论见 [`docs/PHASE4_VALIDATION_REPORT.md`](PHASE4_VALIDATION_REPORT.md)。
 
 ---
 
@@ -375,10 +375,10 @@ P4.8 documentation sync 与 P4.9 validation report 仍在本 validator scope 之
 3. success / rejection expected 均由 P4.1～P4.5 frozen contract 支撑
 4. validator 已对 fixtures/variants 执行 schema、expected、category 与 determinism 检查
 5. P4.7 补足 due/calendar/timezone/DST/tie-order/failure/score/aggregate edge tests
-6. Progress v0.1 regression 保持独立执行；Phase 4 Gate 未在本轮声明
+6. Progress v0.1 regression 保持独立执行；本矩阵不单独判定 Phase 4 Gate（最终结论见 P4.9 report）
 ```
 
-P4.8 architecture/documentation sync 与 P4.9 validation report 仍待后续阶段。
+P4.8 architecture/documentation sync 与 P4.9 validation report 已完成；本文件保留矩阵设计历史，最终 Gate 证据见 [`docs/PHASE4_VALIDATION_REPORT.md`](PHASE4_VALIDATION_REPORT.md)。
 
 ---
 
@@ -514,13 +514,12 @@ PR #6 合并时登记的 GAP-01～GAP-17 原始描述保留作审计历史，不
 * Required decision：错误 category 命名与复用规则。
 * Owner：P4.5。
 
-### GAP-17 fixture schema 版本命名与最终字段未确认
+### GAP-17 fixture schema 版本命名与最终字段（历史 gap，已关闭）
 
-* Gap：`review-fixture/v0.1-draft` 的最终名称、`expected` vs `expected_state`、
+* 原 Gap：`review-fixture/v0.1-draft` 的最终名称、`expected` vs `expected_state`、
   `events_by_case` / `variants` 是否保留。
-* Why it prevents deterministic test：fixture 文件无法最终定稿。
-* Required decision：由 P4.1 / P4.2 确认 fixture schema 是否属于其 contract 一部分。
-* Owner：P4.6 提出，P4.1 / P4.2 确认。
+* Resolution：P4.6/P4.7 冻结独立的 `mastery-review-fixture/v0.1` schema，contract fixtures 仍使用 `review-fixture/v0.1`；字段以 `data/review/fixture-schema.v0.1.json` 为准。
+* Status：CLOSED（P4.6/P4.7）；原始登记仅作历史审计记录。
 
 ---
 
@@ -539,4 +538,4 @@ python3 scripts/validate_taxonomy.py
 python3 -m unittest discover -s tests -v
 ```
 
-当前矩阵状态以 manifest 和 `scripts/validate_review.py` 为准。P4.9 validation report 尚未创建；Phase 4 Gate 不在本轮宣布。
+当前 fixture matrix 状态以 manifest 和 `scripts/validate_review.py` 为准；该 validator 仅报告矩阵状态，不单独判定 Phase 4 Gate。P4.9 的正式验证报告已创建，Phase 4 Gate 结论为 PASS，详见 [`docs/PHASE4_VALIDATION_REPORT.md`](PHASE4_VALIDATION_REPORT.md)。

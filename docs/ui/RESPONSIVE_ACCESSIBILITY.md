@@ -72,7 +72,7 @@ Desktop First + Mobile usable
 
 ```text
 TodayFocusCard（今天做什么）
-Review 到期入口摘要（哪些要复习）—— domain source 为 P4.5 replay；UI read model 未实现
+Review 到期入口摘要（哪些要复习）—— Gate B PASS，domain source 为 P4.5 replay 且 Available；UI Read Model / 前端尚未实现
 开始学习 CTA
 完成记录入口（写事实事件）
 ExamCountdown（紧凑形态）

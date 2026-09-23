@@ -19,11 +19,11 @@ Deterministic Replay         ✅
    ↓
 Review Item / Evidence v0.1  ✅
    ↓
-Mastery / Review Policy v0.1 ✅ 规则冻结（P4.3 / P4.4）
+Mastery / Review             ✅ Phase 4 Gate PASS（P4.1～P4.9）
    ↓
-Mastery / Review Replay      ✅ (P4.5)
+Adaptive Planner             ⏳（阶段编号未冻结）
    ↓
-Adaptive Planner             ⏳
+30-Day Plan                  ⏳
    ↓
 Cockpit UI                   ⏳
 ```
@@ -46,7 +46,7 @@ Phase 3 已完成 Progress Model v0.1 的基础契约与 deterministic replay；
 
 详见 [`docs/review/REVIEW_MODEL_V01.md`](../review/REVIEW_MODEL_V01.md) 与 [`docs/review/REVIEW_EVIDENCE_V01.md`](../review/REVIEW_EVIDENCE_V01.md)。
 
-## Phase 4（进行中）
+## Phase 4（Gate PASS）
 
 Phase 4 的规则设计部分（P4.3 / P4.4）已冻结 v0.1 contract，P4.5 已将 Review Evidence 与 policy kernel 串接为可重建的 `MasteryReviewState v0.1`。
 
@@ -65,10 +65,7 @@ Axis 2  Review Scheduling Projection   not_scheduled / scheduled / due / overdue
 
 完整规则见 [`docs/review/README.md`](../review/README.md)。
 
-本阶段仍然没有实现：
-
-- P4.6 / P4.7 synthetic fixture matrix 与 edge-case 收口，以及 P4.9 validation report；
-- Adaptive Planner、Rolling 7-Day Plan、30-Day Plan 实例化、数据库、API、UI。
+Phase 4 P4.1～P4.9 已完成并通过 Gate；36 个冻结的 synthetic replay fixtures、validator、边界测试与正式 validation report 见 [`docs/PHASE4_VALIDATION_REPORT.md`](../PHASE4_VALIDATION_REPORT.md)。本阶段仍未实现 Adaptive Planner、Rolling 7-Day Plan、30-Day Plan 实例化、数据库、API 或 UI。
 
 `progress-state/v0.1` 的字段与语义不因 Phase 4 改变：mastery / review 是**独立派生层**，不是 ProgressState 的新字段。
 
@@ -115,8 +112,9 @@ Phase 4 当前已冻结 P4.1/P4.2 的 Review Model / Evidence、P4.3/P4.4 的 Ma
         Mastery State Machine / Review Scheduling Policy（P4.3 / P4.4）
 
 已实现：`MasteryReviewState v0.1` replay 与显式 `as_of` / timezone API（P4.5）
-未实现：fixture expected 值与 validation report（P4.6 / P4.7 / P4.9）
-        Adaptive Planner
+已完成：fixture expected 值与 matrix validation（P4.6 / P4.7）
+        Documentation sync / validation report（P4.8 / P4.9，Phase 4 Gate PASS）
+未实现：Adaptive Planner
 ```
 
 因此：

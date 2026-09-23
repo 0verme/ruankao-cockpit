@@ -19,4 +19,4 @@ Review Context Event 必须显式声明 `initial_learning` 或 `review`。没有
 
 P4.5 的 replay 入口为 `engine.review.replay.replay(...)`，输出 `mastery-review-state/v0.1`。Evidence 到 policy primitive 的保守 adapter 见 [`docs/review/REVIEW_OUTCOME_ADAPTER_V01.md`](../../docs/review/REVIEW_OUTCOME_ADAPTER_V01.md)：综合题 boolean 可确定映射；案例/能力 score 在 rubric 冻结前保留为 `insufficient`，不伪造 success/failure。
 
-P4.6/P4.7 已冻结 `fixture-schema.v0.1.json` 和 `fixture-plan.json`，validator 会加载 `fixtures/*.json`，验证 output schema、期望投影/拒绝 category、版本、时间、证据 trace、aggregate invariants 与 determinism。该状态只表示 fixture matrix pass；P4.8/P4.9 仍待后续阶段。
+P4.6/P4.7 已冻结 `fixture-schema.v0.1.json` 和 `fixture-plan.json`，validator 会加载 `fixtures/*.json`，验证 output schema、期望投影/拒绝 category、版本、时间、证据 trace、aggregate invariants 与 determinism。fixture matrix PASS 是测试资产结论；Phase 4 全部 P4.1～P4.9 的 Gate 结论另见 [`docs/PHASE4_VALIDATION_REPORT.md`](../../docs/PHASE4_VALIDATION_REPORT.md)，最终 Gate 为 PASS。

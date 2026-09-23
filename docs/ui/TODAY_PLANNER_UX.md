@@ -237,7 +237,7 @@ UI 不得把 user_config 值伪装成 Planner 输出
 | Planner output contract | ❌ 未冻结 | Today Card、PlanTimeline、PlanModeSwitcher、冲刺阶段 |
 | Planner plan version | ❌ 未冻结 | Explain 可复现性 |
 | Planner explain（rule id + signal snapshot） | ❌ 未冻结 | Explain 层 |
-| Issue #4（review 区块） | ✅ P4.5 domain replay；P4.6/P4.7/P4.9 未收口 | Today 中的到期复习信息仍需 Planner/read model consumer |
+| Issue #4（review 区块） | ✅ Phase 4 Gate PASS；P4.5 replay 与全部 fixture / tests / validation 已通过 | Review domain output Available；Today 计划任务仍受 Planner Gate C 阻塞，consumer 实现尚未开始 |
 | task execution contract | ❌ 未定义 | 计划完成度、完成日、streak |
 | User Configuration contract | ❌ 未定义 | 考试日期、时区、可用时间、目标的持久化与版本 |
 

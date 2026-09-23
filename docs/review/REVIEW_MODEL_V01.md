@@ -1,6 +1,6 @@
 # Review Model v0.1
 
-> 状态：**FROZEN（P4.1）**。本文冻结 Review Item 的领域边界与稳定身份，不实现 Mastery State Machine 或 Review Scheduling Policy。
+> 状态：**FROZEN（P4.1）**。本文只冻结 Review Item 的领域边界与稳定身份；P4.3/P4.4 policy 已独立冻结，P4.5 replay 已实现，详见 [`docs/PHASE4_VALIDATION_REPORT.md`](../PHASE4_VALIDATION_REPORT.md)。
 >
 > 机器契约：[`data/review/schema.json`](../../data/review/schema.json)。Evidence 字段和投影规则见 [`REVIEW_EVIDENCE_V01.md`](REVIEW_EVIDENCE_V01.md)。
 
@@ -14,9 +14,11 @@ Progress Fact
         ↓ + explicit review-event/v0.1 context
 Review Evidence v0.1
         ↓
-Mastery State                 Future: P4.3
+Mastery State                 FROZEN: mastery-policy/spaced-consecutive/v0.1 (P4.3)
         ↓
-Review Scheduling Projection  Future: P4.4
+Review Scheduling Projection  FROZEN: review-policy/simple-ladder/v0.1 (P4.4)
+        ↓
+MasteryReviewState replay     IMPLEMENTED: mastery-review-state/v0.1 (P4.5)
 ```
 
 四层不可互换：
@@ -215,7 +217,7 @@ initial_learning | review
 - **Decision**：缺少所需事实时使用 `evidence_status=insufficient_evidence`、`evidence_value=null`；不等同于 failure、zero 或 mastered。
 - **Reason**：没有 score 不是得零分，没有 capability score 也不是能力失败。
 - **Rejected Alternative**：用 `false`、`0` 或空 score 补洞；会伪造学习事实。
-- **Future Extension**：P4.3 可定义无 evidence item 的 mastery 初态，但不能把它改写成失败。
+- **后续实现（已完成）**：P4.3 将无 evidence item 的 mastery 初态冻结为 `new`，并由 replay 保持 `review_status = not_scheduled`；不得把无 evidence 改写成失败。
 
 ### D10 — duplicate/alias/merge 语义
 
@@ -231,21 +233,21 @@ initial_learning | review
 - **Rejected Alternative**：为了 question identity/evidence 缺口复制原题或答案；这既无必要也违反仓库约束。
 - **Future Extension**：受许可的本地导入可有独立 source asset contract，但不能改变本契约的最小 reference 边界。
 
-### D12 — 留给 P4.3/P4.4 的问题
+### D12 — 留给 P4.3/P4.4 的问题（P4.1 决策记录）
 
-- **Decision**：本窗口不冻结 mastery states、success/failure threshold、interval、due、overdue、maintenance 或 1/3/7/15。
+- **Decision（当时）**：本窗口不冻结 mastery states、success/failure threshold、interval、due、overdue、maintenance 或 1/3/7/15。
 - **Reason**：Evidence 应 policy-neutral；这些规则依赖 Evidence 之后的独立状态机和 scheduling policy。
 - **Rejected Alternative**：在 Review Evidence 中写 `success`、`mastery` 或 `review_due`，或把旧课程草案升级为 formal rule。
-- **Future Extension**：下游必须把 policy/mastery version、as_of、transition reason 和 evidence trace 作为 contract。综合题 boolean 由显式 adapter 映射为 outcome；案例/能力 score 的 threshold/rubric 仍未冻结，P4.5 的 `review-outcome/raw-facts/v0.1` 只将其保留为 raw fact 并映射为 policy `insufficient`，不得把阈值写回 Evidence。未来 score mapping 必须使用新的 adapter version。
+- **后续收口**：P4.3/P4.4 已独立冻结 mastery 与 scheduling policy；P4.5 通过 `review-outcome/raw-facts/v0.1` adapter 和显式 `as_of` / timezone replay 实现 `MasteryReviewState v0.1`。案例/能力 score 仍保留为 raw fact 并映射为 policy `insufficient`；score threshold/rubric 未冻结，不得推断。未来 score mapping 必须使用新的 adapter version。
 
-## 7. 明确留给后续阶段
+## 7. 当前边界与后续阶段
 
-以下内容不是本窗口的实现，也不是 v0.1 的隐含承诺：
+以下内容在 P4.1 文档窗口中不实现；其中 mastery、scheduling 与 `as_of` replay 后由 P4.3～P4.5 冻结并实现：
 
-- `new / learning / due / mastered` 是否采用及其互斥定义；
-- success/failure 的阈值、连续成功次数和失败降级；
-- `review_due_at`、interval、overdue、maintenance review；
-- `as_of` 驱动的 MasteryReview replay；
-- Planner、due count、UI、AI 自动评分。
+- `new / learning / mastered` 与独立 `review_status` 轴：已由 P4.3/P4.4 冻结；
+- success/failure policy、连续成功与失败 transition、`1/3/7/15` interval：已由 P4.3/P4.4 冻结；
+- `next_due_at`、local date、due/overdue 与 maintenance review：已由 P4.4 冻结；
+- `as_of` 驱动的 `MasteryReviewState v0.1` deterministic replay：已由 P4.5 实现并通过 Phase 4 Gate；
+- Planner、due count 的 UI 消费、UI/API、AI 自动评分：仍在各自范围之外；案例/能力 score outcome 暂为 `insufficient`。
 
-若 P4.3/P4.4 需要改变 Item 或 Evidence 语义，必须先提交上游 contract 变更，不能在下游实现中隐式补定义。
+若未来需要改变 Item 或 Evidence 的事实语义，必须先提交上游 contract 变更，不能在下游实现中隐式补定义。

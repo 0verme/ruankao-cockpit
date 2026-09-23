@@ -15,11 +15,11 @@
 | `aggregate` | 直接来自 replay 输出的聚合事实（`progress-state/v0.1`） |
 | `projection` | 由 aggregate 或 user_config 确定性派生的只读投影（可重建、不产生新事实） |
 | `user_config` | 用户显式配置的输入（不是 domain 事实） |
-| `phase4` | Issue #4 Mastery / Review 派生层。P4.1～P4.5 contract / replay 已可消费；本文件仍不实现 UI read model |
+| `phase4` | Issue #4 Mastery / Review 派生层。P4.1～P4.9 已通过 Gate；domain 输出可消费，本文件不实现 UI / Read Model |
 | `planner` | 依赖 Planner contract 冻结后可得 |
 | `future` | 无任何 contract，当前不可用 |
 
-**规则**：`source category` 决定该指标能否渲染。`phase4` / `planner` / `future` 指标在对应契约冻结前，只能渲染 `UnavailableBadge`。
+**规则**：`phase4` domain fields 已 Available，可由 Review consumer 读取；`planner` / `future` 中尚未冻结或未定义的字段必须使用 `UnavailableBadge` / 空态。本映射冻结消费语义，不代表 UI / Read Model 代码已经实现。
 
 ---
 
@@ -27,9 +27,8 @@
 
 | 值 | 含义 |
 |---|---|
-| `Available` | 当前 main 的 `progress-state/v0.1` 已可确定性计算 |
+| `Available` | 当前 main 的 ProgressState 或 MasteryReviewState domain output 已可确定性计算（Phase 4 Gate PASS） |
 | `Available (null 可能)` | 可用，但分母为 0 时值为 `null` |
-| `Phase 4` | P4.1～P4.5 domain replay 可用；正式 UI read model 未实现 |
 | `Planner` | 未冻结 |
 | `Future` | 未定义 contract |
 | `User Config` | 用户输入 |
@@ -83,20 +82,16 @@
 
 ---
 
-## 5. 主映射表 · `phase4`（依赖 `MasteryReviewState v0.1` replay；UI read model 尚未实现）
+## 5. 主映射表 · `phase4`（Domain Available；UI / Read Model 尚未实现）
 
-> **Phase 4 当前真实状态（重要）**：P4.1～P4.5 的 domain contract / replay 已在 main 可消费；UI 仍只消费 replay 输出，不能直接调用 policy kernel。
+> **Phase 4 当前真实状态**：P4.1～P4.9 的契约、实现、fixture、测试、文档与正式 Gate 验证已完成；Gate B PASS。UI / Read Model 仍未实现，只能消费 replay 输出，不能直接调用 policy kernel。详见 [`docs/PHASE4_VALIDATION_REPORT.md`](../PHASE4_VALIDATION_REPORT.md)。
 >
 > ```text
-> ✅ 已冻结并可消费
->    review-model/v0.1 + review-event/v0.1 + review-evidence/v0.1
->    mastery-policy/spaced-consecutive/v0.1 + review-policy/simple-ladder/v0.1
->    MasteryReviewState：mastery-review-state/v0.1
->    item_order、item_kind、canonical_ref、evidence trace、as_of、timezone
->
-> ⏳ 仍未收口
->    P4.6 / P4.7 synthetic fixture matrix 与 edge-case 收口
->    P4.9 validation report
+> Available: review-model/v0.1 + review-event/v0.1 + review-evidence/v0.1
+> Available: mastery-policy/spaced-consecutive/v0.1 + review-policy/simple-ladder/v0.1
+> Available: mastery-review-state/v0.1（item_order、evidence trace、as_of、timezone）
+> Available: mastery_state / review_status / due counts / interval / due dates / reasons / policy metadata
+> UI / Read Model code: 未实现
 > ```
 >
 > 因此下表的 `Current Availability` 表示 **domain replay 已可用**；正式 UI read model / 前端仍不在本轮范围。
@@ -116,7 +111,7 @@
 | 证据详情 | 逐条 review evidence | `items[].evidence[]` | Review Evidence + outcome adapter（P4.2 / P4.5） | `phase4` | `Available` | 不适用 | `evidence_id` / source reference / policy outcome reason | raw score 保留；未冻结 rubric 时不映射为 success/failure |
 | policy 标识 / 版本 | 解释可复现所需的 policy 标识 | `policy`（policy_identity）+ `schema_version` | MasteryReviewState（P4.5） | `phase4` | `Available` | 不适用 | policy 元数据 | 顶层 schema：`mastery-review-state/v0.1`；另记录 outcome adapter `review-outcome/raw-facts/v0.1` |
 | 调度时区 | 日历日边界依据 | `schedule_timezone`（显式 IANA，必填） | MasteryReviewState（P4.5） | `phase4` | `Available` | 无隐式默认；不得回退到机器时区 | `tzdata_version` | replay 同时回显 common envelope 的 `timezone`；UI 不得混用用户本地隐式时区 |
-| 时区数据库版本 | 解释可复现所需 | `tzdata_version` | policy 层已冻结 | `phase4` | `Phase 4` | 恒有值 | policy 元数据 | 进入 `PolicyVersionFooter` |
+| 时区数据库版本 | 解释可复现所需 | `tzdata_version` | policy 层已冻结 | `phase4` | `Available` | replay 输出并记录运行环境 tzdata version | policy 元数据 | 进入 `PolicyVersionFooter` |
 
 ---
 
@@ -218,9 +213,9 @@ Calendar、streak、完成度、计划进度都受此约束。
 | 禁止计算的字段 | 为什么禁止 |
 |---|---|
 | `mastery` / `mastered` | 影响学习计划的指标必须来自版本化 policy + immutable facts |
-| `review_due` / `review_due_at` / `overdue` | 需要冻结的 review policy 与显式 `as_of` |
-| `due_count` | 同上 |
-| `review_interval` | policy 参数未冻结 |
+| `review_due` / `next_due_at` / `overdue` | policy 与显式 `as_of` 已冻结；UI 必须读取 replay 输出，不得自行计算 |
+| `due_count` | 已有 replay 聚合；UI 必须读取输出并保持 aggregate/item projection 一致 |
+| `review_interval_days` | policy 参数已冻结；UI 必须读取 replay 输出 |
 | 今日任务 / 任务数量 / 任务顺序 | Planner contract 未冻结 |
 | 计划完成度 / `completion_rate` | task execution contract 未冻结 |
 | `streak` | 无 contract；易与「有事件」混淆 |
@@ -269,7 +264,7 @@ Calendar、streak、完成度、计划进度都受此约束。
 ```text
 R1  任何 UI 上出现的指标，必须在本文件中存在一条映射
 R2  映射不存在时，该指标不得渲染
-R3  `source category` 为 phase4 / planner / future 时，只能渲染不可用态
+R3  `phase4` fields 从 replay 输出消费且 domain status 为 Available；`planner` / `future` 未冻结字段只能渲染空态 / 不可用态
 R4  映射表不得包含「UI 计算出的中间值」作为新事实
 R5  新增指标时必须同时声明：domain source、null semantics、explain source、constraints
 R6  上游契约版本变化时，必须同步更新本表的 Domain Field 与 Current Availability

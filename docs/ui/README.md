@@ -17,7 +17,7 @@ Taxonomy v0.1             ✅
 Golden Set Expansion      ✅
 Progress Model v0.1       ✅
 Deterministic Replay      ✅
-Mastery / Review          ✅  P4.1～P4.5 domain contract / replay；UI 未实现
+Mastery / Review          ✅  Phase 4 Gate PASS（P4.1～P4.9）；UI / Read Model 实现未开始
 Adaptive Planner          ⏳  未冻结
 30-Day Plan               ⏳  docs/30_DAY_CURRICULUM_DRAFT.md 仍是 DRAFT
 Cockpit UI                ⏳  本目录只冻结规划，不实现
@@ -51,20 +51,22 @@ Gate 定义沿用 Issue #5。当前真实状态如下：
 |---|---|---|---|
 | **Gate 0** | 无领域依赖的规划 / 静态原型 | 🟡 部分允许 | 本目录（IA / Page Map / token / component 方向）已完成；wireframe 与 synthetic prototype（UI.9）**未开始** |
 | **Gate A** | Progress Contract 稳定 | ✅ PASS | `progress-event/v0.1` + `progress-state/v0.1` + `progress-replay/v0.1` 已在 main 冻结并验证 |
-| **Gate B** | Mastery / Review v0.1 Gate PASS | ✅ domain replay | P4.1～P4.5 已冻结并由 `engine.review.replay.replay(...)` 输出 `MasteryReviewState v0.1`；P4.6/P4.7/P4.9 与 UI read model 仍未收口 |
+| **Gate B** | Mastery / Review v0.1 Gate PASS | ✅ PASS | Phase 4 四项 Gate 已由 fixtures、tests 与正式报告验证；`engine.review.replay.replay(...)` 输出 `MasteryReviewState v0.1`。Review Queue 等 consumer 的 UI / Read Model 代码仍未实现 |
 | **Gate C** | Planner MVP Contract 冻结 | ❌ 未冻结 | Today Card / PlanTimeline / PlanModeSwitcher 的输入契约不存在 |
-| **Gate D** | Cockpit Read Model 冻结 | 🟡 本轮定义 consumer contract | 见 [`READ_MODEL_CONTRACT.md`](READ_MODEL_CONTRACT.md)；**契约定义 ≠ 实现**，且 Phase 4 / Planner 字段仍为 TBD |
+| **Gate D** | Cockpit Read Model 冻结 | 🟡 本轮定义 consumer contract | 见 [`READ_MODEL_CONTRACT.md`](READ_MODEL_CONTRACT.md)；**契约定义 ≠ 实现**。Phase 4 domain fields 已 Available；整体 Read Model 仍受 Planner / Future fields 阻塞 |
 
 结论：
 
 ```text
-Gate A 解锁的视图可以进入实现准备（Progress Summary / Coverage / Error）
-Gate B 已解锁 domain consumer contract；正式 UI / read model 仍须按本文件实现
-Gate C 解锁的视图只能显示明确的空态
-Gate D 尚未完成 → 禁止开始正式前端实现
+Gate A 解锁 Progress Summary / Coverage / Error 的 domain consumer
+Gate B PASS，解锁 Review Queue / DueBadge / MasteryBadge / Review Explain 的 domain consumer
+Gate C 尚未通过，Today / Plan 仍必须显示明确空态
+Gate D 尚未完成 → 正式前端实现仍未就绪
 ```
 
-**Gate 状态以 `main` 为准**：只有合并进 `main` 的契约才能进入 Gate 判定。P4.5 replay 已满足 Gate B 的 domain 四问；合并不等于前端 UI 已实现。
+Gate B PASS 不代表 Cockpit UI / Read Model 已实现，也不解锁 Planner-bound 的 Today / Plan 功能。Phase 4 事实与证据见 [`docs/PHASE4_VALIDATION_REPORT.md`](../PHASE4_VALIDATION_REPORT.md)。
+
+**Gate 状态以 `main` 为准**：只有合并进 `main` 的契约才能进入 Gate 判定。Phase 4 replay + fixtures + tests + P4.9 report 共同验证 Gate B 四问；合并不等于前端 UI 已实现。
 
 ---
 
@@ -95,16 +97,14 @@ P4.1/P4.2  review-model/v0.1 + review-event/v0.1 + review-evidence/v0.1
 P4.3/P4.4  mastery-policy/spaced-consecutive/v0.1
            review-policy/simple-ladder/v0.1
 P4.5        mastery-review-state/v0.1（显式 as_of + timezone）
-mastery_state：new / learning / mastered
-review_status：not_scheduled / scheduled / due / overdue
+P4.6/P4.7  36 个冻结 synthetic fixtures、validator、edge-case / determinism tests
+P4.8/P4.9  文档 / 架构同步、四项 Gate 正式验证报告
+Available   mastery_state / mastery_reason；review_status / reason；due counts；
+           review_interval_days / next_due_at / next_due_local_date；evidence trace；
+           policy / adapter versions；as_of / timezone / tzdata_version
 ```
 
-**仍未收口**：
-
-```text
-P4.6/P4.7 synthetic fixture / edge-case matrix
-P4.9 validation report
-```
+Phase 4 domain contract / output / fixture matrix / validation **均已收口，Gate B PASS**。尚未实现的是 UI / Read Model / frontend，不是 P4.6 / P4.7 / P4.9。
 
 **关键结论**：
 
@@ -114,7 +114,7 @@ UI 只能消费 replay 输出，不能消费 policy kernel 本身
 UI 不得绕过 replay 直接调用 engine.rules.review_policy_v01 拼装视图
 ```
 
-`data/review/fixture-schema.draft.json` 仍为 `status: draft` / `frozen: false`，因为 P4.6 fixture contract 尚未收口；`validate_review.py` 会输出 `PENDING_REVIEW_FIXTURE_MATRIX`。正式 UI read model 仍不得自行重算 mastery / due。
+`data/review/fixture-schema.draft.json` 保留为已 superseded 的历史草案；正式 P4.6 fixture contract 是 `mastery-review-fixture/v0.1`，由 `fixture-schema.v0.1.json` 定义。`validate_review.py` 只报告 fixture matrix，不单独判定 Gate。正式 UI read model 仍不得自行重算 mastery / due。
 
 ### 4.3 依赖 Planner（当前不存在）
 
@@ -238,10 +238,10 @@ UI Read Model：
 - [`data/progress/schema.json`](../../data/progress/schema.json)
 - [`engine/rules/README.md`](../../engine/rules/README.md)
 - [`taxonomy/README.md`](../../taxonomy/README.md)
-- [`docs/PHASE4_TEST_MATRIX.md`](../PHASE4_TEST_MATRIX.md)（P4.6/P4.7 测试设计，fixture matrix 仍待收口）
+- [`docs/PHASE4_TEST_MATRIX.md`](../PHASE4_TEST_MATRIX.md)（P4.6/P4.7 测试矩阵；最终状态与 Gate 证据见 Phase 4 Validation Report）
 - [`docs/review/README.md`](../review/README.md)（P4.3 / P4.4，FROZEN v0.1）
 - [`docs/review/MASTERY_POLICY_V01.md`](../review/MASTERY_POLICY_V01.md)
 - [`docs/review/REVIEW_SCHEDULING_POLICY_V01.md`](../review/REVIEW_SCHEDULING_POLICY_V01.md)
 - [`docs/review/POLICY_SYMBOL_FREEZE_V01.md`](../review/POLICY_SYMBOL_FREEZE_V01.md)（字段名 / 枚举冻结记录）
-- [`docs/review/ASSUMPTIONS_PENDING_P4_1_P4_2.md`](../review/ASSUMPTIONS_PENDING_P4_1_P4_2.md)（`UNRESOLVED`）
+- [`docs/review/ASSUMPTIONS_PENDING_P4_1_P4_2.md`](../review/ASSUMPTIONS_PENDING_P4_1_P4_2.md)（RECONCILED；文件名保留历史，当前仅 score rubric 仍未冻结）
 - [`data/review/fixture-schema.draft.json`](../../data/review/fixture-schema.draft.json)（draft，非正式契约）

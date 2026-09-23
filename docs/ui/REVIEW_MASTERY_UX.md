@@ -9,27 +9,22 @@
 
 ## 1. 当前实现状态
 
-仓库目前处于 Phase 4 的**中间态**：
+Phase 4 已完成 P4.1～P4.9，最终 Gate 为 PASS：
 
 ```text
-✅ 已冻结并可消费（P4.1～P4.5）
-   review-model/v0.1 + review-event/v0.1 + review-evidence/v0.1
-   mastery-policy/spaced-consecutive/v0.1
-   review-policy/simple-ladder/v0.1
-   mastery_state：new / learning / mastered
-   review_status：not_scheduled / scheduled / due / overdue
-   MasteryReviewState：mastery-review-state/v0.1
-
-⏳ 未收口
-   P4.6 / P4.7 synthetic fixture matrix 与 edge cases
-   P4.9 validation report
+✅ P4.1～P4.2 Review Model / Event / Evidence v0.1
+✅ P4.3～P4.4 Mastery / Review Scheduling Policy v0.1
+✅ P4.5 deterministic MasteryReviewState v0.1 replay
+✅ P4.6～P4.7 36 个 synthetic fixtures、validator 与 edge-case tests
+✅ P4.8 documentation / architecture sync
+✅ P4.9 validation report（四项 Gate 均有证据）
 ```
 
 因此：
 
 ```text
-规则层：已冻结，可审计、可单测
-消费层：domain replay 可用 —— UI read model / frontend 仍未实现
+规则与 domain consumer：Gate B PASS；MasteryReviewState 字段 Available
+UI / Read Model / frontend：未实现，不代表整个 Cockpit 已可开发
 ```
 
 ### 1.1 证据来源
@@ -39,7 +34,7 @@
 | P4.3 / P4.4 已冻结 | `docs/review/README.md`（FROZEN v0.1）、`docs/review/MASTERY_POLICY_V01.md`、`docs/review/REVIEW_SCHEDULING_POLICY_V01.md`、`docs/review/POLICY_SYMBOL_FREEZE_V01.md` |
 | 可执行 policy kernel | `engine/rules/review_policy_v01.py` + `tests/test_review_policy.py` |
 | P4.1 / P4.2 contract | `docs/review/REVIEW_MODEL_V01.md`、`REVIEW_EVIDENCE_V01.md`（FROZEN） |
-| P4.5 replay | `engine/review/replay.py` 输出 `mastery-review-state/v0.1`；validator 在 fixture 未收口时输出 `PENDING_REVIEW_FIXTURE_MATRIX` |
+| P4.5 replay + P4.6/P4.7 validator | `engine/review/replay.py` 输出 `mastery-review-state/v0.1`；`scripts/validate_review.py` 输出 `REVIEW_FIXTURE_MATRIX_PASS`（仅 matrix）；P4.9 报告判定整个 Gate |
 | Phase 4 不改变 ProgressState | `engine/rules/README.md`：mastery / review 是独立派生层 |
 | `progress-state/v0.1` 边界 | `data/progress/schema.json` 的 `out_of_scope` 仍包含 `mastery` / `review_due` / `review_interval` |
 
@@ -152,8 +147,8 @@ Explain 层默认折叠，展开后展示可复现的原因链。
 | scheduling 原因 | 为什么是这个调度状态 | `review_status_reason` / `scheduling_reason` | ✅ P4.5 replay 输出 |
 | policy version | mastery / review policy 标识 | `policy` + top-level versions + `outcome_adapter` | ✅ P4.5 replay 输出 |
 | `as_of` | 该结论对应的时间点 | replay metadata（P4.5） | ✅ 显式输入并回显 |
-| schedule timezone | 日历日边界依据 | `schedule_timezone` | 🟡 字段名已冻结；值必填、无隐式默认 |
-| tzdata version | 时区数据库版本 | `tzdata_version` | 🟡 字段名已冻结 |
+| schedule timezone | 日历日边界依据 | `schedule_timezone` | ✅ Available：显式 IANA timezone，必填、无隐式默认 |
+| tzdata version | 时区数据库版本 | `tzdata_version` | ✅ Available：replay 输出并记录 |
 | evidence 明细 | 逐条 evidence | `items[].evidence[]` + Review Evidence v0.1 | ✅ P4.2/P4.5 输出；score adapter reason 显式记录 |
 
 **硬约束**：
@@ -202,8 +197,7 @@ review item 可能是 Topic / Question / Case Capability 三种粒度之一。UI
 3. 不同粒度的 evidence 不得互相升级 / 降级
 ```
 
-`item_kind` 字段名与取值：`TBD — dependent on P4.1 Review Model`。
-P4.3 / P4.4 已确认 v0.1 对三种 item kind 使用**同一套 policy 数学**（假设 A5，`UNRESOLVED` 但已记录）。
+`item_kind` 字段名与取值已由 P4.1 冻结并由 replay 输出：`topic` / `question` / `case_capability`。三种 item kind 保持独立 identity / evidence，但 v0.1 使用同一套 frozen policy 数学；alias 输入不属于 replay API，详见 `fixture-plan.json` 的 `not_applicable` 决策。
 
 ---
 
@@ -295,8 +289,9 @@ mastery             != due status
 ## 9. 写路径
 
 ```text
-UI → immutable review evidence（append-only，P4.2 契约）
-UI ✗→ 直接写 mastery_state / review_status / review_interval_days / next_due_at
+UI → immutable Progress Attempt + explicit Review Context events（append-only，P4.1/P4.2 契约）
+engine → deterministic Review Evidence projection → MasteryReviewState replay
+UI ✗→ 直接写 Evidence projection / mastery_state / review_status / review_interval_days / next_due_at
 ```
 
 | 允许 | 禁止 |
@@ -320,13 +315,13 @@ UI ✗→ 直接写 mastery_state / review_status / review_interval_days / next_
 | Issue #4 Mastery State Machine（P4.3） | ✅ **已冻结 v0.1**：`mastery-policy/spaced-consecutive/v0.1`；`new / learning / mastered` |
 | Issue #4 Review Scheduling Policy（P4.4） | ✅ **已冻结 v0.1**：`review-policy/simple-ladder/v0.1`；`not_scheduled / scheduled / due / overdue` |
 | Issue #4 policy 层字段名 | ✅ 已冻结（`POLICY_SYMBOL_FREEZE_V01.md` § 3） |
-| Issue #4 Mastery / Review replay（P4.5） | ✅ `mastery-review-state/v0.1`；P4.6/P4.7/P4.9 尚未收口 |
-| Issue #4 测试骨架（P4.6 / P4.7） | 🟡 已在 main；policy symbol manifest 的剩余 16 项与 synthetic fixture expected / edge cases 待 P4.6/P4.7 收口 |
-| Issue #4 P4.1 / P4.2 假设 | ✅ `ASSUMPTIONS_PENDING_P4_1_P4_2.md` 已 reconcile；score threshold/rubric 仍由后续 adapter version 管理 |
+| Issue #4 Mastery / Review replay（P4.5） | ✅ `mastery-review-state/v0.1`；P4.6～P4.9 已完成，Phase 4 Gate PASS |
+| Issue #4 fixture / tests（P4.6 / P4.7） | ✅ 36 个 policy symbols 全部 frozen；36 个 fixture、validator 和 edge-case tests 已通过 |
+| Issue #4 P4.1 / P4.2 假设 | ✅ `ASSUMPTIONS_PENDING_P4_1_P4_2.md` 已 reconcile；case/capability score threshold/rubric 仍未冻结，v0.1 adapter 输出 `insufficient` |
 | Progress replay（`as_of` 语义先例） | ✅ 语义已由 `tests/baselines/progress_v01_semantics.json` 冻结；但**不提供** `as_of` 参数，Phase 4 需自行定义 |
 | UI 实现 | ⛔ 本轮不实现；domain Gate B 已由 P4.5 replay 解锁 |
 
-**Gate B 判定逻辑（冻结口径）**：Gate B 要求「当前状态 / 今日到期集合 / 到期原因 / 完全确定性」四问都能由**确定性 replay** 回答。P4.5 已提供 `MasteryReviewState v0.1` domain output；UI 实现仍须遵守本规划，不在本轮初始化。
+**Gate B 判定：PASS**。Issue #4 的「当前状态 / 今日到期集合 / 到期原因 / 完全确定性」四问均由 P4.5 replay、P4.6/P4.7 fixtures 与 tests、P4.9 report 验证。该 PASS 解锁 Review / Mastery consumer；不表示 UI / Read Model 已实现，Planner-bound 功能仍受 Gate C 阻塞。
 
 **本 PR 的诚实声明**：
 

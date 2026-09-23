@@ -22,9 +22,10 @@ status         FROZEN（本窗口 P4.3）
 - 不实现 `MasteryReviewState v0.1` replay（P4.5）；
 - 不使用累计 `topic_accuracy` 阈值、SM-2、FSRS、forgetting curve 或 AI 判断。
 
-本窗口对 P4.1 / P4.2 的依赖全部记录在
-[`ASSUMPTIONS_PENDING_P4_1_P4_2.md`](ASSUMPTIONS_PENDING_P4_1_P4_2.md)，代码中以
-`DEPENDS_ON_P4_1_P4_2` 标注。本窗口不反向替 Review Model / Evidence Contract 拍板。
+以上是本 policy 文档自身的范围，不代表全仓库尚未实现 replay：P4.1/P4.2 contracts 已冻结，P4.5 replay 已实现在 `engine/review/replay.py`，P4.6～P4.9 已通过 Phase 4 Gate，见 [`../PHASE4_VALIDATION_REPORT.md`](../PHASE4_VALIDATION_REPORT.md)。
+
+本文件在 P4.3 窗口曾将 P4.1/P4.2 依赖记录在
+[`ASSUMPTIONS_PENDING_P4_1_P4_2.md`](ASSUMPTIONS_PENDING_P4_1_P4_2.md)；这些 assumptions 已 reconcile 并冻结在 Review Model / Evidence contracts。该文件名保留历史信息，不表示当前仍 pending。完整状态与 replay 证据见 [`../PHASE4_VALIDATION_REPORT.md`](../PHASE4_VALIDATION_REPORT.md)。
 
 ---
 
@@ -227,9 +228,9 @@ successful_review_count >= 3  ->  mastered # 禁止（累计计数）
 | 失败是否清零连续成功 | **是**，`c = d = 0` |
 | `insufficient` evidence 是否改变 mastery | **否**，完全 no-op（只计数） |
 | 未作答是否等于 failure | **否**。未作答不产生 policy outcome；若被记录，则为 `insufficient` |
-| 实际 0 分是否等于 failure | **v0.1 不决定**，属 P4.2 的 outcome 映射（`DEPENDS_ON_P4_1_P4_2`） |
+| 实际 0 分是否等于 failure | Mastery policy 本身不从 score 判定 failure；P4.5 `review-outcome/raw-facts/v0.1` 保留 case/capability raw score 并映射为 `insufficient`。新 score outcome 必须使用新 adapter version |
 | 非法状态跃迁如何处理 | 不存在非法跃迁；输入层非法值被显式拒绝 |
-| 不同 item kind 之间是否互升级/降级 | **不允许**，每个 item 状态独立（`DEPENDS_ON_P4_1_P4_2` 确认 item 集合） |
+| 不同 item kind 之间是否互升级/降级 | **不允许**；P4.1 冻结 item catalog，Topic / Question / Case Capability 各自拥有独立 evidence stream 与 state |
 
 ---
 

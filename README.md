@@ -44,13 +44,13 @@ Progress Model v0.1   ✅
 Progress Replay       ✅
 Review Model / Evidence v0.1 ✅
 Mastery / Review Policy v0.1 ✅ 规则冻结
-Mastery / Review Replay ✅ deterministic replay v0.1
+Mastery / Review      ✅ Phase 4 Gate PASS（P4.1～P4.9）
 Adaptive Planner      ⏳
 30-Day Plan           ⏳
 Cockpit UI            ⏳
 ```
 
-当前仓库已完成 Taxonomy v0.1、Case Capability v0.1、Golden Set 数据契约和 Phase 2 扩量验证（100 道综合题、48 道案例子问题），并已建立 Progress Event v0.1、基础 ProgressState、deterministic replay，以及 Phase 4 P4.1/P4.2 Review Model / Evidence、P4.3/P4.4 policy contract 和 P4.5 `MasteryReviewState v0.1` replay。ProgressState 与 MasteryReviewState 都始终由 immutable facts 重建；Adaptive Planner、30 天计划实例化和 UI 仍未实现。
+当前仓库已完成 Taxonomy v0.1、Case Capability v0.1、Golden Set 数据契约和 Phase 2 扩量验证（100 道综合题、48 道案例子问题），并已建立 Progress Event v0.1、基础 ProgressState、deterministic replay，以及 Phase 4 P4.1～P4.5 契约与 replay、P4.6/P4.7 synthetic fixture matrix 与测试、P4.8 文档同步和 P4.9 Gate 验证。Phase 4 Gate 已 PASS；ProgressState 与 MasteryReviewState 都始终由 immutable facts 重建。Adaptive Planner、30 天计划实例化和 UI 仍未实现。
 
 ## 文档入口
 
@@ -62,6 +62,7 @@ Cockpit UI            ⏳
 - [Phase 2 Golden Set 扩量验证报告](docs/GOLDEN_SET_EXPANSION_VALIDATION.md)
 - [Progress Model v0.1 / Replay 边界](engine/progress/README.md)
 - [Progress Model v0.1 验证报告](docs/PROGRESS_MODEL_V01_VALIDATION.md)
+- [Phase 4 Gate 验证报告](docs/PHASE4_VALIDATION_REPORT.md)
 - [Review Model v0.1](docs/review/REVIEW_MODEL_V01.md)
 - [Review Evidence v0.1](docs/review/REVIEW_EVIDENCE_V01.md)
 - [Mastery / Review Policy 文档索引](docs/review/README.md)
