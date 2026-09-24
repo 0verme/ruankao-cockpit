@@ -1,0 +1,9 @@
+{
+  "fixture_id": "invalid-horizon-length",
+  "description": "A projection with fewer than seven PlanDay entries is rejected.",
+  "input_patches": [],
+  "output_patches": [
+    {"op": "remove", "path": ["days", "6"]}
+  ],
+  "expected_error": "invalid_horizon"
+}

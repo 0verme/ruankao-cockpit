@@ -1,0 +1,14 @@
+{
+  "fixture_id": "malformed-explain-trace",
+  "description": "Natural language alone is not a structured Explain trace.",
+  "input_patches": [],
+  "output_patches": [
+    {"op": "replace", "path": ["days", "0", "tasks"], "value": [
+      {"task_id": "malformed-explain", "task_type": "review", "target_kind": "review_item", "target_ref": "review/topic/DATA.DATABASE.RELATIONAL", "planned_minutes": 0, "explain_trace_id": "trace-malformed-explain"}
+    ]},
+    {"op": "replace", "path": ["explain_traces"], "value": [
+      {"trace_id": "trace-malformed-explain", "reason": "Because this needs review today."}
+    ]}
+  ],
+  "expected_error": "invalid_explain_trace"
+}

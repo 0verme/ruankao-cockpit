@@ -1,0 +1,9 @@
+{
+  "fixture_id": "minutes-do-not-balance",
+  "description": "Planned and remaining minutes must sum exactly to capacity, with no hidden overhead.",
+  "input_patches": [],
+  "output_patches": [
+    {"op": "replace", "path": ["days", "0", "planned_minutes"], "value": 1}
+  ],
+  "expected_error": "capacity_invariant"
+}

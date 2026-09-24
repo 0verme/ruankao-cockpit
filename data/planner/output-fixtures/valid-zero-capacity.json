@@ -1,0 +1,9 @@
+{
+  "fixture_id": "valid-zero-capacity",
+  "description": "Zero capacity is valid and yields no tasks, zero planned minutes, and zero remaining minutes.",
+  "input_patches": [
+    {"op": "replace", "path": ["inputs", "user_configuration", "daily_available_minutes"], "value": 0}
+  ],
+  "output_patches": [],
+  "expected_error": null
+}

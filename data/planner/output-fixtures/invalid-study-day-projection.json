@@ -1,0 +1,9 @@
+{
+  "fixture_id": "invalid-study-day-projection",
+  "description": "study_day must be projected from the explicit ISO weekday configuration.",
+  "input_patches": [],
+  "output_patches": [
+    {"op": "replace", "path": ["days", "0", "study_day"], "value": false}
+  ],
+  "expected_error": "invalid_plan_day"
+}

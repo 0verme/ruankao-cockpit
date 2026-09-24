@@ -1,0 +1,9 @@
+{
+  "fixture_id": "invalid-schema-version",
+  "description": "Unsupported Planner Output schema versions fail closed.",
+  "input_patches": [],
+  "output_patches": [
+    {"op": "replace", "path": ["schema_version"], "value": "planner-output/v9.9"}
+  ],
+  "expected_error": "invalid_schema_version"
+}

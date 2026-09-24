@@ -1,0 +1,12 @@
+{
+  "fixture_id": "duplicate-task-id",
+  "description": "Task identities must be unique in one PlannerOutput.",
+  "input_patches": [],
+  "output_patches": [
+    {"op": "replace", "path": ["days", "0", "tasks"], "value": [
+      {"task_id": "duplicate-task", "task_type": "review", "target_kind": "review_item", "target_ref": "review/topic/DATA.DATABASE.RELATIONAL", "planned_minutes": 0, "explain_trace_id": "trace-a"},
+      {"task_id": "duplicate-task", "task_type": "review", "target_kind": "review_item", "target_ref": "review/case_capability/CASE.DATA_DESIGN", "planned_minutes": 0, "explain_trace_id": "trace-b"}
+    ]}
+  ],
+  "expected_error": "duplicate_task_id"
+}

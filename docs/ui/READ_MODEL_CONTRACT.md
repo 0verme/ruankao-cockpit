@@ -65,15 +65,15 @@ read model 字段语义 ≠ domain 字段语义时 → 视为新事实，禁止
 | `capability_version` | `aggregate` | ✅ capability v0.1 | Case Capability 契约版本 |
 | `mastery_policy_version` | `phase4` | ✅ 已冻结：`mastery-policy/spaced-consecutive/v0.1`（由 P4.5 replay 输出） | Mastery 状态机 policy 版本 |
 | `review_policy_version` | `phase4` | ✅ 已冻结：`review-policy/simple-ladder/v0.1`（由 P4.5 replay 输出） | Review scheduling policy 版本 |
-| `policy_version` | `future` | ❌ `TBD — dependent on Planner contract` | 计划策略版本 |
-| `plan_version` | `future` | ❌ `TBD — dependent on Planner contract` | 计划实例版本 |
+| Planner policy identity/version | `planner` | ✅ P5.3 `PlannerOutput.planner_policy` 已冻结结构；执行 identity / policy 未由 P5.4 冻结 | 只读投影，不由 UI 覆写 |
+| `plan_version` | `future` | ❌ P5.3 不定义独立 plan instance version | Read Model 不得自行制造计划版本 |
 | `unavailable[]` | `projection` | ✅ | 显式列出本视图中不可用的指标及其依赖 |
 
 **信封约束**：
 
 ```text
 1. `as_of` 与 `timezone` 缺失时，read model 视为无效（不得回退到系统时间）
-2. 当视图包含 Phase 4 数据时，`mastery_policy_version` / `review_policy_version` 必须使用 replay 输出的版本；Planner / Future 版本在对应契约冻结前仍允许为空，并须在 `unavailable[]` 中声明
+2. 当视图包含 Phase 4 数据时，`mastery_policy_version` / `review_policy_version` 必须使用 replay 输出的版本；Planner policy metadata 仅在存在正式 PlannerOutput 时投影，不得伪造执行 policy
 3. 版本字段只读，不得由 UI 覆写
 4. UI 必须展示（至少在 Explain / Footer 层）`as_of` + `replay_rule_version`
 ```
@@ -135,7 +135,7 @@ read model 字段语义 ≠ domain 字段语义时 → 视为新事实，禁止
 | Read Model | 主要 consumer | 依赖 | 当前可否实现 |
 |---|---|---|---|
 | `CockpitDashboardView` | Dashboard `/` | Gate A + User Config + Gate B + Gate C | 🟡 Progress 可用；Review domain inputs Available（Gate B PASS），Today 仍受 Gate C 阻塞；View 未实现 |
-| `TodayPlanView` | `/today`、`TodayFocusCard` | Gate C（Planner）+ Gate B（Review data 可消费） | ❌ Planner contract 未冻结；Review domain data Available |
+| `TodayPlanView` | `/today`、`TodayFocusCard` | Gate C（Planner）+ Gate B（Review data 可消费） | ❌ P5.3 output contract 已冻结；Planner generation 与 Read Model 未实现，Review domain data Available |
 | `SubjectStatusView` | `SubjectStatusGrid` | Gate A + Gate B + essay contract | 🟡 部分（论文不可用） |
 | `ReviewQueueView` | `/review`、`ReviewQueue` | Gate B（Issue #4） | ✅ Gate B PASS、所有 domain inputs Available；UI Read Model / frontend 未实现 |
 | `CalendarView` | `StudyCalendar` | Gate A + Gate B + assessment contract | 🟡 部分（只有「有学习记录」） |
@@ -151,7 +151,7 @@ read model 字段语义 ≠ domain 字段语义时 → 视为新事实，禁止
 | **purpose** | 支撑首屏四问：整体怎么样 / 今天做什么 / 哪些要复习 / 离目标多远 |
 | **consumer** | `/` Dashboard、`OverallProgressCard`、`TodayFocusCard`、`OperationalStatsGrid`、`ExamCountdown`、`StudyCalendar`、`SubjectStatusGrid` |
 | **source categories** | `aggregate` + `projection` + `user_config` + `phase4` + `planner` + `future` |
-| **version metadata** | 通用信封 + P4.5 `mastery_policy_version` / `review_policy_version`；`plan_version` 仍 TBD |
+| **version metadata** | 通用信封 + P4.5 `mastery_policy_version` / `review_policy_version`；若有 PlannerOutput，投影其 `schema_version`、`planner_policy` 与 `input_snapshot_schema_version`；无独立 `plan_version` |
 | **as_of** | 必填；所有子区块共享同一 `as_of`（禁止一个视图内混用多个时间点） |
 | **timezone semantics** | 必填；日历区块与倒计时依赖它确定日历日边界 |
 | **null semantics** | 每个数值字段必须带 `value_state`；`global.accuracy = null` → `empty`；`capabilities[*].evidence_status = insufficient_evidence` → 同名字段 |
@@ -174,7 +174,7 @@ stats
   due_count / mastery_distribution                                                 （phase4）
   plan_completion / recent_assessment / streak                                     （future）
 countdown
-  exam_date / days_remaining（需 not_configured 分支）
+  exam_date / days_remaining（Future；P5.2 User Configuration v0.1 不含 exam_date）
 calendar
   → CalendarView 摘要
 subjects
@@ -191,32 +191,26 @@ unavailable[]
 | **purpose** | 回答「我今天应该做什么」，并提供开始入口 |
 | **consumer** | `/today`、`TodayFocusCard`、`/plan` 的当日区块 |
 | **source categories** | `planner` + `phase4` + `projection` |
-| **version metadata** | 通用信封 + `plan_version` + `policy_version`（均 `TBD — dependent on Planner contract`） |
+| **version metadata** | 从 PlannerOutput 投影 `schema_version`、`planner_policy.policy_id` / `policy_version`、`input_snapshot_schema_version`、`as_of` 与 `timezone`；P5.3 不定义 `plan_version` |
 | **as_of** | 必填；必须与 Planner 生成计划时的 `as_of` 语义一致 |
 | **timezone semantics** | 必填；决定「今天」是哪一天（日历日边界） |
-| **null semantics** | 无计划 → 不返回伪造任务；返回 `value_state = unavailable_future`，或返回带空任务列表的显式空态（由 Planner 契约决定） |
-| **future / unavailable** | Planner 任务字段 → `no_contract` / `planner-contract` / Gate C；`review.due_count` domain replay 可用，但 Today read model / queue consumer 尚未实现 |
+| **null semantics** | Planner 尚未生成 output → unavailable；有效 output 中 `days[0].tasks=[]` 是合法空计划，二者不得混淆 |
+| **future / unavailable** | P5.3 output shape 已冻结但未生成；Today / Plan consumer 仍需 Gate C；`review.due_count` domain replay 可用，但 Today read model / queue consumer 尚未实现 |
 
-**规划字段（字段名与枚举均为 TBD）**
+**PlannerOutput v0.1 projection fields**
 
 ```text
-day_index                                   TBD — dependent on Planner contract
-plan_phase                                  TBD — dependent on Planner contract
-day_type                                    TBD — dependent on Planner contract
-theme.primary_topic_id                      TBD — dependent on Planner contract
-theme.supporting_topic_ids                  TBD — dependent on Planner contract
-theme.capability_ids                        TBD — dependent on Planner contract
-capacity.planned_minutes                    TBD — dependent on Planner contract
-capacity.tier                               TBD — dependent on Planner contract
-tasks[].id                                  TBD — dependent on Planner contract
-tasks[].type                                TBD — dependent on Planner contract
-tasks[].ref                                 TBD — dependent on Planner contract
-tasks[].est_minutes                         TBD — dependent on Planner contract
-tasks[].required                            TBD — dependent on Planner contract
-review.due_count                            ✅ P4.5 replay 输出（unit = review_item）
-review.overdue_count                        ✅ P4.5 replay 输出
-cta_target                                  TBD — dependent on Planner contract
-explain.rule_ids / explain.signal_snapshot  TBD — dependent on Planner contract
+PlannerOutput.schema_version / planner_policy / input_snapshot_schema_version / as_of / timezone
+PlannerOutput.generated_for_local_date / horizon
+TodayPlanView.day = PlannerOutput.days[0]             # 不复制独立 today payload
+day_offset / local_date / study_day
+capacity_minutes / planned_minutes / remaining_minutes
+tasks[].task_id / task_type / target_kind / target_ref / planned_minutes / explain_trace_id
+unmet_demand[].demand_id / demand_type / target_kind / target_ref / requested_minutes / explain_trace_id
+explain_traces[]                                      # machine-readable structured trace
+review.due_count / review.overdue_count               ✅ 仅在独立接入 P4.5 read data 时投影；不是 PlannerOutput 字段
+
+不属于 P5.3：theme / phase / tier / required / cta_target / task completion / actual minutes
 ```
 
 **约束**：
@@ -224,8 +218,8 @@ explain.rule_ids / explain.signal_snapshot  TBD — dependent on Planner contrac
 ```text
 1. 本视图不得包含任何由 UI 生成的任务
 2. 本视图不得包含 docs/30_DAY_CURRICULUM_DRAFT.md 中的固定天数、间隔或阈值
-3. `theme.*` 中的 topic 与 capability 必须分字段返回，不得合并
-4. 无计划时必须可区分「未冻结」与「今天确实没有任务」
+3. P5.3 不输出 `theme.*`、phase 或 CTA，Read Model 不得从 Draft 补造
+4. Today 唯一来源是 `PlannerOutput.days[0]`；无 output 与合法空 tasks 列表必须区分
 ```
 
 ---
@@ -471,8 +465,8 @@ versions                         envelope
 | `review_projection_schema_version` | ✅ `review-policy-projection/v0.1`；MasteryReviewState 顶层 schema 为 `mastery-review-state/v0.1` |
 | `schedule_timezone` | ✅ 字段名已冻结；必填、无隐式默认 |
 | `tzdata_version` | ✅ 字段名已冻结 |
-| `policy_version` | `TBD — dependent on Planner contract` |
-| `plan_version` | `TBD — dependent on Planner contract` |
+| `planner_policy` | P5.3 PlannerOutput identity/version 容器已冻结；执行 policy identity 由 P5.4 冻结 |
+| `plan_version` | P5.3 不定义独立 plan instance version，不得由 Read Model 补造 |
 | `assessment_version` | `TBD — assessment contract 未冻结` |
 | `essay_version` | `TBD — essay contract 未冻结` |
 | `as_of` | 每次视图请求必须显式提供 |

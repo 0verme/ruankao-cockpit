@@ -1,0 +1,11 @@
+{
+  "fixture_id": "malformed-target-ref",
+  "description": "A display label or malformed string is not a stable target reference.",
+  "input_patches": [],
+  "output_patches": [
+    {"op": "replace", "path": ["days", "0", "tasks"], "value": [
+      {"task_id": "malformed-target", "task_type": "review", "target_kind": "review_item", "target_ref": "A displayed topic name", "planned_minutes": 0, "explain_trace_id": "trace-malformed"}
+    ]}
+  ],
+  "expected_error": "invalid_target_ref"
+}
