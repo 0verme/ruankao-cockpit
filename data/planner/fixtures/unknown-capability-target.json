@@ -1,0 +1,8 @@
+{
+  "fixture_id": "unknown-capability-target",
+  "description": "Review target capability refs must exist in the embedded supported catalog.",
+  "patches": [
+    {"op": "replace", "path": ["inputs", "mastery_review_state", "items", "review/case_capability/CASE.DATA_DESIGN", "canonical_ref", "capability_id"], "value": "CASE.UNKNOWN"}
+  ],
+  "expected_error": "unknown_capability_id"
+}

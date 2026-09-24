@@ -1,0 +1,8 @@
+{
+  "fixture_id": "capability-version-mismatch",
+  "description": "A Case Capability catalog version not matching the supported catalog is rejected.",
+  "patches": [
+    {"op": "replace", "path": ["inputs", "capabilities", "taxonomy_version"], "value": "0.2"}
+  ],
+  "expected_error": "invalid_catalog_version"
+}

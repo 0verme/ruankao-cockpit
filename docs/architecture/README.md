@@ -21,7 +21,7 @@ Review Item / Evidence v0.1  ✅
    ↓
 Mastery / Review             ✅ Phase 4 Gate PASS（P4.1～P4.9）
    ↓
-Adaptive Planner             ⏳（阶段编号未冻结）
+Adaptive Planner             ⏳ Phase 5（Issue #13；contract / Gate 待完成）
    ↓
 30-Day Plan                  ⏳
    ↓
@@ -65,7 +65,7 @@ Axis 2  Review Scheduling Projection   not_scheduled / scheduled / due / overdue
 
 完整规则见 [`docs/review/README.md`](../review/README.md)。
 
-Phase 4 P4.1～P4.9 已完成并通过 Gate；36 个冻结的 synthetic replay fixtures、validator、边界测试与正式 validation report 见 [`docs/PHASE4_VALIDATION_REPORT.md`](../PHASE4_VALIDATION_REPORT.md)。本阶段仍未实现 Adaptive Planner、Rolling 7-Day Plan、30-Day Plan 实例化、数据库、API 或 UI。
+Phase 4 P4.1～P4.9 已完成并通过 Gate；36 个冻结的 synthetic replay fixtures、validator、边界测试与正式 validation report 见 [`docs/PHASE4_VALIDATION_REPORT.md`](../PHASE4_VALIDATION_REPORT.md)。Phase 5（Issue #13）当前只完成 P5.1 Planner 输入契约与 P5.2 User Configuration v0.1；输入冻结不代表 Planner 已实现或 Phase 5 Gate 通过。P5.3+、Rolling 7-Day Plan、30-Day Plan 实例化、数据库、API 与 UI 仍未实现。契约见 [`docs/planner/README.md`](../planner/README.md)。
 
 `progress-state/v0.1` 的字段与语义不因 Phase 4 改变：mastery / review 是**独立派生层**，不是 ProgressState 的新字段。
 

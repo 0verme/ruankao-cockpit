@@ -1,0 +1,8 @@
+{
+  "fixture_id": "unknown-review-item-target",
+  "description": "item_order cannot name a review item absent from the state item map.",
+  "patches": [
+    {"op": "replace", "path": ["inputs", "mastery_review_state", "item_order"], "value": ["review/topic/UNKNOWN.TOPIC"]}
+  ],
+  "expected_error": "unknown_review_item"
+}

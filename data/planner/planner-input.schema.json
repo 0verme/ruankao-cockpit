@@ -1,0 +1,178 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/0verme/ruankao-cockpit/blob/main/data/planner/planner-input.schema.json",
+  "title": "Planner Input Snapshot v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "as_of", "timezone", "planner_policy", "inputs"],
+  "properties": {
+    "schema_version": {"const": "planner-input/v0.1"},
+    "as_of": {"type": "string", "format": "date-time"},
+    "timezone": {"type": "string", "minLength": 1},
+    "planner_policy": {"$ref": "#/$defs/plannerPolicy"},
+    "inputs": {"$ref": "#/$defs/inputs"}
+  },
+  "$defs": {
+    "plannerPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy_id", "policy_version"],
+      "properties": {
+        "policy_id": {"const": "planner-policy/input-contract"},
+        "policy_version": {"const": "v0.1"}
+      },
+      "description": "Reserved non-executable identity token for the P5.1 input envelope; not a scheduling policy."
+    },
+    "inputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["progress_state", "mastery_review_state", "taxonomy", "capabilities", "user_configuration"],
+      "properties": {
+        "progress_state": {"$ref": "#/$defs/progressState"},
+        "mastery_review_state": {"$ref": "../review/mastery-review-state.schema.json"},
+        "taxonomy": {"$ref": "#/$defs/taxonomyCatalog"},
+        "capabilities": {"$ref": "#/$defs/capabilityCatalog"},
+        "user_configuration": {"$ref": "user-configuration.schema.json"}
+      }
+    },
+    "taxonomyCatalog": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["taxonomy_version", "topic_ids"],
+      "properties": {
+        "taxonomy_version": {"const": "0.1"},
+        "topic_ids": {"$ref": "#/$defs/idSet"}
+      },
+      "description": "Complete canonical topic ID set for the version; names and source prose are not planner inputs in P5.1."
+    },
+    "capabilityCatalog": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["taxonomy_version", "capability_ids"],
+      "properties": {
+        "taxonomy_version": {"const": "0.1"},
+        "capability_ids": {"$ref": "#/$defs/idSet"}
+      },
+      "description": "Complete canonical Case Capability ID set; taxonomy_version is the existing field in capabilities.json."
+    },
+    "idSet": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "count": {"type": "integer", "minimum": 0},
+    "ratio": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+    "progressState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "replay_rule_version", "event_schema_version", "taxonomy_version", "capability_version", "replayed_event_count", "global", "case", "topics", "capabilities", "errors", "coverage", "study"],
+      "properties": {
+        "schema_version": {"const": "progress-state/v0.1"},
+        "replay_rule_version": {"const": "progress-replay/v0.1"},
+        "event_schema_version": {"const": "progress-event/v0.1"},
+        "taxonomy_version": {"const": "0.1"},
+        "capability_version": {"const": "0.1"},
+        "replayed_event_count": {"$ref": "#/$defs/count"},
+        "global": {
+          "type": "object", "additionalProperties": false,
+          "required": ["attempt_count", "correct_count", "incorrect_count", "accuracy"],
+          "properties": {
+            "attempt_count": {"$ref": "#/$defs/count"},
+            "correct_count": {"$ref": "#/$defs/count"},
+            "incorrect_count": {"$ref": "#/$defs/count"},
+            "accuracy": {"$ref": "#/$defs/ratio"}
+          }
+        },
+        "case": {
+          "type": "object", "additionalProperties": false,
+          "required": ["attempt_count", "scored_attempt_count", "score_earned", "score_possible", "score_ratio"],
+          "properties": {
+            "attempt_count": {"$ref": "#/$defs/count"},
+            "scored_attempt_count": {"$ref": "#/$defs/count"},
+            "score_earned": {"$ref": "#/$defs/count"},
+            "score_possible": {"$ref": "#/$defs/count"},
+            "score_ratio": {"$ref": "#/$defs/ratio"}
+          }
+        },
+        "topics": {"type": "object", "additionalProperties": {"$ref": "#/$defs/topicMetric"}},
+        "capabilities": {"type": "object", "additionalProperties": {"$ref": "#/$defs/capabilityMetric"}},
+        "errors": {
+          "type": "object", "additionalProperties": false,
+          "required": ["error_count", "classified_error_count", "unclassified_error_count", "error_count_by_cause", "error_cause_mix"],
+          "properties": {
+            "error_count": {"$ref": "#/$defs/count"},
+            "classified_error_count": {"$ref": "#/$defs/count"},
+            "unclassified_error_count": {"$ref": "#/$defs/count"},
+            "error_count_by_cause": {
+              "type": "object", "additionalProperties": false,
+              "required": ["knowledge_gap", "reading_error", "calculation_error", "scoring_point_expression"],
+              "properties": {
+                "knowledge_gap": {"$ref": "#/$defs/count"},
+                "reading_error": {"$ref": "#/$defs/count"},
+                "calculation_error": {"$ref": "#/$defs/count"},
+                "scoring_point_expression": {"$ref": "#/$defs/count"}
+              }
+            },
+            "error_cause_mix": {
+              "type": "object", "additionalProperties": false,
+              "required": ["knowledge_gap", "reading_error", "calculation_error", "scoring_point_expression"],
+              "properties": {
+                "knowledge_gap": {"$ref": "#/$defs/ratio"},
+                "reading_error": {"$ref": "#/$defs/ratio"},
+                "calculation_error": {"$ref": "#/$defs/ratio"},
+                "scoring_point_expression": {"$ref": "#/$defs/ratio"}
+              }
+            }
+          }
+        },
+        "coverage": {
+          "type": "object", "additionalProperties": false,
+          "required": ["l1", "l2", "l3"],
+          "properties": {
+            "l1": {"$ref": "#/$defs/coverageMetric"},
+            "l2": {"$ref": "#/$defs/coverageMetric"},
+            "l3": {"$ref": "#/$defs/coverageMetric"}
+          }
+        },
+        "study": {
+          "type": "object", "additionalProperties": false,
+          "required": ["session_count", "study_minutes"],
+          "properties": {
+            "session_count": {"$ref": "#/$defs/count"},
+            "study_minutes": {"$ref": "#/$defs/count"}
+          }
+        }
+      }
+    },
+    "topicMetric": {
+      "type": "object", "additionalProperties": false,
+      "required": ["attempt_count", "correct_count", "incorrect_count", "accuracy"],
+      "properties": {
+        "attempt_count": {"$ref": "#/$defs/count"},
+        "correct_count": {"$ref": "#/$defs/count"},
+        "incorrect_count": {"$ref": "#/$defs/count"},
+        "accuracy": {"$ref": "#/$defs/ratio"}
+      }
+    },
+    "capabilityMetric": {
+      "type": "object", "additionalProperties": false,
+      "required": ["attempt_count", "score_earned", "score_possible", "score_ratio", "evidence_status"],
+      "properties": {
+        "attempt_count": {"$ref": "#/$defs/count"},
+        "score_earned": {"$ref": "#/$defs/count"},
+        "score_possible": {"$ref": "#/$defs/count"},
+        "score_ratio": {"$ref": "#/$defs/ratio"},
+        "evidence_status": {"enum": ["sufficient", "insufficient_evidence"]}
+      }
+    },
+    "coverageMetric": {
+      "type": "object", "additionalProperties": false,
+      "required": ["covered", "total", "ratio"],
+      "properties": {
+        "covered": {"$ref": "#/$defs/count"},
+        "total": {"$ref": "#/$defs/count"},
+        "ratio": {"$ref": "#/$defs/ratio"}
+      }
+    }
+  }
+}

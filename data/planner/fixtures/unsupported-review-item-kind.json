@@ -1,0 +1,8 @@
+{
+  "fixture_id": "unsupported-review-item-kind",
+  "description": "Review item kinds are closed to the existing P4 v0.1 domain.",
+  "patches": [
+    {"op": "replace", "path": ["inputs", "mastery_review_state", "items", "review/topic/DATA.DATABASE.RELATIONAL", "item_kind"], "value": "essay_topic"}
+  ],
+  "expected_error": "unknown_item_kind"
+}

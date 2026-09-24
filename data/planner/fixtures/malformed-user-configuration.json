@@ -1,0 +1,8 @@
+{
+  "fixture_id": "malformed-user-configuration",
+  "description": "Required configuration fields cannot be omitted or guessed.",
+  "patches": [
+    {"op": "remove", "path": ["inputs", "user_configuration", "study_days"]}
+  ],
+  "expected_error": "invalid_user_configuration"
+}

@@ -1,0 +1,8 @@
+{
+  "fixture_id": "invalid-daily-available-minutes",
+  "description": "Daily available minutes outside 0..1440 is rejected.",
+  "patches": [
+    {"op": "replace", "path": ["inputs", "user_configuration", "daily_available_minutes"], "value": 1441}
+  ],
+  "expected_error": "invalid_user_configuration"
+}

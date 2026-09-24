@@ -1,0 +1,8 @@
+{
+  "fixture_id": "unknown-topic-target",
+  "description": "Review target topic refs must exist in the embedded supported catalog.",
+  "patches": [
+    {"op": "replace", "path": ["inputs", "mastery_review_state", "items", "review/topic/DATA.DATABASE.RELATIONAL", "canonical_ref", "topic_id"], "value": "UNKNOWN.TOPIC"}
+  ],
+  "expected_error": "unknown_topic_id"
+}
