@@ -45,12 +45,12 @@ Progress Replay       ✅
 Review Model / Evidence v0.1 ✅
 Mastery / Review Policy v0.1 ✅ 规则冻结
 Mastery / Review      ✅ Phase 4 Gate PASS（P4.1～P4.9）
-Adaptive Planner      ⏳ Phase 5（Issue #13；P5.1/P5.2 输入边界已冻结，P5.3+ 待完成）
+Adaptive Planner      ⏳ Phase 5（Issue #13；P5.1–P5.3 输入 / 输出结构已冻结，P5.4+ policy / replay 待完成）
 30-Day Plan           ⏳
 Cockpit UI            ⏳
 ```
 
-当前仓库已完成 Taxonomy v0.1、Case Capability v0.1、Golden Set 数据契约和 Phase 2 扩量验证（100 道综合题、48 道案例子问题），并已建立 Progress Event v0.1、基础 ProgressState、deterministic replay，以及 Phase 4 P4.1～P4.5 契约与 replay、P4.6/P4.7 synthetic fixture matrix 与测试、P4.8 文档同步和 P4.9 Gate 验证。Phase 4 Gate 已 PASS；ProgressState 与 MasteryReviewState 都始终由 immutable facts 重建。Phase 5 P5.1/P5.2 已冻结 Planner 输入边界与 User Configuration v0.1；Planner output、capacity/priority policy、replay、30 天计划实例化和 UI 仍未实现，Phase 5 Gate 未通过。
+当前仓库已完成 Taxonomy v0.1、Case Capability v0.1、Golden Set 数据契约和 Phase 2 扩量验证（100 道综合题、48 道案例子问题），并已建立 Progress Event v0.1、基础 ProgressState、deterministic replay，以及 Phase 4 P4.1～P4.5 契约与 replay、P4.6/P4.7 synthetic fixture matrix 与测试、P4.8 文档同步和 P4.9 Gate 验证。Phase 4 Gate 已 PASS；ProgressState 与 MasteryReviewState 都始终由 immutable facts 重建。Phase 5 P5.1–P5.3 已冻结 Planner 输入、User Configuration v0.1 与 Planner Output v0.1 contract；capacity/priority policy、Planner replay、30 天计划实例化和 UI 仍未实现，Phase 5 Gate 未通过。
 
 ## 文档入口
 
@@ -67,11 +67,11 @@ Cockpit UI            ⏳
 - [Review Evidence v0.1](docs/review/REVIEW_EVIDENCE_V01.md)
 - [Mastery / Review Policy 文档索引](docs/review/README.md)
 - [Progress / Adaptive Engine 边界](engine/rules/README.md)
-- [Planner 输入与用户配置契约（P5.1/P5.2）](docs/planner/README.md)
+- [Planner 输入、用户配置与输出契约（P5.1–P5.3）](docs/planner/README.md)
 - [Cockpit UI / UX Blueprint（规划，未实现）](docs/ui/README.md)
 
 ## 开发边界
 
-本阶段不初始化前端技术栈、数据库、API 或 Planner；当前实现标准库 Progress Event / Replay、独立的 Review Model / Evidence v0.1 契约，以及将冻结 policy kernel 接入 `MasteryReviewState v0.1` 的 deterministic replay。详细的版权、数据边界、测试优先级和领域约束见 [AGENTS.md](AGENTS.md)。
+本阶段不初始化前端技术栈、数据库、API 或 Planner replay；当前实现标准库 Progress Event / Replay、独立的 Review Model / Evidence v0.1 契约，以及将冻结 policy kernel 接入 `MasteryReviewState v0.1` 的 deterministic replay。P5.1–P5.3 仅冻结 Planner input/output contracts，不包含排程业务代码。详细的版权、数据边界、测试优先级和领域约束见 [AGENTS.md](AGENTS.md)。
 
 Cockpit UI 目前只有**规划文档**（[`docs/ui/`](docs/ui/README.md)）：信息架构、页面地图、Domain → UI 映射、UI Read Model consumer contract、Design Direction 与组件边界已冻结为可审计文档，但仍**没有**前端工程、API、数据库或账号系统。P4.5 已解锁 Mastery / Review 的 domain consumer；正式 Planner 与前端实现仍按 [`docs/ui/README.md`](docs/ui/README.md) 的 Gate 状态表推进。

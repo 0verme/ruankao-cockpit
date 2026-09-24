@@ -1,0 +1,7 @@
+{
+  "fixture_id": "valid-empty-7-day",
+  "description": "An empty seven-day projection is valid when all seven local dates and capacities are explicit.",
+  "input_patches": [],
+  "output_patches": [],
+  "expected_error": null
+}

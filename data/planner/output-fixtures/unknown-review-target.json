@@ -1,0 +1,11 @@
+{
+  "fixture_id": "unknown-review-target",
+  "description": "A syntactically valid but absent Review Item reference is rejected, not emitted as a task.",
+  "input_patches": [],
+  "output_patches": [
+    {"op": "replace", "path": ["days", "0", "tasks"], "value": [
+      {"task_id": "unknown-target", "task_type": "review", "target_kind": "review_item", "target_ref": "review/topic/UNKNOWN.TOPIC", "planned_minutes": 0, "explain_trace_id": "trace-unknown"}
+    ]}
+  ],
+  "expected_error": "unknown_review_item"
+}

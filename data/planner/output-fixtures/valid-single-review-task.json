@@ -1,0 +1,16 @@
+{
+  "fixture_id": "valid-single-review-task",
+  "description": "One review task targets an existing stable Review Item identity and has a structured Explain trace.",
+  "input_patches": [],
+  "output_patches": [
+    {"op": "replace", "path": ["days", "0", "planned_minutes"], "value": 10},
+    {"op": "replace", "path": ["days", "0", "remaining_minutes"], "value": 110},
+    {"op": "replace", "path": ["days", "0", "tasks"], "value": [
+      {"task_id": "task-fixture-review-topic-day0", "task_type": "review", "target_kind": "review_item", "target_ref": "review/topic/DATA.DATABASE.RELATIONAL", "planned_minutes": 10, "explain_trace_id": "trace-fixture-task"}
+    ]},
+    {"op": "replace", "path": ["explain_traces"], "value": [
+      {"trace_id": "trace-fixture-task", "subject_kind": "plan_task", "subject_id": "task-fixture-review-topic-day0", "decision_category": "task_scheduled", "reason_code": "contract_fixture", "planner_policy": {"policy_id": "planner-policy/contract-fixture", "policy_version": "v0.1"}, "input_references": ["/inputs/mastery_review_state/items/review~1topic~1DATA.DATABASE.RELATIONAL/review_status"], "target_kind": "review_item", "target_ref": "review/topic/DATA.DATABASE.RELATIONAL", "structured_inputs": {"fixture_kind": "shape_only"}, "display_message": "Synthetic contract fixture only."}
+    ]}
+  ],
+  "expected_error": null
+}

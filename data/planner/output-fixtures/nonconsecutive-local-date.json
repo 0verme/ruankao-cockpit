@@ -1,0 +1,9 @@
+{
+  "fixture_id": "nonconsecutive-local-date",
+  "description": "The seven PlanDay dates must be continuous local calendar dates.",
+  "input_patches": [],
+  "output_patches": [
+    {"op": "replace", "path": ["days", "1", "local_date"], "value": "2026-01-03"}
+  ],
+  "expected_error": "invalid_horizon"
+}

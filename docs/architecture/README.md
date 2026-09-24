@@ -65,7 +65,7 @@ Axis 2  Review Scheduling Projection   not_scheduled / scheduled / due / overdue
 
 完整规则见 [`docs/review/README.md`](../review/README.md)。
 
-Phase 4 P4.1～P4.9 已完成并通过 Gate；36 个冻结的 synthetic replay fixtures、validator、边界测试与正式 validation report 见 [`docs/PHASE4_VALIDATION_REPORT.md`](../PHASE4_VALIDATION_REPORT.md)。Phase 5（Issue #13）当前只完成 P5.1 Planner 输入契约与 P5.2 User Configuration v0.1；输入冻结不代表 Planner 已实现或 Phase 5 Gate 通过。P5.3+、Rolling 7-Day Plan、30-Day Plan 实例化、数据库、API 与 UI 仍未实现。契约见 [`docs/planner/README.md`](../planner/README.md)。
+Phase 4 P4.1～P4.9 已完成并通过 Gate；36 个冻结的 synthetic replay fixtures、validator、边界测试与正式 validation report 见 [`docs/PHASE4_VALIDATION_REPORT.md`](../PHASE4_VALIDATION_REPORT.md)。Phase 5（Issue #13）已冻结 P5.1 Planner 输入、P5.2 User Configuration v0.1 与 P5.3 Planner Output v0.1 contract；contract 冻结不代表 Planner replay 已实现或 Phase 5 Gate 通过。P5.4+ policy、Planner replay、30-Day Plan 实例化、数据库、API 与 UI 仍未实现。契约见 [`docs/planner/README.md`](../planner/README.md)。
 
 `progress-state/v0.1` 的字段与语义不因 Phase 4 改变：mastery / review 是**独立派生层**，不是 ProgressState 的新字段。
 

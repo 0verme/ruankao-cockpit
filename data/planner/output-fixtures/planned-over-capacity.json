@@ -1,0 +1,13 @@
+{
+  "fixture_id": "planned-over-capacity",
+  "description": "Planned minutes must not exceed the PlanDay capacity.",
+  "input_patches": [],
+  "output_patches": [
+    {"op": "replace", "path": ["days", "0", "planned_minutes"], "value": 121},
+    {"op": "replace", "path": ["days", "0", "remaining_minutes"], "value": 0},
+    {"op": "replace", "path": ["days", "0", "tasks"], "value": [
+      {"task_id": "over-capacity", "task_type": "review", "target_kind": "review_item", "target_ref": "review/topic/DATA.DATABASE.RELATIONAL", "planned_minutes": 121, "explain_trace_id": "trace-over-capacity"}
+    ]}
+  ],
+  "expected_error": "capacity_invariant"
+}

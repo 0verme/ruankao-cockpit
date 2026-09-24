@@ -74,11 +74,11 @@
 
 | UI Metric | UI Meaning | Domain Field | Domain Source | Source Category | Current Availability | Null Semantics | Explain Source | Notes / Constraints |
 |---|---|---|---|---|---|---|---|---|
-| 考试日期 | 用户设定的目标考试日 | `exam_date` | User Configuration | `user_config` | `User Config` | 未配置 → `null` →「未配置考试日期」 | 用户输入 | **不是 domain 事实**；Contract 不得硬编码任何具体日期 |
-| 距考试剩余天数 | 距目标考试的天数 | —（由 `exam_date` + `as_of` + `timezone` 派生） | projection | `projection` | `User Config`（可派生） | 未配置 → `null` | `exam_date` / `timezone` / `as_of` | 必须显式使用 `as_of` 与 timezone；不得使用浏览器本地时间 |
+| 考试日期 | 用户设定的目标考试日 | —（`exam_date` 不在 User Configuration v0.1） | Future config contract | `future` | `Future` | 不适用 | 尚无正式输入 source | P5.2 明确 OUT / FUTURE；不得假称当前可配置 |
+| 距考试剩余天数 | 距目标考试的天数 | —（未来由 exam-date contract + `as_of` + `timezone` 派生） | future projection | `future` | `Future` | 不适用 | 未来配置 + `timezone` + `as_of` | 必须使用显式 as_of 与 timezone；不得使用浏览器本地时间 |
 | 时区 | 日历日边界依据 | `timezone` | User Configuration | `user_config` | `User Config` | 未配置 → 必须显式要求配置，不得默认 | 用户输入 | due / calendar 的日期归属依赖它 |
-| 每日可用时间 / 档位 | 计划容量的用户输入 | `daily_available_minutes` / `tier` | User Configuration（未来可由 Planner 校准为 planned capacity） | `user_config` | `User Config` | 未配置 → `null` | 用户输入 | 与 Planner 的 `capacity.planned_minutes` 是不同概念（实际 vs 计划） |
-| 目标 / 及格线 | 用户设定的目标线 | `target_score` | User Configuration | `user_config` | `User Config` | 未配置 → `null` | 用户输入 | **必须标注「目标 / 参考」**，不得显示为 domain 事实或 assessment 结果 |
+| 每日可用时间 | 用户声明的输入分钟容量 | `daily_available_minutes` | User Configuration v0.1 | `user_config` | `User Config` | 未配置 → contract validation reject | 用户输入 | P5.2 不含 `tier`；与 PlannerOutput `capacity_minutes` 是不同语义 |
+| 目标 / 及格线 | 用户设定的目标线 | —（不在 User Configuration v0.1） | Future config contract | `future` | `Future` | 不适用 | 尚无正式输入 source | 需独立配置与 assessment contract；不得假称当前可配置或 domain 事实 |
 
 ---
 
@@ -115,18 +115,20 @@
 
 ---
 
-## 6. 主映射表 · `planner`（依赖 Planner contract，当前未冻结）
+## 6. 主映射表 · `planner`（P5.3 output contract 已冻结；Planner generation 未实现）
 
 | UI Metric | UI Meaning | Domain Field | Domain Source | Source Category | Current Availability | Null Semantics | Explain Source | Notes / Constraints |
 |---|---|---|---|---|---|---|---|---|
-| Today Plan | 今天应该做什么 | `TBD — dependent on Planner contract` | Planner output | `planner` | `Planner`（未冻结） | 无 plan → 空态「Planner contract 尚未冻结」 | rule id + signal snapshot + plan version | UI 不得自行生成、拆分、补全或重排任务 |
-| 计划阶段 / 日类型 | 当前阶段与当天类型 | `TBD — dependent on Planner contract` | Planner output | `planner` | `Planner` | 无 plan → 空态 | plan version | 不得硬编码 `docs/30_DAY_CURRICULUM_DRAFT.md` 的 Day 1..30 |
-| 今日主题 | 当天 primary / supporting topic 与 capability | `TBD — dependent on Planner contract` | Planner output | `planner` | `Planner` | 无 plan → 空态 | planner 输出 | topic 与 capability 必须分开渲染（语义隔离） |
-| 计划容量 | 计划投入时长 / 档位 | `TBD — dependent on Planner contract` | Planner output | `planner` | `Planner` | 无 plan → 空态 | plan version | 与 user_config 的「每日可用时间」是不同概念 |
-| 任务列表 | 计划任务 | `TBD — dependent on Planner contract` | Planner output | `planner` | `Planner` | 无 plan → 空态 | rule id + signal snapshot | 任务必须持有来源指针，不得内联第三方正文 |
-| 任务来源引用 | 任务指向的内容位置 | `TBD — dependent on Planner contract`（source reference） | Planner output | `planner` | `Planner` | 无 → 不适用 | source catalog | 只索引 / 引用，不复制正文（版权边界） |
-| 计划视图切换（7 / 14 / 30 天） | 切换计划窗口 | `TBD — dependent on Planner contract` | Planner output | `planner` | `Planner` | 无 plan → **不渲染控件** | plan version | 窗口长度必须来自 Planner，不是 UI 常量 |
-| 冲刺阶段 | 考前阶段标签 | `TBD — dependent on Planner contract` | Planner output | `planner` | `Planner` | 无 plan → 空态 | plan version | 不得由 UI 用倒计时天数自行推断阶段 |
+| Today Plan | 今天应该做什么 | `PlannerOutput.days[0]` | `planner-output/v0.1` | `planner` | Contract frozen；尚无生成器 / consumer | 无 PlannerOutput = unavailable；有效空日为 `tasks=[]` | `explain_traces[]` | Today 是 `days[0]` alias，不双写；UI 不生成 / 拆分 / 补全 / 重排任务 |
+| Rolling horizon | 未来短周期容器 | `horizon` + `days[0..6]` | `planner-output/v0.1` | `planner` | Contract frozen；尚未生成 | 无 PlannerOutput = unavailable | output metadata | 7 个连续 local calendar days；不是 30-day curriculum |
+| 日期 / 学习日 | 本地日期与配置学习日投影 | `generated_for_local_date` / `days[].day_offset` / `local_date` / `study_day` | `planner-output/v0.1` + P5.2 config | `planner` / `user_config` | Contract frozen | 不适用 | `as_of` + `timezone` + `study_days` | 禁止用机器时区；P5.3 不规定非学习日 capacity |
+| 计划容量 | 单日计划容量、已分配与剩余分钟 | `days[].capacity_minutes` / `planned_minutes` / `remaining_minutes` | `planner-output/v0.1` | `planner` | Contract frozen；P5.4 allocation 未实现 | 无 output = unavailable | policy-specific structured trace | 与 `daily_available_minutes` 语义不同；不显示为实际耗时 |
+| 任务列表 | v0.1 复习任务 | `tasks[].task_id / task_type / target_kind / target_ref / planned_minutes / explain_trace_id` | `PlannerOutput.days[]` | `planner` | Contract frozen；尚无生成器 | 有效无任务日 = 空数组 | `explain_traces[]` | v0.1 仅 `review`；UI 保留 output 顺序，不内联第三方正文 |
+| 任务 target | 正式 Review Item identity | `target_kind = review_item` / `target_ref = review_item_id` | Review Item / MasteryReviewState input | `planner` / `phase4` | 已有稳定 Review identity | 未知 / 不支持引用应拒绝 | trace `target_ref` + input references | label != identity；展示名不得作为引用 |
+| Unmet Demand | 合法需求未进入计划 | `unmet_demand[].demand_id / demand_type / target_kind / target_ref / requested_minutes / explain_trace_id` | `PlannerOutput.days[]` | `planner` | Contract frozen；selection policy 未实现 | 空数组表示无未满足 demand | `explain_traces[]` | 与 invalid / unsupported input 拒绝语义不同；不是 overflow task |
+| Explain | 任务 / unmet demand 的结构化说明 | `explain_traces[].reason_code / planner_policy / input_references / target / decision_category / structured_inputs` | `planner-output/v0.1` | `planner` | 容器 frozen；业务 reason 留给 P5.4 | 无 output = unavailable | 同一结构化 trace；`display_message` 可选 | 自然语言不能成为唯一机器依据 |
+| 计划视图切换（14 / 30 天） | 切换其它窗口 | —（P5.3 v0.1 不支持） | — | `future` | 未定义 | 不渲染控件 | — | v0.1 horizon 固定 7 天 |
+| 冲刺阶段 / 主题 / milestone | 课程阶段 / Backbone 内容 | —（P5.3 v0.1 不输出） | — | `future` | P5.5 未冻结 | 不渲染 / 不推导 | — | 不得从 `docs/30_DAY_CURRICULUM_DRAFT.md` 推断 |
 
 ---
 
@@ -216,7 +218,7 @@ Calendar、streak、完成度、计划进度都受此约束。
 | `review_due` / `next_due_at` / `overdue` | policy 与显式 `as_of` 已冻结；UI 必须读取 replay 输出，不得自行计算 |
 | `due_count` | 已有 replay 聚合；UI 必须读取输出并保持 aggregate/item projection 一致 |
 | `review_interval_days` | policy 参数已冻结；UI 必须读取 replay 输出 |
-| 今日任务 / 任务数量 / 任务顺序 | Planner contract 未冻结 |
+| 今日任务 / 任务数量 / 任务顺序 | 只能读取 PlannerOutput（生成与业务排序仍未实现） |
 | 计划完成度 / `completion_rate` | task execution contract 未冻结 |
 | `streak` | 无 contract；易与「有事件」混淆 |
 | `recent_score` / 考试分数 | assessment contract 未冻结 |
@@ -243,9 +245,9 @@ Calendar、streak、完成度、计划进度都受此约束。
 | 论文分数形值（`x/75`） | `reference-only` / `non-contract` | 论文无任何 domain contract → 必须显示 Future / unavailable |
 | 案例分数形值（`x/75`） | `reference-only` / `non-contract` | `case.score_ratio` 是加权 earned/possible，不是 75 分制 |
 | 综合分数形值（`x/75`） | `reference-only` / `non-contract` | 无 assessment contract，不能生成 75 分制分数 |
-| 计划天数（`14 天`、`Day 1..N`） | `reference-only` / `non-contract` | 只能消费 Planner 输出；Planner 未冻结前显示空态 |
+| 计划天数（`14 天`、`Day 1..N`） | `reference-only` / `non-contract` | v0.1 仅冻结 7 日 Rolling projection；30 天仍是 Draft，不得硬编码 |
 | 单日分钟数（`120 分钟`） | `reference-only` / `non-contract` | 未来来自 Planner capacity；当前只能是 user configuration 或 Future |
-| 倒计时天数（`36 天`） | `reference-only` / `non-contract` | 来自 user configuration（考试日期），不得硬编码 |
+| 倒计时天数（`36 天`） | `reference-only` / `non-contract` | P5.2 User Configuration v0.1 不含 exam_date；需未来正式配置契约，不得硬编码 |
 | 模拟场次形值（`x/y Mock`） | `reference-only` / `non-contract` | 需要 assessment contract |
 | 个人激励文案（`买车奖励`） | `reference-only` / `non-contract` | 个人文案不进 contract；未来最多作为用户自定义字段 |
 

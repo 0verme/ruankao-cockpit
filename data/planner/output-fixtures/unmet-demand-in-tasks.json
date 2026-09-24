@@ -1,0 +1,11 @@
+{
+  "fixture_id": "unmet-demand-in-tasks",
+  "description": "Unmet demand fields cannot be disguised as PlanTask fields.",
+  "input_patches": [],
+  "output_patches": [
+    {"op": "replace", "path": ["days", "0", "tasks"], "value": [
+      {"task_id": "not-a-task", "task_type": "review", "demand_type": "review", "target_kind": "review_item", "target_ref": "review/topic/DATA.DATABASE.RELATIONAL", "planned_minutes": 0, "explain_trace_id": "trace-not-a-task"}
+    ]}
+  ],
+  "expected_error": "invalid_plan_task"
+}

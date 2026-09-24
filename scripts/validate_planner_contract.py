@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Validate Planner Input Snapshot v0.1 contracts and input-only fixtures."""
+"""Validate Planner input/output contract schemas and static fixtures; do not generate plans."""
 from __future__ import annotations
 
 import argparse
 import copy
 import json
 import math
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 import re
 import sys
@@ -21,6 +21,8 @@ if str(TESTS) not in sys.path:
 
 from engine.rules.review_policy_v01 import ReviewPolicyError, resolve_timezone  # noqa: E402
 from planner_contract_fixtures import build_minimal_snapshot  # noqa: E402
+from planner_output_fixtures import apply_patch as apply_output_fixture_patch  # noqa: E402
+from planner_output_fixtures import build_minimal_output  # noqa: E402
 
 SNAPSHOT_SCHEMA_VERSION = "planner-input/v0.1"
 USER_CONFIGURATION_SCHEMA_VERSION = "user-configuration/v0.1"
@@ -32,6 +34,18 @@ PROGRESS_EVENT_SCHEMA_VERSION = "progress-event/v0.1"
 MASTERY_REVIEW_STATE_SCHEMA_VERSION = "mastery-review-state/v0.1"
 TAXONOMY_VERSION = "0.1"
 CAPABILITY_VERSION = "0.1"
+PLANNER_OUTPUT_SCHEMA_VERSION = "planner-output/v0.1"
+PLANNER_OUTPUT_HORIZON_DAYS = 7
+PLANNER_OUTPUT_HORIZON_UNIT = "local_calendar_days"
+SUPPORTED_PLAN_TASK_TYPES = {"review"}
+SUPPORTED_DEMAND_TYPES = {"review"}
+SUPPORTED_TARGET_KINDS = {"review_item"}
+REVIEW_ITEM_ID_PATTERN = re.compile(
+    r"^review/(?:topic/[A-Za-z0-9][A-Za-z0-9._:-]*|"
+    r"question/[A-Za-z0-9][A-Za-z0-9._:-]*/[A-Za-z0-9][A-Za-z0-9._:-]*|"
+    r"case_capability/[A-Za-z0-9][A-Za-z0-9._:-]*)$"
+)
+REASON_CODE_PATTERN = re.compile(r"^[a-z][a-z0-9_]*$")
 
 
 class PlannerContractError(ValueError):
@@ -157,6 +171,51 @@ def validate_contract_schemas(root: Path = ROOT) -> None:
     _require((root / "data/review/mastery-review-state.schema.json").is_file(), "MasteryReviewState schema reference is missing", "invalid_contract_schema")
     _constant_object_from_schema(review_state_schema.get("$defs", {}).get("policy", {}), "MasteryReviewState.policy")
     _constant_object_from_schema(review_state_schema.get("$defs", {}).get("outcomeAdapter", {}), "MasteryReviewState.outcome_adapter")
+
+    output_schema = load_json(root / "data/planner/planner-output.schema.json")
+    _require(output_schema.get("$schema", "").endswith("2020-12/schema"), "Planner output schema must use JSON Schema 2020-12", "invalid_contract_schema")
+    _require(output_schema.get("title") == "Planner Output v0.1", "Planner output schema title/version mismatch", "invalid_contract_schema")
+    output_properties = output_schema.get("properties", {})
+    _require(output_properties.get("schema_version", {}).get("const") == PLANNER_OUTPUT_SCHEMA_VERSION, "Planner output schema version mismatch", "invalid_contract_schema")
+    _require(output_properties.get("input_snapshot_schema_version", {}).get("const") == SNAPSHOT_SCHEMA_VERSION, "Planner output input schema trace mismatch", "invalid_contract_schema")
+    _require(output_schema.get("additionalProperties") is False, "Planner output must reject additional root properties", "invalid_contract_schema")
+    _require(set(output_schema.get("required", [])) == {
+        "schema_version", "planner_policy", "input_snapshot_schema_version", "as_of", "timezone",
+        "generated_for_local_date", "horizon", "days", "explain_traces",
+    }, "Planner output required fields mismatch", "invalid_contract_schema")
+    horizon_schema = output_schema.get("$defs", {}).get("horizon", {}).get("properties", {})
+    _require(horizon_schema.get("unit", {}).get("const") == PLANNER_OUTPUT_HORIZON_UNIT, "Planner output horizon unit mismatch", "invalid_contract_schema")
+    _require(horizon_schema.get("day_count", {}).get("const") == PLANNER_OUTPUT_HORIZON_DAYS, "Planner output horizon length mismatch", "invalid_contract_schema")
+    days_schema = output_properties.get("days", {})
+    _require(days_schema.get("minItems") == PLANNER_OUTPUT_HORIZON_DAYS and days_schema.get("maxItems") == PLANNER_OUTPUT_HORIZON_DAYS, "Planner output day count schema mismatch", "invalid_contract_schema")
+    for name in ("planDay", "planTask", "unmetDemand", "explainTrace"):
+        _require(output_schema.get("$defs", {}).get(name, {}).get("additionalProperties") is False, f"Planner output {name} must reject unsupported fields", "invalid_contract_schema")
+    output_defs = output_schema.get("$defs", {})
+    plan_task_definition = output_defs.get("planTask", {})
+    plan_task_schema = plan_task_definition.get("properties", {})
+    _require(plan_task_schema.get("task_type", {}).get("const") == "review", "Planner output task type scope mismatch", "invalid_contract_schema")
+    _require(plan_task_schema.get("target_kind", {}).get("const") == "review_item", "Planner output target kind scope mismatch", "invalid_contract_schema")
+    target_ref_schema = output_defs.get("targetRef", {})
+    _require(target_ref_schema.get("pattern") == REVIEW_ITEM_ID_PATTERN.pattern, "Planner output target identity pattern mismatch", "invalid_contract_schema")
+    _require(set(plan_task_definition.get("required", [])) == {
+        "task_id", "task_type", "target_kind", "target_ref", "planned_minutes", "explain_trace_id",
+    }, "Planner output PlanTask required fields mismatch", "invalid_contract_schema")
+    task_minutes = plan_task_schema.get("planned_minutes", {})
+    _require(task_minutes.get("type") == "integer" and task_minutes.get("minimum") == 0 and task_minutes.get("maximum") == 1440, "Planner output PlanTask minute range mismatch", "invalid_contract_schema")
+    plan_day_properties = output_defs.get("planDay", {}).get("properties", {})
+    for minute_field in ("capacity_minutes", "planned_minutes", "remaining_minutes"):
+        minute_schema = plan_day_properties.get(minute_field, {})
+        _require(minute_schema.get("type") == "integer" and minute_schema.get("minimum") == 0 and minute_schema.get("maximum") == 1440, f"Planner output PlanDay.{minute_field} range mismatch", "invalid_contract_schema")
+    demand_properties = output_defs.get("unmetDemand", {}).get("properties", {})
+    requested_minutes = demand_properties.get("requested_minutes", {})
+    _require(requested_minutes.get("type") == "integer" and requested_minutes.get("minimum") == 0 and requested_minutes.get("maximum") == 1440, "Planner output UnmetDemand minute range mismatch", "invalid_contract_schema")
+    trace_definition = output_defs.get("explainTrace", {})
+    trace_properties = trace_definition.get("properties", {})
+    _require(trace_properties.get("reason_code", {}).get("pattern") == REASON_CODE_PATTERN.pattern, "Planner output reason_code slot mismatch", "invalid_contract_schema")
+    _require(set(trace_definition.get("required", [])) == {
+        "trace_id", "subject_kind", "subject_id", "decision_category", "reason_code", "planner_policy",
+        "input_references", "target_kind", "target_ref", "structured_inputs",
+    }, "Planner output ExplainTrace required fields mismatch", "invalid_contract_schema")
 
 
 def _constant_object_from_schema(schema: Mapping[str, Any], label: str) -> dict[str, Any]:
@@ -567,6 +626,295 @@ def canonical_json(snapshot: Any, root: Path = ROOT) -> str:
     return json.dumps(canonical, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
 
 
+def _output_date(value: Any, label: str) -> date:
+    if not isinstance(value, str):
+        _fail(f"{label}: expected an ISO local date", "invalid_plan_day")
+    try:
+        parsed = date.fromisoformat(value)
+    except ValueError as exc:
+        raise PlannerContractError(f"{label}: invalid ISO local date", "invalid_plan_day") from exc
+    if parsed.isoformat() != value:
+        _fail(f"{label}: expected canonical YYYY-MM-DD", "invalid_plan_day")
+    return parsed
+
+
+def _output_minutes(value: Any, label: str) -> int:
+    if type(value) is not int or not 0 <= value <= 1440:
+        _fail(f"{label}: expected integer minutes in 0..1440", "invalid_minutes")
+    return value
+
+
+def _resolve_input_pointer(document: Any, pointer: Any, label: str) -> Any:
+    if not isinstance(pointer, str) or not pointer.startswith("/") or re.search(r"~(?![01])", pointer):
+        _fail(f"{label}: expected a valid JSON Pointer into Planner input", "invalid_explain_trace")
+    current = document
+    for raw_part in pointer[1:].split("/"):
+        part = raw_part.replace("~1", "/").replace("~0", "~")
+        if isinstance(current, Mapping) and part in current:
+            current = current[part]
+        elif isinstance(current, list) and part.isdigit() and int(part) < len(current):
+            current = current[int(part)]
+        else:
+            _fail(f"{label}: JSON Pointer does not resolve in Planner input", "invalid_explain_trace")
+    return current
+
+
+def _validate_output_target(
+    target_kind: Any,
+    target_ref: Any,
+    review_item_ids: set[str],
+    label: str,
+) -> tuple[str, str]:
+    if not isinstance(target_kind, str) or target_kind not in SUPPORTED_TARGET_KINDS:
+        _fail(f"{label}.target_kind: unsupported target kind {target_kind!r}", "unsupported_target_kind")
+    reference = _nonempty_string(target_ref, f"{label}.target_ref", "invalid_target_ref")
+    if REVIEW_ITEM_ID_PATTERN.fullmatch(reference) is None:
+        _fail(f"{label}.target_ref: malformed Review Item identity", "invalid_target_ref")
+    if reference not in review_item_ids:
+        _fail(f"{label}.target_ref: unknown Review Item identity {reference!r}", "unknown_review_item")
+    return str(target_kind), reference
+
+
+def validate_planner_output(
+    output_value: Any,
+    input_snapshot_value: Any,
+    root: Path = ROOT,
+) -> dict[str, Any]:
+    """Validate one output projection against its explicit, self-contained input."""
+    validate_contract_schemas(root)
+    input_snapshot = validate_snapshot(input_snapshot_value, root)
+    output = _object(output_value, "PlannerOutput", "invalid_planner_output")
+    required_output_keys = {
+        "schema_version", "planner_policy", "input_snapshot_schema_version", "as_of", "timezone",
+        "generated_for_local_date", "horizon", "days", "explain_traces",
+    }
+    _exact_keys(output, required_output_keys, "PlannerOutput", "invalid_planner_output")
+    if output.get("schema_version") != PLANNER_OUTPUT_SCHEMA_VERSION:
+        _fail("unsupported PlannerOutput schema_version", "invalid_schema_version")
+    if output.get("input_snapshot_schema_version") != input_snapshot["schema_version"]:
+        _fail("PlannerOutput input snapshot schema version mismatch", "inconsistent_input")
+
+    policy = _object(output.get("planner_policy"), "PlannerOutput.planner_policy", "invalid_policy_input")
+    _exact_keys(policy, {"policy_id", "policy_version"}, "PlannerOutput.planner_policy", "invalid_policy_input")
+    _nonempty_string(policy.get("policy_id"), "PlannerOutput.planner_policy.policy_id", "invalid_policy_input")
+    _nonempty_string(policy.get("policy_version"), "PlannerOutput.planner_policy.policy_version", "invalid_policy_input")
+
+    as_of = _parse_instant(output.get("as_of"), "PlannerOutput.as_of")
+    if output["as_of"] != _canonical_instant(output["as_of"]):
+        _fail("PlannerOutput.as_of must use canonical UTC Z form", "invalid_timestamp")
+    if as_of != _parse_instant(input_snapshot["as_of"], "PlannerInput.as_of"):
+        _fail("PlannerOutput.as_of must match the input snapshot instant", "inconsistent_input")
+    timezone_name = _validate_timezone(output.get("timezone"), "PlannerOutput.timezone")
+    if timezone_name != input_snapshot["timezone"]:
+        _fail("PlannerOutput.timezone must match the input snapshot", "inconsistent_input")
+    generated_for_date = _output_date(output.get("generated_for_local_date"), "PlannerOutput.generated_for_local_date")
+    expected_local_date = as_of.astimezone(resolve_timezone(timezone_name)).date()
+    if generated_for_date != expected_local_date:
+        _fail("generated_for_local_date must be the local date of as_of", "invalid_horizon")
+
+    horizon = _object(output.get("horizon"), "PlannerOutput.horizon", "invalid_horizon")
+    _exact_keys(horizon, {"unit", "day_count"}, "PlannerOutput.horizon", "invalid_horizon")
+    if horizon.get("unit") != PLANNER_OUTPUT_HORIZON_UNIT or horizon.get("day_count") != PLANNER_OUTPUT_HORIZON_DAYS:
+        _fail("PlannerOutput horizon must be seven local calendar days", "invalid_horizon")
+    days = output.get("days")
+    if not isinstance(days, list) or len(days) != PLANNER_OUTPUT_HORIZON_DAYS:
+        _fail("PlannerOutput.days must contain exactly seven PlanDay values", "invalid_horizon")
+
+    inputs = input_snapshot["inputs"]
+    review_item_ids = set(inputs["mastery_review_state"]["items"])
+    study_days = set(inputs["user_configuration"]["study_days"])
+    task_ids: set[str] = set()
+    demand_ids: set[str] = set()
+    task_links: list[tuple[str, str, str, str, str]] = []
+    demand_links: list[tuple[str, str, str, str, str]] = []
+
+    for offset, day_value in enumerate(days):
+        day = _object(day_value, f"PlannerOutput.days[{offset}]", "invalid_plan_day")
+        _exact_keys(day, {
+            "day_offset", "local_date", "study_day", "capacity_minutes", "planned_minutes",
+            "remaining_minutes", "tasks", "unmet_demand",
+        }, f"PlannerOutput.days[{offset}]", "invalid_plan_day")
+        if type(day.get("day_offset")) is not int or day["day_offset"] != offset:
+            _fail(f"PlanDay[{offset}].day_offset must equal its array index", "invalid_horizon")
+        local_date = _output_date(day.get("local_date"), f"PlanDay[{offset}].local_date")
+        if local_date != generated_for_date + timedelta(days=offset):
+            _fail(f"PlanDay[{offset}].local_date is not a consecutive local calendar date", "invalid_horizon")
+        if type(day.get("study_day")) is not bool or day["study_day"] != (local_date.isoweekday() in study_days):
+            _fail(f"PlanDay[{offset}].study_day does not match UserConfiguration.study_days", "invalid_plan_day")
+        capacity = _output_minutes(day.get("capacity_minutes"), f"PlanDay[{offset}].capacity_minutes")
+        planned = _output_minutes(day.get("planned_minutes"), f"PlanDay[{offset}].planned_minutes")
+        remaining = _output_minutes(day.get("remaining_minutes"), f"PlanDay[{offset}].remaining_minutes")
+        tasks = day.get("tasks")
+        demands = day.get("unmet_demand")
+        if not isinstance(tasks, list):
+            _fail(f"PlanDay[{offset}].tasks must be an array", "invalid_plan_day")
+        if not isinstance(demands, list):
+            _fail(f"PlanDay[{offset}].unmet_demand must be an array", "invalid_plan_day")
+
+        task_minutes = 0
+        scheduled_targets: set[tuple[str, str]] = set()
+        for task_index, task_value in enumerate(tasks):
+            label = f"PlanDay[{offset}].tasks[{task_index}]"
+            task = _object(task_value, label, "invalid_plan_task")
+            _exact_keys(task, {
+                "task_id", "task_type", "target_kind", "target_ref", "planned_minutes", "explain_trace_id",
+            }, label, "invalid_plan_task")
+            task_id = _nonempty_string(task.get("task_id"), f"{label}.task_id", "invalid_plan_task")
+            if task_id in task_ids:
+                _fail(f"duplicate task_id {task_id!r}", "duplicate_task_id")
+            task_ids.add(task_id)
+            if not isinstance(task.get("task_type"), str) or task["task_type"] not in SUPPORTED_PLAN_TASK_TYPES:
+                _fail(f"{label}.task_type is unsupported", "unsupported_task_type")
+            target_kind, target_ref = _validate_output_target(task.get("target_kind"), task.get("target_ref"), review_item_ids, label)
+            target_key = (target_kind, target_ref)
+            if target_key in scheduled_targets:
+                _fail(f"{label}: duplicate scheduled target in one day", "invalid_plan_task")
+            scheduled_targets.add(target_key)
+            minutes = _output_minutes(task.get("planned_minutes"), f"{label}.planned_minutes")
+            task_minutes += minutes
+            explain_id = _nonempty_string(task.get("explain_trace_id"), f"{label}.explain_trace_id", "invalid_explain_trace")
+            task_links.append(("plan_task", task_id, explain_id, target_kind, target_ref))
+
+        unmet_targets: set[tuple[str, str]] = set()
+        for demand_index, demand_value in enumerate(demands):
+            label = f"PlanDay[{offset}].unmet_demand[{demand_index}]"
+            demand = _object(demand_value, label, "invalid_unmet_demand")
+            _exact_keys(demand, {
+                "demand_id", "demand_type", "target_kind", "target_ref", "requested_minutes", "explain_trace_id",
+            }, label, "invalid_unmet_demand")
+            demand_id = _nonempty_string(demand.get("demand_id"), f"{label}.demand_id", "invalid_unmet_demand")
+            if demand_id in demand_ids:
+                _fail(f"duplicate demand_id {demand_id!r}", "duplicate_unmet_demand")
+            demand_ids.add(demand_id)
+            if not isinstance(demand.get("demand_type"), str) or demand["demand_type"] not in SUPPORTED_DEMAND_TYPES:
+                _fail(f"{label}.demand_type is unsupported", "unsupported_demand_type")
+            target_kind, target_ref = _validate_output_target(demand.get("target_kind"), demand.get("target_ref"), review_item_ids, label)
+            target_key = (target_kind, target_ref)
+            if target_key in unmet_targets or target_key in scheduled_targets:
+                _fail(f"{label}: demand cannot be both scheduled and unmet for the same day", "invalid_unmet_demand")
+            unmet_targets.add(target_key)
+            _output_minutes(demand.get("requested_minutes"), f"{label}.requested_minutes")
+            explain_id = _nonempty_string(demand.get("explain_trace_id"), f"{label}.explain_trace_id", "invalid_explain_trace")
+            demand_links.append(("unmet_demand", demand_id, explain_id, target_kind, target_ref))
+
+        if planned > capacity or remaining != capacity - planned or task_minutes != planned:
+            _fail(f"PlanDay[{offset}] violates capacity or task-minute invariants", "capacity_invariant")
+        if capacity == 0 and tasks:
+            _fail(f"PlanDay[{offset}] with zero capacity cannot contain tasks", "capacity_invariant")
+
+    traces_value = output.get("explain_traces")
+    if not isinstance(traces_value, list):
+        _fail("PlannerOutput.explain_traces must be an array", "invalid_explain_trace")
+    traces: dict[str, Mapping[str, Any]] = {}
+    for index, trace_value in enumerate(traces_value):
+        label = f"PlannerOutput.explain_traces[{index}]"
+        trace = _object(trace_value, label, "invalid_explain_trace")
+        allowed = {
+            "trace_id", "subject_kind", "subject_id", "decision_category", "reason_code", "planner_policy",
+            "input_references", "target_kind", "target_ref", "structured_inputs", "display_message",
+        }
+        required = allowed - {"display_message"}
+        _require(required <= set(trace), f"{label}: required structured fields are missing", "invalid_explain_trace")
+        _exact_keys(trace, allowed if "display_message" in trace else required, label, "invalid_explain_trace")
+        trace_id = _nonempty_string(trace.get("trace_id"), f"{label}.trace_id", "invalid_explain_trace")
+        if trace_id in traces:
+            _fail(f"duplicate Explain trace_id {trace_id!r}", "duplicate_explain_trace")
+        subject_kind = trace.get("subject_kind")
+        if not isinstance(subject_kind, str) or subject_kind not in {"plan_task", "unmet_demand"}:
+            _fail(f"{label}.subject_kind is unsupported", "invalid_explain_trace")
+        _nonempty_string(trace.get("subject_id"), f"{label}.subject_id", "invalid_explain_trace")
+        if not isinstance(trace.get("decision_category"), str) or trace["decision_category"] not in {"task_scheduled", "demand_unmet"}:
+            _fail(f"{label}.decision_category is unsupported", "invalid_explain_trace")
+        reason_code = trace.get("reason_code")
+        if not isinstance(reason_code, str) or REASON_CODE_PATTERN.fullmatch(reason_code) is None:
+            _fail(f"{label}.reason_code must be a machine-readable string", "invalid_explain_trace")
+        trace_policy = _object(trace.get("planner_policy"), f"{label}.planner_policy", "invalid_explain_trace")
+        _exact_keys(trace_policy, {"policy_id", "policy_version"}, f"{label}.planner_policy", "invalid_explain_trace")
+        if dict(trace_policy) != dict(policy):
+            _fail(f"{label}.planner_policy does not match PlannerOutput policy", "invalid_explain_trace")
+        input_references = trace.get("input_references")
+        if not isinstance(input_references, list) or not input_references:
+            _fail(f"{label}.input_references must contain JSON Pointers", "invalid_explain_trace")
+        for ref_index, pointer in enumerate(input_references):
+            _resolve_input_pointer(input_snapshot, pointer, f"{label}.input_references[{ref_index}]")
+        target_kind, target_ref = _validate_output_target(trace.get("target_kind"), trace.get("target_ref"), review_item_ids, label)
+        if not isinstance(trace.get("structured_inputs"), Mapping):
+            _fail(f"{label}.structured_inputs must be an object", "invalid_explain_trace")
+        if "display_message" in trace:
+            _nonempty_string(trace["display_message"], f"{label}.display_message", "invalid_explain_trace")
+        traces[trace_id] = trace
+
+    expected_trace_refs: set[str] = set()
+    links = task_links + demand_links
+    for subject_kind, subject_id, trace_id, target_kind, target_ref in links:
+        if trace_id in expected_trace_refs:
+            _fail(f"Explain trace {trace_id!r} is referenced more than once", "invalid_explain_trace")
+        expected_trace_refs.add(trace_id)
+        trace = traces.get(trace_id)
+        if trace is None:
+            _fail(f"missing Explain trace {trace_id!r}", "invalid_explain_trace")
+        expected_category = "task_scheduled" if subject_kind == "plan_task" else "demand_unmet"
+        if (
+            trace.get("subject_kind") != subject_kind
+            or trace.get("subject_id") != subject_id
+            or trace.get("decision_category") != expected_category
+            or trace.get("target_kind") != target_kind
+            or trace.get("target_ref") != target_ref
+        ):
+            _fail(f"Explain trace {trace_id!r} does not match its task/demand subject", "invalid_explain_trace")
+    if set(traces) != expected_trace_refs:
+        _fail("PlannerOutput contains orphan Explain traces", "invalid_explain_trace")
+    return copy.deepcopy(dict(output))
+
+
+def validate_output_fixture_set(root: Path = ROOT) -> dict[str, Any]:
+    """Validate synthetic output contract fixtures; never generates a plan."""
+    fixture_dir = root / "data/planner/output-fixtures"
+    fixture_paths = sorted(fixture_dir.glob("*.json"))
+    _require(bool(fixture_paths), "planner output contract fixtures are missing", "invalid_fixture")
+    base_input, _ = build_minimal_output(root)
+    fixture_ids: set[str] = set()
+    accepted = 0
+    rejected = 0
+    rejection_categories: dict[str, int] = {}
+    for path in fixture_paths:
+        fixture = load_json(path)
+        _require(isinstance(fixture, dict), f"{path.name}: fixture must be an object", "invalid_fixture")
+        _exact_keys(fixture, {"fixture_id", "description", "input_patches", "output_patches", "expected_error"}, path.name, "invalid_fixture")
+        fixture_id = _nonempty_string(fixture.get("fixture_id"), f"{path.name}.fixture_id", "invalid_fixture")
+        _require(fixture_id not in fixture_ids, f"duplicate output fixture_id {fixture_id}", "invalid_fixture")
+        fixture_ids.add(fixture_id)
+        input_patches = fixture.get("input_patches")
+        output_patches = fixture.get("output_patches")
+        _require(isinstance(input_patches, list) and isinstance(output_patches, list), f"{path.name}: patches must be arrays", "invalid_fixture")
+        expected_error = fixture.get("expected_error")
+        _require(expected_error is None or isinstance(expected_error, str) and bool(expected_error), f"{path.name}: expected_error must be null or a category", "invalid_fixture")
+        candidate_input = copy.deepcopy(base_input)
+        try:
+            for index, patch in enumerate(input_patches):
+                apply_output_fixture_patch(candidate_input, _object(patch, f"{path.name}.input_patches[{index}]", "invalid_fixture"), f"{path.name}.input_patches[{index}]")
+            _, candidate_output = build_minimal_output(root, candidate_input)
+            for index, patch in enumerate(output_patches):
+                apply_output_fixture_patch(candidate_output, _object(patch, f"{path.name}.output_patches[{index}]", "invalid_fixture"), f"{path.name}.output_patches[{index}]")
+            validate_planner_output(candidate_output, candidate_input, root)
+        except (PlannerContractError, ValueError) as exc:
+            category = exc.category if isinstance(exc, PlannerContractError) else "invalid_fixture"
+            if expected_error is None:
+                _fail(f"{path.name}: unexpected rejection [{category}]: {exc}", "invalid_fixture")
+            _require(category == expected_error, f"{path.name}: expected {expected_error}, got {category}: {exc}", "invalid_fixture")
+            rejected += 1
+            rejection_categories[category] = rejection_categories.get(category, 0) + 1
+        else:
+            _require(expected_error is None, f"{path.name}: expected rejection [{expected_error}] but output was accepted", "invalid_fixture")
+            accepted += 1
+    return {
+        "fixtures": len(fixture_paths),
+        "accepted": accepted,
+        "rejected": rejected,
+        "rejection_categories": rejection_categories,
+    }
+
+
 def _apply_patch(snapshot: dict[str, Any], patch: Mapping[str, Any], label: str) -> None:
     operation = patch.get("op")
     path = patch.get("path")
@@ -638,12 +986,16 @@ def main() -> int:
     try:
         validate_contract_schemas(root)
         result = validate_fixture_set(root)
-        print("PASS Planner Input Snapshot v0.1 and User Configuration v0.1 schema metadata")
-        print(f"PASS self-contained snapshot fixtures: {result['fixtures']} ({result['accepted']} accepted / {result['rejected']} expected rejection)")
-        print("PASS schema/version, catalog/reference, policy, timezone/as_of and configuration validation")
-        print("PASS canonical input semantics; no Planner output or policy generated")
+        output_result = validate_output_fixture_set(root)
+        print("PASS Planner Input Snapshot v0.1, User Configuration v0.1 and Planner Output v0.1 schema metadata")
+        print(f"PASS input contract fixtures: {result['fixtures']} ({result['accepted']} accepted / {result['rejected']} expected rejection)")
+        print(f"PASS output contract fixtures: {output_result['fixtures']} ({output_result['accepted']} accepted / {output_result['rejected']} expected rejection)")
+        print("PASS input/output version traceability, timezone/date horizon, targets, Explain references and capacity invariants")
+        print("PASS canonical input semantics; no Planner output is generated and no scheduling policy is executed")
         for category, count in sorted(result["rejection_categories"].items()):
-            print(f"  {category}: {count}")
+            print(f"  input {category}: {count}")
+        for category, count in sorted(output_result["rejection_categories"].items()):
+            print(f"  output {category}: {count}")
         return 0
     except PlannerContractError as exc:
         print(f"FAIL [{exc.category}]: {exc}", file=sys.stderr)

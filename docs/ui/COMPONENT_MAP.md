@@ -99,8 +99,8 @@ Dashboard / Review / Progress ← view-model，互相不直接引用对方内部
 | 职责 | 回答「我今天应该做什么」 |
 | view-model | `TodayPlanView`（当前不可用） |
 | 子组件 | `TodayThemeHeader`、`TodayTaskList`、`StartTodayCTA` |
-| empty | 当前唯一合法状态：「Planner contract 尚未冻结」 |
-| unavailable | 任务区 → `planner-contract` / Gate C；复习 domain output 已 Available（Gate B PASS），当前无 UI / Read Model implementation |
+| empty | 当前状态：「Planner 尚未生成计划」（P5.3 contract frozen；Phase 5 Gate 未通过）；有效 output 中 `days[0].tasks=[]` 是不同状态 |
+| unavailable | PlannerOutput generation → Gate C；结构见 P5.3 `PlannerOutput.days[0]`，复习 domain output 已 Available（Gate B PASS），当前无 UI / Read Model implementation |
 | 禁止 | 生成 / 拆分 / 补全 / 重排任务；硬编码 Day 1..30；渲染指向伪造任务流的 CTA |
 
 ### 4.3 `OperationalStatsGrid`
@@ -121,8 +121,8 @@ Dashboard / Review / Progress ← view-model，互相不直接引用对方内部
 | 项 | 内容 |
 |---|---|
 | 职责 | 展示目标考试日期与剩余天数 |
-| view-model | `countdown`（`exam_date` + `days_remaining` + `timezone` + `as_of`） |
-| empty / unavailable | 未配置考试日期 → 「未配置考试日期」+ 前往设置；冲刺阶段 → `UnavailableBadge`（`planner-contract`） |
+| view-model | `countdown`（`exam_date` 属于 Future 配置；P5.2 User Configuration v0.1 不包含该字段） |
+| empty / unavailable | 考试日期暂无正式配置 contract；冲刺阶段不属于 P5.3 output → `UnavailableBadge` |
 | 禁止 | 硬编码考试日期；使用浏览器本地时间计算剩余天数；把剩余天数写回 domain |
 
 ### 4.5 `StudyCalendar`

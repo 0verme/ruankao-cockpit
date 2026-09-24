@@ -1,0 +1,11 @@
+{
+  "fixture_id": "negative-task-minutes",
+  "description": "Negative planned task minutes are rejected.",
+  "input_patches": [],
+  "output_patches": [
+    {"op": "replace", "path": ["days", "0", "tasks"], "value": [
+      {"task_id": "negative-minutes", "task_type": "review", "target_kind": "review_item", "target_ref": "review/topic/DATA.DATABASE.RELATIONAL", "planned_minutes": -1, "explain_trace_id": "trace-negative"}
+    ]}
+  ],
+  "expected_error": "invalid_minutes"
+}
