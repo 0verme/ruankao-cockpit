@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/0verme/ruankao-cockpit/blob/main/data/planner/user-configuration.schema.json",
+  "title": "User Configuration v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "timezone",
+    "daily_available_minutes",
+    "study_days"
+  ],
+  "properties": {
+    "schema_version": {"const": "user-configuration/v0.1"},
+    "timezone": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Required explicit IANA timezone; validated semantically by the contract validator."
+    },
+    "daily_available_minutes": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1440,
+      "description": "Minutes per day. Zero is valid and is never replaced by a default."
+    },
+    "study_days": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "integer", "minimum": 1, "maximum": 7},
+      "description": "Unordered ISO weekdays: Monday=1 through Sunday=7. Empty and all seven days are valid."
+    }
+  }
+}

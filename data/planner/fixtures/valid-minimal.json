@@ -1,0 +1,6 @@
+{
+  "fixture_id": "valid-minimal",
+  "description": "Accept the complete synthetic ProgressState/MasteryReviewState snapshot.",
+  "patches": [],
+  "expected_error": null
+}

@@ -45,12 +45,12 @@ Progress Replay       ✅
 Review Model / Evidence v0.1 ✅
 Mastery / Review Policy v0.1 ✅ 规则冻结
 Mastery / Review      ✅ Phase 4 Gate PASS（P4.1～P4.9）
-Adaptive Planner      ⏳
+Adaptive Planner      ⏳ Phase 5（Issue #13；P5.1/P5.2 输入边界已冻结，P5.3+ 待完成）
 30-Day Plan           ⏳
 Cockpit UI            ⏳
 ```
 
-当前仓库已完成 Taxonomy v0.1、Case Capability v0.1、Golden Set 数据契约和 Phase 2 扩量验证（100 道综合题、48 道案例子问题），并已建立 Progress Event v0.1、基础 ProgressState、deterministic replay，以及 Phase 4 P4.1～P4.5 契约与 replay、P4.6/P4.7 synthetic fixture matrix 与测试、P4.8 文档同步和 P4.9 Gate 验证。Phase 4 Gate 已 PASS；ProgressState 与 MasteryReviewState 都始终由 immutable facts 重建。Adaptive Planner、30 天计划实例化和 UI 仍未实现。
+当前仓库已完成 Taxonomy v0.1、Case Capability v0.1、Golden Set 数据契约和 Phase 2 扩量验证（100 道综合题、48 道案例子问题），并已建立 Progress Event v0.1、基础 ProgressState、deterministic replay，以及 Phase 4 P4.1～P4.5 契约与 replay、P4.6/P4.7 synthetic fixture matrix 与测试、P4.8 文档同步和 P4.9 Gate 验证。Phase 4 Gate 已 PASS；ProgressState 与 MasteryReviewState 都始终由 immutable facts 重建。Phase 5 P5.1/P5.2 已冻结 Planner 输入边界与 User Configuration v0.1；Planner output、capacity/priority policy、replay、30 天计划实例化和 UI 仍未实现，Phase 5 Gate 未通过。
 
 ## 文档入口
 
@@ -67,6 +67,7 @@ Cockpit UI            ⏳
 - [Review Evidence v0.1](docs/review/REVIEW_EVIDENCE_V01.md)
 - [Mastery / Review Policy 文档索引](docs/review/README.md)
 - [Progress / Adaptive Engine 边界](engine/rules/README.md)
+- [Planner 输入与用户配置契约（P5.1/P5.2）](docs/planner/README.md)
 - [Cockpit UI / UX Blueprint（规划，未实现）](docs/ui/README.md)
 
 ## 开发边界

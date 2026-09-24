@@ -1,0 +1,13 @@
+{
+  "fixture_id": "valid-zero-capacity-study-days",
+  "description": "Zero minutes is valid; ISO weekdays are unordered; DST timezone is explicit.",
+  "patches": [
+    {"op": "replace", "path": ["inputs", "user_configuration", "daily_available_minutes"], "value": 0},
+    {"op": "replace", "path": ["inputs", "user_configuration", "study_days"], "value": [7, 1, 4]},
+    {"op": "replace", "path": ["timezone"], "value": "America/New_York"},
+    {"op": "replace", "path": ["inputs", "user_configuration", "timezone"], "value": "America/New_York"},
+    {"op": "replace", "path": ["inputs", "mastery_review_state", "timezone"], "value": "America/New_York"},
+    {"op": "replace", "path": ["inputs", "mastery_review_state", "schedule_timezone"], "value": "America/New_York"}
+  ],
+  "expected_error": null
+}

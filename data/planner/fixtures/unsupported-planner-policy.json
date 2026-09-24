@@ -1,0 +1,8 @@
+{
+  "fixture_id": "unsupported-planner-policy",
+  "description": "An unregistered identity/version cannot pass the input boundary.",
+  "patches": [
+    {"op": "replace", "path": ["planner_policy", "policy_version"], "value": "v9.9"}
+  ],
+  "expected_error": "invalid_policy_input"
+}

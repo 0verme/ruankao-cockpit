@@ -1,0 +1,8 @@
+{
+  "fixture_id": "unsupported-schema-version",
+  "description": "Unsupported Planner Input Snapshot versions fail closed.",
+  "patches": [
+    {"op": "replace", "path": ["schema_version"], "value": "planner-input/v9.9"}
+  ],
+  "expected_error": "invalid_schema_version"
+}

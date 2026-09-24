@@ -1,0 +1,8 @@
+{
+  "fixture_id": "timezone-naive-as-of",
+  "description": "A timestamp without UTC offset is invalid.",
+  "patches": [
+    {"op": "replace", "path": ["as_of"], "value": "2026-01-01T00:00:00"}
+  ],
+  "expected_error": "invalid_timestamp"
+}

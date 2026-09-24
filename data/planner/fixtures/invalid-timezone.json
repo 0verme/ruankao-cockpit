@@ -1,0 +1,9 @@
+{
+  "fixture_id": "invalid-timezone",
+  "description": "Unknown timezone is rejected rather than replaced with a machine default.",
+  "patches": [
+    {"op": "replace", "path": ["timezone"], "value": "Mars/Olympus"},
+    {"op": "replace", "path": ["inputs", "user_configuration", "timezone"], "value": "Mars/Olympus"}
+  ],
+  "expected_error": "invalid_timezone"
+}

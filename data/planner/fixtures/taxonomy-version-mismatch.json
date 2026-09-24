@@ -1,0 +1,8 @@
+{
+  "fixture_id": "taxonomy-version-mismatch",
+  "description": "A catalog version not matching the supported taxonomy is rejected.",
+  "patches": [
+    {"op": "replace", "path": ["inputs", "taxonomy", "taxonomy_version"], "value": "0.2"}
+  ],
+  "expected_error": "invalid_catalog_version"
+}
