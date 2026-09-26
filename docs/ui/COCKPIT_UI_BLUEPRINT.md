@@ -61,7 +61,7 @@ AI tutor
 | UX9 | **Dense but Calm** | 高信息密度、轻边框、克制用色；不做彩色卡片堆叠 | 每张卡不同底色 + 巨型数字 |
 | UX10 | **No Premature System** | 不做 Design System 工程化；只冻结 design direction、语义色与组件边界 | 本轮产出 token package / 主题引擎 |
 | UX11 | **No UI-side ordering** | 队列排序、优先级、next due 全部来自 engine | 前端按「看起来更合理」重排复习队列 |
-| UX12 | **Two independent dimensions** | mastery status 与 scheduling status 分层渲染，不强行合成单一互斥枚举 | 一个 badge 同时表示「已掌握」和「已逾期」 |
+| UX12 | **Two independent dimensions** | mastery status 与 scheduling status 分层渲染，不强行合成单一互斥枚举 | 一个 badge 同时表示「当前策略已达阈值」和「已逾期」 |
 
 ---
 

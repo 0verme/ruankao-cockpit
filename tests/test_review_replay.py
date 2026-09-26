@@ -197,6 +197,30 @@ class ReplayOutputTests(unittest.TestCase):
         self.assertEqual(state["review"]["due_count"], 1)
         self.assertEqual(state["review"]["due_today_count"], 1)
 
+    def test_early_success_is_retained_without_advancing_replayed_mastery(self) -> None:
+        item = question_item()
+        sources = [
+            comprehensive("attempt-001", "2026-09-01T23:59:00+08:00"),
+            comprehensive("attempt-002", "2026-09-02T00:01:00+08:00"),
+            comprehensive("attempt-003", "2026-09-03T00:01:00+08:00"),
+        ]
+        contexts = [context(source, item["review_item_id"]) for source in sources]
+        projected = run_replay(
+            sources,
+            contexts,
+            [item],
+            as_of="2026-09-03T00:01:00+08:00",
+        )["items"][item["review_item_id"]]
+
+        self.assertEqual(projected["mastery_state"], "learning")
+        self.assertEqual(projected["successful_review_count"], 3)
+        self.assertEqual(projected["consecutive_success_count"], 3)
+        self.assertEqual(projected["consecutive_success_day_count"], 2)
+        self.assertEqual(projected["last_review_at"], "2026-09-02T16:01:00+00:00")
+        self.assertEqual(projected["review_interval_days"], 3)
+        self.assertEqual(projected["next_due_local_date"], "2026-09-05")
+        self.assertEqual(projected["scheduling_reason"], "early_success_keeps_schedule")
+
     def test_three_spaced_successes_master_and_failure_demotes(self) -> None:
         item = question_item()
         sources = [

@@ -43,14 +43,14 @@ Golden Set Expansion  ✅
 Progress Model v0.1   ✅
 Progress Replay       ✅
 Review Model / Evidence v0.1 ✅
-Mastery / Review Policy v0.1 ✅ 规则冻结
+Mastery / Review Policy v0.1 ✅ 已实现（mastered = 达到当前 Review Policy 阈值）
 Mastery / Review      ✅ Phase 4 Gate PASS（P4.1～P4.9）
 Adaptive Planner      ⏳ Phase 5（Issue #13；P5.1–P5.3 输入 / 输出结构已冻结，P5.4+ policy / replay 待完成）
 30-Day Plan           ⏳
 Cockpit UI            ⏳
 ```
 
-当前仓库已完成 Taxonomy v0.1、Case Capability v0.1、Golden Set 数据契约和 Phase 2 扩量验证（100 道综合题、48 道案例子问题），并已建立 Progress Event v0.1、基础 ProgressState、deterministic replay，以及 Phase 4 P4.1～P4.5 契约与 replay、P4.6/P4.7 synthetic fixture matrix 与测试、P4.8 文档同步和 P4.9 Gate 验证。Phase 4 Gate 已 PASS；ProgressState 与 MasteryReviewState 都始终由 immutable facts 重建。Phase 5 P5.1–P5.3 已冻结 Planner 输入、User Configuration v0.1 与 Planner Output v0.1 contract；capacity/priority policy、Planner replay、30 天计划实例化和 UI 仍未实现，Phase 5 Gate 未通过。
+当前仓库已完成 Taxonomy v0.1、Case Capability v0.1、Golden Set 数据契约和 Phase 2 扩量验证（100 道综合题、48 道案例子问题），并已建立 Progress Event v0.1、基础 ProgressState、deterministic replay，以及 Phase 4 P4.1～P4.5 契约与 replay、P4.6/P4.7 synthetic fixture matrix 与测试、P4.8 文档同步和 P4.9 Gate 验证。Phase 4 Gate 已 PASS；ProgressState 与 MasteryReviewState 都始终由 immutable facts 重建。`mastered` 仅表示达到当前 Review Policy 的 mastery 阈值，不是对真实掌握程度的绝对断言。Phase 5 P5.1–P5.3 已冻结 Planner 输入、User Configuration v0.1 与 Planner Output v0.1 contract；capacity/priority policy、Planner replay、30 天计划实例化和 UI 仍未实现，Phase 5 Gate 未通过。
 
 ## 文档入口
 

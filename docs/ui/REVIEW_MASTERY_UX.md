@@ -74,7 +74,7 @@ P4.1 已冻结 `review_item_id` 的稳定 identity：`review/<item_kind>/<stable
 UI 必须把 **mastery status** 与 **scheduling status** 渲染为**两个独立维度**。
 
 ```text
-维度 1 · mastery status       —— 「我掌握到什么程度」
+维度 1 · mastery status       —— 「当前 Review Policy 的掌握阈值是否达到」
 维度 2 · scheduling status    —— 「我什么时候该复习」
 ```
 
@@ -101,7 +101,7 @@ mastered 与 due 可以同时成立（maintenance review）
 ```text
 MasteryBadge  —— 只表达 mastery_state
 DueBadge      —— 只表达 review_status
-两者可在同一行并列显示（如「已掌握 · 今天复习」），但不得互相覆盖、不得互相推导
+两者可在同一行并列显示（如「当前策略已达阈值 · 今天复习」），但不得互相覆盖、不得互相推导
 ```
 
 ---
@@ -114,7 +114,7 @@ DueBadge      —— 只表达 review_status
 |---|---|---|---|
 | 未开始 | mastery | `new` | 中性灰 |
 | 学习中 | mastery | `learning` | 中性 / 进行中 |
-| 已掌握 | mastery | `mastered` | healthy / completed |
+| 当前策略已达阈值 | mastery | `mastered` | healthy / completed |
 | 证据不足 | mastery（解释态） | `insufficient_evidence_count > 0` 且 `mastery_state = new` 时的 UI 解释 | **中性灰** |
 | 未安排 | scheduling | `not_scheduled` | 中性灰 |
 | 已安排 | scheduling | `scheduled` | 中性 / primary 低强度 |
@@ -158,7 +158,7 @@ Explain 层默认折叠，展开后展示可复现的原因链。
 2. engine 未输出原因 → 显示「原因不可用」，UI 不得生成推测性解释
 3. Explain 必须显示版本信息（policy + as_of + schedule_timezone），使历史结果可复现
 4. AI 只可用于表达润色，不得生成事实型结论
-5. mastery 由 item 自身的「跳天连续成功数」（阈值 3）决定，不读 topic_accuracy
+5. mastery 由 item 自身达到 due boundary 的 spaced-success 日期数（阈值 3）决定，不读 topic_accuracy；`mastered` 仅表示达到当前 Review Policy 阈值
    → UI 不得用 accuracy 高低“补充解释” mastery_reason
 ```
 
@@ -239,7 +239,7 @@ UI 不得把该组合视为错误、不得隐去其中一个 badge、不得用�
 [MasteryBadge] [DueBadge]
 ```
 
-两者独立，允许同时出现（如「已掌握 · 今天复习」）。该组合已由 P4.3 / P4.4 确认合法（mastered maintenance review），不再是待定项。
+两者独立，允许同时出现（如「当前策略已达阈值 · 今天复习」）。该组合已由 P4.3 / P4.4 确认合法（mastered maintenance review），不再是待定项。
 
 ---
 
@@ -250,7 +250,7 @@ UI 不得把该组合视为错误、不得隐去其中一个 badge、不得用�
 | 证据不足 / 未评估 | 中性灰 | `insufficient_evidence`、`empty`、Future |
 | 今天到期 | primary / attention（暖橙） | 需要今天行动 |
 | 已逾期 | risk（红） | 已超过 due |
-| 已掌握 / 状态良好 | healthy（绿） | 完成、健康 |
+| 达到当前策略阈值 / 状态良好 | healthy（绿） | 当前 policy 阈值已达到 |
 
 **冻结规则**：
 

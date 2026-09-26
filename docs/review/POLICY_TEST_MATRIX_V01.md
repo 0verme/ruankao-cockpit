@@ -11,7 +11,7 @@
 ```text
 S = success evidence        F = failure evidence        I = insufficient evidence
 D = 本地日历日期（Asia/Shanghai）
-d = consecutive_success_day_count
+d = consecutive spaced-success local dates（首次 success 计入；后续仅 due-boundary success 计入）
 ```
 
 ---
@@ -23,17 +23,18 @@ d = consecutive_success_day_count
 | M1 | 无 evidence | — | `mastery_state = new`，reason `no_evaluated_evidence` |
 | M2 | 首次成功 | `S@D1` | `learning`，reason `success_enters_learning`，`d = 1` |
 | M3 | 首次失败 | `F@D1` | `learning`，reason `failure_enters_learning`，`d = 0` |
-| M4 | 第二次跨天成功 | `S@D1, S@D2` | `learning`，reason `learning_success_below_mastery`，`d = 2` |
-| M5 | 第三次跨天成功 | `S@D1, S@D2, S@D3` | `mastered`，reason `learning_success_reaches_mastery`，`d = 3` |
-| M6 | 第四次跨天成功 | `…, S@D4` | 仍 `mastered`，reason `mastered_success_maintenance` |
+| M4 | 第二次到期成功 | `S@D1, S@D2 (occurred_at >= due)` | `learning`，reason `learning_success_below_mastery`，`d = 2` |
+| M5 | 第三次到期成功 | `S@D1, S@D2 (due), S@D5 (due)` | 达到当前 Review Policy mastery 阈值，`d = 3` |
+| M6 | 第四次到期 success | `…, S@D4 (due)` | 仍达到当前阈值，reason `mastered_success_maintenance` |
 | M7 | 同一天重复成功 | `S@D1 09:00, S@D1 21:00` | `learning`，`d = 1`，interval 不变，due 不变 |
 | M8 | `learning` 失败 | `S@D1, F@D2` | `learning`，reason `learning_failure_keeps_learning`，`d = 0` |
 | M9 | `mastered` 后失败 | `S@D1, S@D2, S@D3, F@D4` | `learning`，reason `mastered_failure_demotes_learning`，`d = 0` |
-| M10 | 累计计数不决定 mastery | `S,S,F,S,S`（跨天） | `successful_review_count = 4`，`mastery_state = learning` |
-| M11 | 同日 `S,F,S` 不跳档 | `S@D1 09:00, F@D1 10:00, S@D1 11:00` | interval `1`，`d = 1`，due `D1 + 1` |
-| M12 | 同日失败不可被同日成功撤销 | `F@D1 10:00, S@D1 11:00` | interval `1`，`mastery_state = learning` |
+| M10 | 累计计数不决定 mastery | `S,S,F,S,S`（due-boundary spaced run） | `successful_review_count = 4`，`mastery_state = learning` |
+| M11 | 同日 `S,F,S` 不跳档 | `S@D1 09:00, F@D1 10:00, S@D1 11:00` | failure schedule 保持 1 天；末次 success 是 early，`d = 0`，due `D1 + 1` |
+| M12 | 同日失败不可被同日成功撤销 | `F@D1 10:00, S@D1 11:00` | early success 不推进 `d`；interval `1`，`mastery_state = learning` |
 | M13 | 仅 evidence 不足 | `I@D1` | `new`，reason `no_evaluated_evidence`，`insufficient_evidence_count = 1`，不排期 |
 | M14 | evidence 不足不改变已有状态 | `S@D1, I@D2` | 与仅有 `S@D1` 时完全一致（除 insufficient 计数） |
+| M15 | 跨日期但早于 due 的 success | `S@D1, S@D2 (due), S@D3 (before next due)` | success / `last_review_at` 记录；`d`、interval、due 与 mastery 不推进 |
 
 ---
 
@@ -43,9 +44,9 @@ d = consecutive_success_day_count
 | --- | --- | --- | --- |
 | S1 | 新 item 不排期 | 无 evidence | `next_due_at = null`，`review_status = not_scheduled` |
 | S2 | 首次成功后 1 天 | `S@D1 10:00` | `review_interval_days = 1`，`next_due_local_date = D1+1` |
-| S3 | 第二次成功后 3 天 | `S@D1, S@D2 10:00` | `review_interval_days = 3`，`next_due_local_date = D2+3` |
-| S4 | 第三次成功后 7 天 | `S@D1, S@D2, S@D3` | `review_interval_days = 7`，`next_due_local_date = D3+7` |
-| S5 | 第四次成功后 15 天 | `S@D1, S@D2, S@D3, S@D4` | `review_interval_days = 15`，`next_due_local_date = D4+15` |
+| S3 | 第二次到期成功后 3 天 | `S@D1, S@D2 10:00`（D2 due boundary 已到） | `review_interval_days = 3`，`next_due_local_date = D2+3` |
+| S4 | 第三次到期成功后 7 天 | `S@D1, S@D2 (due), S@D5 (due)` | `review_interval_days = 7`，达到当前 mastery 阈值 |
+| S5 | 第四次到期 success 后 15 天 | `S@D1, S@D2 (due), S@D5 (due), S@D12 (due)` | `review_interval_days = 15`，`next_due_local_date = D12+15` |
 | S6 | failure 后 1 天 | `S@D1, F@D2` | `review_interval_days = 1`，`next_due_local_date = D2+1` |
 | S7 | `mastered` 后 failure 复位 | `S@D1, S@D2, S@D3, F@D4` | interval `1`，due `D4+1` |
 | S8 | `mastered` maintenance | `S@D1, S@D2, S@D3, S@D4, S@D5` | interval `15`，due `D5+15`，mastery 不变 |
@@ -53,6 +54,7 @@ d = consecutive_success_day_count
 | S10 | 同一天完成复习后不再当天到期 | `S@D1`，`as_of = D1+1 08:00` → `S@D1+1 09:00`，`as_of = D1+1 09:01` | 之前 `due`，之后 `scheduled` |
 | S11 | `due_count` 等于 item-level 投影 | 4 个 item（due / scheduled / overdue / new） | `due_count = 2 = due_today_count(1) + overdue_count(1)` |
 | S12 | `due_count` 不是事件数 | 同一天对同一 item 多次 review | `due_count` 不因事件数变化 |
+| S13 | early success 不滚动 schedule | success 时间早于 previous `next_due_at`，即使跨 local date | 保留 evidence / 成功计数，原 interval 与 due 不变 |
 
 ---
 
@@ -102,7 +104,7 @@ due_count == due_today_count + overdue_count
 due_count == count(item for item in items if review_status in {due, overdue})
 review_status == not_scheduled  =>  next_due_at is None and mastery_state == new
 mastery_state == new            =>  evaluated_evidence_count == 0
-mastery_state == mastered       =>  consecutive_success_day_count >= 3
+mastery_state == mastered       =>  consecutive_success_day_count >= 3（仅首次 / due-boundary spaced success 计数）
 insufficient evidence           =>  scheduling unchanged and mastery unchanged
 repeatability / input-order independence / as_of determinism
 ```

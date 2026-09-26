@@ -200,6 +200,8 @@
         "metric": "consecutive_success_day_count",
         "min_consecutive_successes": 3,
         "min_distinct_success_local_dates": 3,
+        "subsequent_success_requires_due_boundary": true,
+        "early_success_counts_as_evidence_only": true,
         "reset_on_failure": true,
         "same_local_date_repeat_does_not_advance": true
       },
@@ -292,7 +294,9 @@
       "status": "frozen",
       "value": {
         "applied_interval_days": "INTERVAL_LADDER_DAYS[min(d - 1, 3)]",
-        "d": "distinct local dates of successes in the current run",
+        "d": "distinct local dates of first / due-boundary successes in the current run",
+        "eligibility": "no_previous_due_or_occurred_at_gte_previous_next_due_at",
+        "early_success": "evidence_only_no_advance",
         "same_local_date": "no_advance",
         "cap_index": 3
       },

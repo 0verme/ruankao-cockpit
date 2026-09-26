@@ -52,7 +52,7 @@ Review Scheduling Projection   not_scheduled | scheduled | due | overdue
 冻结要点：
 
 - `due` / `overdue` 是时间投影，不是 mastery 状态；`mastered` 与 `due` 可以同时成立；
-- mastery 由 item 自身的“跨天连续成功数”决定（阈值 3），不读 `topic_accuracy`；
+- mastery 由 item 自身达到 due boundary 的 spaced-success 日期数决定（阈值 3）；`mastered` 表示达到当前 Review Policy 阈值，不读 `topic_accuracy`；
 - interval ladder 为 `1 / 3 / 7 / 15` 天，失败重置为 1 天，mastered 保留 15 天 maintenance；
 - 到期时间锚定本地日历日 00:00，时区必须显式传入，禁止 `datetime.now()`；
 - `as_of` 早于 evidence 时直接拒绝（`future_evidence`），不静默丢弃或泄漏未来事实；
