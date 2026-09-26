@@ -1,10 +1,10 @@
 {
   "fixture_id": "unsupported-task-type",
-  "description": "Task types without a frozen v0.1 target contract are rejected.",
+  "description": "Task types outside the minimal Today MVP scope are rejected.",
   "input_patches": [],
   "output_patches": [
     {"op": "replace", "path": ["days", "0", "tasks"], "value": [
-      {"task_id": "unsupported-task", "task_type": "new_learning", "target_kind": "review_item", "target_ref": "review/topic/DATA.DATABASE.RELATIONAL", "planned_minutes": 0, "explain_trace_id": "trace-unsupported"}
+      {"task_id": "unsupported-task", "task_type": "practice", "target_kind": "review_item", "target_ref": "review/topic/DATA.DATABASE.RELATIONAL", "planned_minutes": 0, "explain_trace_id": "trace-unsupported"}
     ]}
   ],
   "expected_error": "unsupported_task_type"

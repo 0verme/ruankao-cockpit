@@ -160,7 +160,7 @@ class PlannerOutputContractTests(unittest.TestCase):
         candidate = copy.deepcopy(self.output)
         add_task(candidate)
         candidate["days"][0]["tasks"][0]["task_type"] = "new_learning"
-        self.assert_output_category("unsupported_task_type", candidate)
+        self.assert_output_category("unsupported_target_kind", candidate)
 
         candidate = copy.deepcopy(self.output)
         add_task(candidate)
