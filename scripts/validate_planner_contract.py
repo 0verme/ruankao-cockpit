@@ -37,14 +37,15 @@ CAPABILITY_VERSION = "0.1"
 PLANNER_OUTPUT_SCHEMA_VERSION = "planner-output/v0.1"
 PLANNER_OUTPUT_HORIZON_DAYS = 7
 PLANNER_OUTPUT_HORIZON_UNIT = "local_calendar_days"
-SUPPORTED_PLAN_TASK_TYPES = {"review"}
-SUPPORTED_DEMAND_TYPES = {"review"}
-SUPPORTED_TARGET_KINDS = {"review_item"}
+SUPPORTED_PLAN_TASK_TYPES = {"review", "new_learning"}
+SUPPORTED_DEMAND_TYPES = {"review", "new_learning"}
+SUPPORTED_TARGET_KINDS = {"review_item", "topic"}
 REVIEW_ITEM_ID_PATTERN = re.compile(
     r"^review/(?:topic/[A-Za-z0-9][A-Za-z0-9._:-]*|"
     r"question/[A-Za-z0-9][A-Za-z0-9._:-]*/[A-Za-z0-9][A-Za-z0-9._:-]*|"
     r"case_capability/[A-Za-z0-9][A-Za-z0-9._:-]*)$"
 )
+TOPIC_ID_PATTERN = re.compile(r"^[A-Z][A-Z0-9_]*(?:\.[A-Z][A-Z0-9_]*){0,2}$")
 REASON_CODE_PATTERN = re.compile(r"^[a-z][a-z0-9_]*$")
 
 
@@ -193,10 +194,21 @@ def validate_contract_schemas(root: Path = ROOT) -> None:
     output_defs = output_schema.get("$defs", {})
     plan_task_definition = output_defs.get("planTask", {})
     plan_task_schema = plan_task_definition.get("properties", {})
-    _require(plan_task_schema.get("task_type", {}).get("const") == "review", "Planner output task type scope mismatch", "invalid_contract_schema")
-    _require(plan_task_schema.get("target_kind", {}).get("const") == "review_item", "Planner output target kind scope mismatch", "invalid_contract_schema")
+    _require(set(plan_task_schema.get("task_type", {}).get("enum", [])) == SUPPORTED_PLAN_TASK_TYPES, "Planner output task type scope mismatch", "invalid_contract_schema")
+    _require(set(plan_task_schema.get("target_kind", {}).get("enum", [])) == SUPPORTED_TARGET_KINDS, "Planner output target kind scope mismatch", "invalid_contract_schema")
     target_ref_schema = output_defs.get("targetRef", {})
-    _require(target_ref_schema.get("pattern") == REVIEW_ITEM_ID_PATTERN.pattern, "Planner output target identity pattern mismatch", "invalid_contract_schema")
+    target_patterns = {
+        branch.get("pattern") for branch in target_ref_schema.get("anyOf", [])
+        if isinstance(branch, Mapping)
+    }
+    _require(
+        REVIEW_ITEM_ID_PATTERN.pattern in target_patterns and TOPIC_ID_PATTERN.pattern in target_patterns,
+        "Planner output target identity patterns mismatch",
+        "invalid_contract_schema",
+    )
+    demand_schema = output_defs.get("unmetDemand", {}).get("properties", {})
+    _require(set(demand_schema.get("demand_type", {}).get("enum", [])) == SUPPORTED_DEMAND_TYPES, "Planner output demand type scope mismatch", "invalid_contract_schema")
+    _require(set(demand_schema.get("target_kind", {}).get("enum", [])) == SUPPORTED_TARGET_KINDS, "Planner output demand target kind scope mismatch", "invalid_contract_schema")
     _require(set(plan_task_definition.get("required", [])) == {
         "task_id", "task_type", "target_kind", "target_ref", "planned_minutes", "explain_trace_id",
     }, "Planner output PlanTask required fields mismatch", "invalid_contract_schema")
@@ -211,6 +223,7 @@ def validate_contract_schemas(root: Path = ROOT) -> None:
     _require(requested_minutes.get("type") == "integer" and requested_minutes.get("minimum") == 0 and requested_minutes.get("maximum") == 1440, "Planner output UnmetDemand minute range mismatch", "invalid_contract_schema")
     trace_definition = output_defs.get("explainTrace", {})
     trace_properties = trace_definition.get("properties", {})
+    _require(set(trace_properties.get("target_kind", {}).get("enum", [])) == SUPPORTED_TARGET_KINDS, "Planner output trace target kind scope mismatch", "invalid_contract_schema")
     _require(trace_properties.get("reason_code", {}).get("pattern") == REASON_CODE_PATTERN.pattern, "Planner output reason_code slot mismatch", "invalid_contract_schema")
     _require(set(trace_definition.get("required", [])) == {
         "trace_id", "subject_kind", "subject_id", "decision_category", "reason_code", "planner_policy",
@@ -663,15 +676,22 @@ def _validate_output_target(
     target_kind: Any,
     target_ref: Any,
     review_item_ids: set[str],
+    topic_ids: set[str],
     label: str,
 ) -> tuple[str, str]:
     if not isinstance(target_kind, str) or target_kind not in SUPPORTED_TARGET_KINDS:
         _fail(f"{label}.target_kind: unsupported target kind {target_kind!r}", "unsupported_target_kind")
     reference = _nonempty_string(target_ref, f"{label}.target_ref", "invalid_target_ref")
-    if REVIEW_ITEM_ID_PATTERN.fullmatch(reference) is None:
-        _fail(f"{label}.target_ref: malformed Review Item identity", "invalid_target_ref")
-    if reference not in review_item_ids:
-        _fail(f"{label}.target_ref: unknown Review Item identity {reference!r}", "unknown_review_item")
+    if target_kind == "review_item":
+        if REVIEW_ITEM_ID_PATTERN.fullmatch(reference) is None:
+            _fail(f"{label}.target_ref: malformed Review Item identity", "invalid_target_ref")
+        if reference not in review_item_ids:
+            _fail(f"{label}.target_ref: unknown Review Item identity {reference!r}", "unknown_review_item")
+    else:
+        if TOPIC_ID_PATTERN.fullmatch(reference) is None:
+            _fail(f"{label}.target_ref: malformed canonical topic ID", "invalid_target_ref")
+        if reference not in topic_ids:
+            _fail(f"{label}.target_ref: unknown topic ID {reference!r}", "unknown_topic_id")
     return str(target_kind), reference
 
 
@@ -722,6 +742,7 @@ def validate_planner_output(
 
     inputs = input_snapshot["inputs"]
     review_item_ids = set(inputs["mastery_review_state"]["items"])
+    topic_ids = set(inputs["taxonomy"]["topic_ids"])
     study_days = set(inputs["user_configuration"]["study_days"])
     task_ids: set[str] = set()
     demand_ids: set[str] = set()
@@ -765,7 +786,10 @@ def validate_planner_output(
             task_ids.add(task_id)
             if not isinstance(task.get("task_type"), str) or task["task_type"] not in SUPPORTED_PLAN_TASK_TYPES:
                 _fail(f"{label}.task_type is unsupported", "unsupported_task_type")
-            target_kind, target_ref = _validate_output_target(task.get("target_kind"), task.get("target_ref"), review_item_ids, label)
+            target_kind, target_ref = _validate_output_target(task.get("target_kind"), task.get("target_ref"), review_item_ids, topic_ids, label)
+            expected_target_kind = "review_item" if task["task_type"] == "review" else "topic"
+            if target_kind != expected_target_kind:
+                _fail(f"{label}: task_type {task['task_type']!r} requires target_kind {expected_target_kind!r}", "unsupported_target_kind")
             target_key = (target_kind, target_ref)
             if target_key in scheduled_targets:
                 _fail(f"{label}: duplicate scheduled target in one day", "invalid_plan_task")
@@ -788,7 +812,10 @@ def validate_planner_output(
             demand_ids.add(demand_id)
             if not isinstance(demand.get("demand_type"), str) or demand["demand_type"] not in SUPPORTED_DEMAND_TYPES:
                 _fail(f"{label}.demand_type is unsupported", "unsupported_demand_type")
-            target_kind, target_ref = _validate_output_target(demand.get("target_kind"), demand.get("target_ref"), review_item_ids, label)
+            target_kind, target_ref = _validate_output_target(demand.get("target_kind"), demand.get("target_ref"), review_item_ids, topic_ids, label)
+            expected_target_kind = "review_item" if demand["demand_type"] == "review" else "topic"
+            if target_kind != expected_target_kind:
+                _fail(f"{label}: demand_type {demand['demand_type']!r} requires target_kind {expected_target_kind!r}", "unsupported_target_kind")
             target_key = (target_kind, target_ref)
             if target_key in unmet_targets or target_key in scheduled_targets:
                 _fail(f"{label}: demand cannot be both scheduled and unmet for the same day", "invalid_unmet_demand")
@@ -837,7 +864,7 @@ def validate_planner_output(
             _fail(f"{label}.input_references must contain JSON Pointers", "invalid_explain_trace")
         for ref_index, pointer in enumerate(input_references):
             _resolve_input_pointer(input_snapshot, pointer, f"{label}.input_references[{ref_index}]")
-        target_kind, target_ref = _validate_output_target(trace.get("target_kind"), trace.get("target_ref"), review_item_ids, label)
+        target_kind, target_ref = _validate_output_target(trace.get("target_kind"), trace.get("target_ref"), review_item_ids, topic_ids, label)
         if not isinstance(trace.get("structured_inputs"), Mapping):
             _fail(f"{label}.structured_inputs must be an object", "invalid_explain_trace")
         if "display_message" in trace:

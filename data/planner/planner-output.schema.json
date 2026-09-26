@@ -56,7 +56,10 @@
     "targetRef": {
       "type": "string",
       "minLength": 1,
-      "pattern": "^review/(?:topic/[A-Za-z0-9][A-Za-z0-9._:-]*|question/[A-Za-z0-9][A-Za-z0-9._:-]*/[A-Za-z0-9][A-Za-z0-9._:-]*|case_capability/[A-Za-z0-9][A-Za-z0-9._:-]*)$"
+      "anyOf": [
+        {"pattern": "^review/(?:topic/[A-Za-z0-9][A-Za-z0-9._:-]*|question/[A-Za-z0-9][A-Za-z0-9._:-]*/[A-Za-z0-9][A-Za-z0-9._:-]*|case_capability/[A-Za-z0-9][A-Za-z0-9._:-]*)$"},
+        {"pattern": "^[A-Z][A-Z0-9_]*(?:\\.[A-Z][A-Z0-9_]*){0,2}$"}
+      ]
     },
     "planTask": {
       "type": "object",
@@ -71,8 +74,8 @@
       ],
       "properties": {
         "task_id": {"type": "string", "minLength": 1},
-        "task_type": {"const": "review"},
-        "target_kind": {"const": "review_item"},
+        "task_type": {"enum": ["review", "new_learning"]},
+        "target_kind": {"enum": ["review_item", "topic"]},
         "target_ref": {"$ref": "#/$defs/targetRef"},
         "planned_minutes": {"type": "integer", "minimum": 0, "maximum": 1440},
         "explain_trace_id": {"type": "string", "minLength": 1}
@@ -91,8 +94,8 @@
       ],
       "properties": {
         "demand_id": {"type": "string", "minLength": 1},
-        "demand_type": {"const": "review"},
-        "target_kind": {"const": "review_item"},
+        "demand_type": {"enum": ["review", "new_learning"]},
+        "target_kind": {"enum": ["review_item", "topic"]},
         "target_ref": {"$ref": "#/$defs/targetRef"},
         "requested_minutes": {"type": "integer", "minimum": 0, "maximum": 1440},
         "explain_trace_id": {"type": "string", "minLength": 1}
@@ -125,7 +128,7 @@
           "minItems": 1,
           "items": {"type": "string", "minLength": 1, "pattern": "^/"}
         },
-        "target_kind": {"const": "review_item"},
+        "target_kind": {"enum": ["review_item", "topic"]},
         "target_ref": {"$ref": "#/$defs/targetRef"},
         "structured_inputs": {"type": "object"},
         "display_message": {"type": "string", "minLength": 1}

@@ -33,7 +33,7 @@ PlannerOutput != Task Completion
 }
 ```
 
-- `planner_policy` 是实际生成本计划的 policy identity/version；P5.1 的 `planner-policy/input-contract/v0.1` 仍是**非执行输入契约标记**，不能被冒充为执行 policy。执行 identity 的具体规则由 P5.4 冻结。
+- `planner_policy` 是实际生成本计划的 policy identity/version；P5.1 的 `planner-policy/input-contract/v0.1` 仍是**非执行输入契约标记**。Today MVP 使用 `planner-policy/minimal-today/v0.1`；这不是完整 P5.4 policy freeze。
 - 输出固定回显输入 schema 版本、显式 `as_of`、显式 IANA timezone 和 policy identity/version。
 - **不定义 input digest/hash。** P5.1 提供确定性 `canonical_json`，但没有 digest 契约；ProgressState v0.1 也没有 event digest。输出不声称具有完整 input-content fingerprint。需要精确重建时，调用方须保留相应完整 input snapshot；不得用上述元数据假装唯一内容身份。
 - `generated_for_local_date` 是 `as_of` 在 `timezone` 下的本地日期，不是机器日期。
@@ -102,9 +102,9 @@ capacity_minutes = 0 => tasks = []
 }
 ```
 
-- **v0.1 唯一支持 task type：`review`**。MasteryReviewState 中存在正式且稳定的 review target；不从其余候选列表推导支持能力。
-- 唯一支持的 target kind 为 `review_item`；`target_ref` 是 Review Model 已冻结的 canonical `review_item_id`，不是 label / 题干 / 自由文本：`review/topic/<topic_id>`、`review/question/<source_id>/<source_question_id>` 或 `review/case_capability/<capability_id>`。引用必须在本次有效 MasteryReviewState input 中存在。
-- Topic、Case Capability ID catalog 的存在不等于存在对应的 `new_learning` / `case_practice` target 来源。P5.3 不纳入 `new_learning`、`practice`、`case_practice`；`essay`、`mock_exam` 也不支持。
+- Today MVP 支持 `review` 与 `new_learning` 两类 task。Review 消费 MasteryReviewState 中已有的稳定 Review Item；new_learning 仅引用 taxonomy 中有效的 canonical L3 topic ID。
+- `review` 的 `target_kind=review_item`，`target_ref` 使用 `review/topic/<topic_id>`、`review/question/<source_id>/<source_question_id>` 或 `review/case_capability/<capability_id>`，并必须存在于本次 MasteryReviewState input。`new_learning` 的 `target_kind=topic`，`target_ref` 为现有稳定 topic ID，不带自由文本或正文。
+- 本次 MVP 不纳入 `practice`、`case_practice`、`essay` 或 `mock_exam`；完整 Curriculum Backbone、prerequisite 与其他 new-learning 算法仍未实现。
 - `planned_minutes` 为 `0..1440` 整数分钟，是 projection，不是实际用时。
 - 不定义 `required` 或 priority 字段：前者的业务含义依赖 P5.4 selection policy；priority 的表示与语义也留给 P5.4。
 
@@ -132,7 +132,7 @@ planner policy namespace + policy version
 }
 ```
 
-此结构只表示**来源合法、但未被安排的 demand**，不表示 invalid/unsupported input。v0.1 `demand_type` 仅为 `review`，与当前支持 target 对齐。`requested_minutes` 是请求的计划分钟数（整数分钟），不是已分配或实际耗时。task 与 unmet demand 不允许在同一天重复表示同一个 review target。
+此结构只表示**来源合法、但未被安排的 demand**，不表示 invalid/unsupported input。Today MVP 的 `demand_type` 可为 `review` 或 `new_learning`，并分别对应 `review_item` 或 `topic` target。`requested_minutes` 是请求的计划分钟数（整数分钟），不是已分配或实际耗时。同一天同一 target 不允许同时作为 task 与 unmet demand。
 
 `demand_id` 的稳定身份由 policy namespace/version、本地日期、demand type、target kind/ref 组成；不得随机生成，编码算法不在 P5.3 冻结。什么 demand 会被保留、推迟或列出均由 P5.4 / P5.5 决定。
 
@@ -165,36 +165,15 @@ structured_inputs           # 结构化对象槽位
 
 - output schema / version、policy metadata、input schema / `as_of` / timezone traceability；
 - IANA timezone、本地生成日期、7 日连续日期、study-day 投影与 day offset；
-- target 格式与有效 input 的 Review Item identity；
+- target 格式与有效 input 的 Review Item identity / canonical taxonomy topic ID；
 - 唯一 task / demand / trace identity，Explain 引用、policy 与 target 一致性；
 - 分钟范围、task minute sum、capacity / remaining 守恒及零容量约束；
 - fail-closed 闭合对象，不接纳 execution 字段或未支持 task / target 类型。
 
 ## 9. 明确未冻结
 
-### UNFROZEN — P5.4
+### MVP 已实现，不等于完整 Phase 5 freeze
 
-```text
-task ordering
-priority semantics
-review debt ordering
-overdue vs due priority
-capacity allocation
-task duration policy
-required / optional selection policy
-unmet demand selection
-stable tie-break business rule
-执行 policy identity 如何进入受支持的 Planner input envelope
-```
+Today MVP 在 `engine/planner/replay.py` 采用 `overdue review → due review → new_learning`；review 固定 15 分钟，new_learning 固定 25 分钟；同类 review 以 `next_due_at → review_item_id` 排序。容量不足时保留 unmet demand。new-learning 从无 Progress attempt / supported topic review evidence 的 L3 topic 中按 canonical ID 选第一个。
 
-### UNFROZEN — P5.5
-
-```text
-new learning topic source
-curriculum backbone
-coverage-based selection
-topic progression
-prerequisite semantics
-```
-
-P5.3 冻结输出结构，不回答为什么选 A 而不选 B。`docs/30_DAY_CURRICULUM_DRAFT.md` 继续保持 DRAFT；Rolling 7-Day 不隐含 30 天实例化。P5.6 replay、P5.7 behavior fixtures、Task Execution、UI/API/DB 均不在本轮范围。
+完整 P5.4/P5.5 仍未冻结 / 实现：复杂配额、Rolling 7-Day 重排、课程 backbone、topic prerequisite 和完整 progression 都不在此 MVP。`docs/30_DAY_CURRICULUM_DRAFT.md` 继续保持 DRAFT，不能作为输入。PlannerOutput.days[0] 是今天的计划；days[1:7] 在当前实现中只是空结构占位，不代表 Rolling policy 已实现。Task Execution、UI/API/DB 也不在本轮范围。
