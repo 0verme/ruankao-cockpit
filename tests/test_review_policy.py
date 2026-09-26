@@ -140,19 +140,63 @@ class MasteryTransitionTests(unittest.TestCase):
         self.assertEqual(third["consecutive_success_day_count"], 3)
         self.assertEqual(third["next_due_local_date"], "2026-03-12")
 
+    def test_cross_date_early_success_does_not_reach_mastery(self) -> None:
+        evidence = [
+            success("e1", "2026-09-01T23:59+08:00"),
+            success("e2", "2026-09-02T00:01+08:00"),
+            success("e3", "2026-09-03T00:01+08:00"),
+        ]
+        after_due_success = state_of(evidence[:2], "2026-09-02T00:01+08:00")
+        after_early_success = state_of(evidence, "2026-09-03T00:01+08:00")
+
+        self.assertEqual(after_due_success["consecutive_success_day_count"], 2)
+        self.assertEqual(after_due_success["next_due_local_date"], "2026-09-05")
+        self.assertEqual(after_early_success["mastery_state"], "learning")
+        self.assertEqual(after_early_success["consecutive_success_day_count"], 2)
+        self.assertEqual(after_early_success["consecutive_success_count"], 3)
+        self.assertEqual(after_early_success["successful_review_count"], 3)
+        self.assertEqual(after_early_success["last_review_at"], "2026-09-02T16:01:00+00:00")
+        self.assertEqual(after_early_success["review_interval_days"], 3)
+        self.assertEqual(after_early_success["next_due_at"], after_due_success["next_due_at"])
+        self.assertEqual(after_early_success["scheduling_reason"], "early_success_keeps_schedule")
+
+    def test_early_success_keeps_due_then_due_success_advances_ladder(self) -> None:
+        evidence = [
+            success("e1", "2026-03-01T23:59+08:00"),
+            success("e2", "2026-03-02T00:01+08:00"),
+            success("e3", "2026-03-04T10:00+08:00"),
+        ]
+        early = state_of(evidence, "2026-03-04T10:00+08:00")
+        self.assertEqual(early["consecutive_success_day_count"], 2)
+        self.assertEqual(early["next_due_at"], "2026-03-04T16:00:00+00:00")
+        self.assertEqual(early["scheduling_reason"], "early_success_keeps_schedule")
+
+        on_time = state_of(
+            evidence + [success("e4", "2026-03-05T00:00+08:00")],
+            "2026-03-05T00:00+08:00",
+        )
+        self.assertEqual(on_time["mastery_state"], "mastered")
+        self.assertEqual(on_time["consecutive_success_day_count"], 3)
+        self.assertEqual(on_time["review_interval_days"], 7)
+        self.assertEqual(on_time["next_due_local_date"], "2026-03-12")
+        self.assertEqual(on_time["scheduling_reason"], "success_schedules_ladder_interval")
+
     def test_fourth_spaced_success_uses_maintenance_interval(self) -> None:
         evidence = [
             success("e1", "2026-03-01T10:00+08:00"),
             success("e2", "2026-03-02T10:00+08:00"),
             success("e3", "2026-03-05T10:00+08:00"),
-            success("e4", "2026-03-12T09:00+08:00"),
+            success("e4", "2026-03-11T10:00+08:00"),
+            success("e5", "2026-03-12T09:00+08:00"),
         ]
         state = state_of(evidence, "2026-03-12T09:00+08:00")
         self.assertEqual(state["mastery_state"], "mastered")
         self.assertEqual(state["mastery_reason"], "mastered_success_maintenance")
         self.assertEqual(state["review_interval_days"], MASTERED_MAINTENANCE_INTERVAL_DAYS)
         self.assertEqual(state["review_interval_days"], INTERVAL_LADDER_DAYS[-1])
+        self.assertEqual(state["consecutive_success_count"], 5)
         self.assertEqual(state["consecutive_success_day_count"], 4)
+        self.assertEqual(state["next_due_local_date"], "2026-03-27")
 
     def test_failure_while_learning_resets_the_run(self) -> None:
         evidence = [
@@ -225,8 +269,9 @@ class MasteryTransitionTests(unittest.TestCase):
         ]
         state = state_of(evidence, "2026-03-20T11:00+08:00")
         self.assertEqual(state["review_interval_days"], 1)
-        self.assertEqual(state["consecutive_success_day_count"], 1)
+        self.assertEqual(state["consecutive_success_day_count"], 0)
         self.assertEqual(state["next_due_local_date"], "2026-03-21")
+        self.assertEqual(state["scheduling_reason"], "early_success_keeps_schedule")
 
     def test_mastery_does_not_depend_on_cumulative_counts(self) -> None:
         evidence = [
@@ -235,13 +280,13 @@ class MasteryTransitionTests(unittest.TestCase):
             failure("e3", "2026-03-03T10:00+08:00"),
             success("e4", "2026-03-04T10:00+08:00"),
             success("e5", "2026-03-05T10:00+08:00"),
-            success("e6", "2026-03-06T10:00+08:00"),
+            success("e6", "2026-03-08T10:00+08:00"),
         ]
-        state = state_of(evidence, "2026-03-06T10:00+08:00")
+        state = state_of(evidence, "2026-03-08T10:00+08:00")
         self.assertEqual(state["successful_review_count"], 5)
         self.assertEqual(state["mastery_state"], "mastered")
         self.assertEqual(state["consecutive_success_day_count"], MASTERY_MIN_DISTINCT_SUCCESS_DAYS)
-        self.assertEqual(state["next_due_local_date"], "2026-03-13")
+        self.assertEqual(state["next_due_local_date"], "2026-03-15")
 
     def test_insufficient_evidence_is_not_a_failure(self) -> None:
         state = state_of([insufficient("e1", "2026-03-01T10:00+08:00")], "2026-03-01T10:00+08:00")
@@ -308,6 +353,22 @@ class SchedulingProjectionTests(unittest.TestCase):
         self.assertEqual(state["next_due_at"], "2026-03-01T16:00:00+00:00")
         self.assertEqual(state["review_status"], "due")
         self.assertEqual(state["review_status_reason"], "due_on_due_local_date")
+
+    def test_success_at_timezone_due_boundary_advances_spaced_progress(self) -> None:
+        evidence = [
+            success("e1", "2026-09-01T23:59-04:00"),
+            success("e2", "2026-09-02T00:00-04:00"),
+        ]
+        state = derive_item_state(
+            "ITEM.A",
+            evidence,
+            as_of=at("2026-09-02T00:00-04:00"),
+            schedule_timezone="America/New_York",
+        )
+        self.assertEqual(state["next_due_at"], "2026-09-05T04:00:00+00:00")
+        self.assertEqual(state["consecutive_success_day_count"], 2)
+        self.assertEqual(state["review_interval_days"], 3)
+        self.assertEqual(state["next_due_local_date"], "2026-09-05")
 
     def test_one_microsecond_before_due_is_scheduled(self) -> None:
         just_before = at("2026-03-02T00:00+08:00") - timedelta(microseconds=1)
@@ -625,6 +686,11 @@ class FixturePlanSymbolTests(unittest.TestCase):
         streak = self.frozen_value("MASTERY_SUCCESS_STREAK_TO_MASTERED")
         self.assertEqual(streak["min_consecutive_successes"], MASTERY_MIN_DISTINCT_SUCCESS_DAYS)
         self.assertEqual(streak["min_distinct_success_local_dates"], MASTERY_MIN_DISTINCT_SUCCESS_DAYS)
+        self.assertTrue(streak["subsequent_success_requires_due_boundary"])
+        self.assertTrue(streak["early_success_counts_as_evidence_only"])
+        advance = self.frozen_value("SCHED_SUCCESS_ADVANCE_RULE")
+        self.assertEqual(advance["eligibility"], "no_previous_due_or_occurred_at_gte_previous_next_due_at")
+        self.assertEqual(advance["early_success"], "evidence_only_no_advance")
         self.assertEqual(self.frozen_value("MASTERY_MASTERED_PERSISTENCE"), "revocable")
         self.assertEqual(self.frozen_value("MASTERY_MASTERED_FAILURE_TRANSITION"), "demote_to_learning")
         self.assertEqual(self.frozen_value("MASTERY_INSUFFICIENT_EVIDENCE_STATE")["is_failure"], False)
@@ -666,6 +732,8 @@ class DocumentationSyncTests(unittest.TestCase):
         self.assertIn(REVIEW_POLICY_VERSION, scheduling)
         self.assertIn("[1, 3, 7, 15]", scheduling)
         self.assertIn(f">= {MASTERY_MIN_DISTINCT_SUCCESS_DAYS} 个不同本地日期", mastery)
+        self.assertIn("occurred_at >= previous next_due_at", scheduling)
+        self.assertIn("early_success_keeps_schedule", scheduling)
 
     def test_every_reason_code_is_documented(self) -> None:
         corpus = "\n".join(

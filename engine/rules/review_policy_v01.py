@@ -54,17 +54,17 @@ REVIEW_POLICY_VERSION = "v0.1"
 PROJECTION_SCHEMA_VERSION = "review-policy-projection/v0.1"
 
 #: Applied review intervals in whole local calendar days.
-#: The interval applied after a successful review is `INTERVAL_LADDER_DAYS[min(d - 1, 3)]`
-#: where `d` is the number of distinct local dates in the current success run.
+#: The interval applied after a spaced success is `INTERVAL_LADDER_DAYS[min(d - 1, 3)]`,
+#: where `d` counts distinct local dates of first / due-boundary successes in the run.
 INTERVAL_LADDER_DAYS = (1, 3, 7, 15)
 MAX_LADDER_INDEX = len(INTERVAL_LADDER_DAYS) - 1
 
 #: A failure always schedules the next review one local day later.
 FAILURE_INTERVAL_DAYS = INTERVAL_LADDER_DAYS[0]
 
-#: Mastery is bound to a review item, a run of successes and distinct local
-#: dates: at least this many *different local dates* must carry a successful
-#: review inside the current (unbroken) success run.
+#: Mastery is bound to a review item and a run of spaced successes: the first
+#: success and later successes at/after the previous due instant must cover at
+#: least this many distinct local dates in the current (unbroken) success run.
 MASTERY_MIN_DISTINCT_SUCCESS_DAYS = 3
 
 #: `mastered` items keep a maintenance review at the longest interval.
@@ -90,6 +90,7 @@ SCHEDULING_REASONS = (
     "no_evidence_not_scheduled",
     "success_schedules_ladder_interval",
     "same_day_success_keeps_schedule",
+    "early_success_keeps_schedule",
     "failure_schedules_retry_interval",
 )
 
@@ -487,29 +488,45 @@ def apply_evidence(
             updated["mastery_reason"] = "learning_failure_keeps_learning"
         return updated
 
-    # success
+    # success. The due boundary is an instant (the local-day start); crossing
+    # a calendar date before that instant is still an early review.
     prior_success_date = state.get("last_success_local_date")
     same_local_date = prior_success_date == local_date
-    day_count = state["consecutive_success_day_count"] + (0 if same_local_date else 1)
+    previous_due_at = state["next_due_at"]
+    early_success = previous_due_at is not None and evidence.occurred_at < previous_due_at
+    day_count = state["consecutive_success_day_count"] + (
+        0 if early_success or same_local_date else 1
+    )
     updated["successful_review_count"] = state["successful_review_count"] + 1
     updated["consecutive_success_count"] = state["consecutive_success_count"] + 1
     updated["consecutive_success_day_count"] = day_count
     updated["last_success_local_date"] = local_date
 
-    ladder_index = min(day_count - 1, MAX_LADDER_INDEX)
-    if ladder_index < 0:  # pragma: no cover - guarded by the run invariant
-        raise ReviewPolicyError(
-            "internal invariant violated: a success cannot produce a negative ladder index",
-            "internal_invariant_violation",
+    if early_success:
+        # Keep the schedule anchored to the last spaced success/failure. The
+        # early success is retained as evidence but cannot roll the due date.
+        updated["scheduling_reason"] = (
+            "same_day_success_keeps_schedule"
+            if same_local_date
+            else "early_success_keeps_schedule"
         )
-    interval_days = INTERVAL_LADDER_DAYS[ladder_index]
-    updated["review_interval_days"] = interval_days
-    due_date = local_date + timedelta(days=interval_days)
-    updated["next_due_at"] = start_of_local_day(due_date, tz)
-    updated["next_due_local_date"] = local_date_of(updated["next_due_at"], tz)
-    updated["scheduling_reason"] = (
-        "same_day_success_keeps_schedule" if same_local_date else "success_schedules_ladder_interval"
-    )
+    else:
+        ladder_index = min(day_count - 1, MAX_LADDER_INDEX)
+        if ladder_index < 0:  # pragma: no cover - guarded by the run invariant
+            raise ReviewPolicyError(
+                "internal invariant violated: a success cannot produce a negative ladder index",
+                "internal_invariant_violation",
+            )
+        interval_days = INTERVAL_LADDER_DAYS[ladder_index]
+        updated["review_interval_days"] = interval_days
+        due_date = local_date + timedelta(days=interval_days)
+        updated["next_due_at"] = start_of_local_day(due_date, tz)
+        updated["next_due_local_date"] = local_date_of(updated["next_due_at"], tz)
+        updated["scheduling_reason"] = (
+            "same_day_success_keeps_schedule"
+            if same_local_date
+            else "success_schedules_ladder_interval"
+        )
 
     prior_mastery = state["mastery_state"]
     if prior_mastery == "mastered":

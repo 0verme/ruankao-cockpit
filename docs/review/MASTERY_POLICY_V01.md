@@ -45,7 +45,7 @@ new / learning / due / mastered
 | --- | --- | --- |
 | `new` | 是否有可评估 evidence | 否 |
 | `learning` | evidence 序列的结论（有证据但未达掌握条件） | 否 |
-| `mastered` | evidence 序列的结论（达到掌握条件） | 否 |
+| `mastered` | 达到当前 Review Policy 的 mastery 阈值（不是对真实掌握程度的绝对断言） | 否 |
 | `due` | `as_of` 是否到达 `next_due_at` | **是** |
 | `overdue` | `as_of` 的本地日期是否晚于到期本地日期 | **是** |
 
@@ -58,7 +58,7 @@ not 知识状态
 
 ### 1.2 为什么不能用单枚举表达
 
-1. **不互斥**：一个 item 可以同时是 `mastered` 且到期（已掌握但仍需维护复习）。
+1. **不互斥**：一个 item 可以同时达到当前 mastery 阈值（`mastered`）且到期，仍需维护复习。
    单枚举必须回答“`mastered + due` 是什么状态”，而这只能靠额外规则掩盖。
 2. **`overdue` 无法表达**：单枚举里没有 overdue 的位置；若把 due 拆成 due/overdue，则“到期 3 天”
    和“到期 30 天”都没有位置。
@@ -104,8 +104,8 @@ Axis 2 — Review Scheduling Projection（时间轴，由 policy + as_of 决定�
 | 状态 | 定义 | 判定依据 |
 | --- | --- | --- |
 | `new` | 该 item 没有任何可评估 evidence | `evaluated_evidence_count == 0` |
-| `learning` | 有可评估 evidence，但当前成功 run 未达到掌握条件 | `evaluated_evidence_count > 0` 且 `consecutive_success_day_count < 3` |
-| `mastered` | 当前成功 run 达到掌握条件 | `consecutive_success_day_count >= 3` |
+| `learning` | 有可评估 evidence，但当前 spaced-success run 未达到当前 policy 阈值 | `evaluated_evidence_count > 0` 且 `consecutive_success_day_count < 3` |
+| `mastered` | 当前 spaced-success run 达到当前 Review Policy 的 mastery 阈值 | `consecutive_success_day_count >= 3` |
 
 互斥性：三者由 `evaluated_evidence_count` 与 `consecutive_success_day_count` 两个派生量唯一决定，
 且 `new`（count = 0）与 `learning` / `mastered`（count > 0）互斥，`learning` 与 `mastered`
@@ -139,14 +139,14 @@ mastery 与 scheduling 都只读两个从 evidence 序列派生的量：
 
 | 派生量 | 定义 |
 | --- | --- |
-| `consecutive_success_count`（`c`） | 自最近一次 failure 以来的 success 条数（无 failure 则从序列开头算起） |
-| `consecutive_success_day_count`（`d`） | 上述 success 覆盖的**不同本地日期**数量 |
+| `consecutive_success_count`（`c`） | 自最近一次 failure 以来的 success 条数（包括 early success；无 failure 则从序列开头算起） |
+| `consecutive_success_day_count`（`d`） | 当前 run 中 spaced success 覆盖的不同本地日期数：首次 success 计入；后续仅 `occurred_at >= previous next_due_at` 的 success 计入 |
 
 性质：
 
 - `1 <= d <= c`；有 failure 后 `c = d = 0`；
-- 由于时间单调，同一 run 内的本地日期非递减，`d` 等于“首次成功 + 每次比前一条成功更晚的本地日期的成功”数量；
 - `c` 只用于解释与统计，**不参与** mastery 判定与 interval 判定；
+- early success 仍计入 `c` 和成功 evidence，但不计入 `d`；
 - `d` 同时驱动 mastery（阈值 3）与 interval ladder（见 scheduling 文档）。
 
 不使用“可变 ladder 指针”作为独立状态，是 v0.1 保持可 replay 的关键：状态越少，非法跃迁越少。
@@ -163,8 +163,10 @@ mastery 与 scheduling 都只读两个从 evidence 序列派生的量：
 | T1 | `new` | （无 evidence） | `new` | `no_evaluated_evidence` | 初始状态 |
 | T2 | `new` | `failure` | `learning` | `failure_enters_learning` | 首次失败即进入 learning，不留在 new |
 | T3 | `new` | `success` | `learning` | `success_enters_learning` | 单次成功不足以掌握 |
-| T4 | `learning` | `success`，`d < 3` | `learning` | `learning_success_below_mastery` | 继续累积跨天成功 |
-| T5 | `learning` | `success`，`d >= 3` | `mastered` | `learning_success_reaches_mastery` | 唯一升入 mastered 的路径 |
+| T4 | `learning` | due-boundary `success`，`d < 3` | `learning` | `learning_success_below_mastery` | 继续累积 spaced success |
+| T5 | `learning` | due-boundary `success`，`d >= 3` | `mastered` | `learning_success_reaches_mastery` | 唯一升入 mastered 的路径 |
+| T9 | `learning` | early `success`（`occurred_at < previous next_due_at`） | `learning` | `learning_success_below_mastery` | 保留 success evidence，不推进 mastery 阈值 |
+| T10 | `mastered` | early `success` | `mastered` | `mastered_success_maintenance` | 保留状态，不推进 ladder / 不滚动 due |
 | T6 | `learning` | `failure` | `learning` | `learning_failure_keeps_learning` | 状态不变，run 清零 |
 | T7 | `mastered` | `success` | `mastered` | `mastered_success_maintenance` | maintenance，不改变状态 |
 | T8 | `mastered` | `failure` | `learning` | `mastered_failure_demotes_learning` | **mastered 可被撤销** |
@@ -186,7 +188,8 @@ mastery 与 scheduling 都只读两个从 evidence 序列派生的量：
 
 ```text
     当前连续成功 run 中
-AND 成功发生在 >= 3 个不同本地日期
+AND spaced success 覆盖 >= 3 个不同本地日期
+AND 首次 success 之后的每次计入 success 均满足 `occurred_at >= previous next_due_at`
 AND evidence outcome 属于 policy primitive `success`
 AND 该 item 自身（不是 topic 聚合）
 AND 使用 review policy `v0.1` + mastery policy `v0.1` 的 transition 语义
@@ -197,7 +200,7 @@ AND 使用 review policy `v0.1` + mastery policy `v0.1` 的 transition 语义
 | 绑定项 | 取值 |
 | --- | --- |
 | specific review item | 是，`review_item_id` |
-| minimum evidence | 3 条 `success`，且跨越 3 个不同本地日期 |
+| minimum evidence | 3 次 spaced `success`，覆盖 3 个不同本地日期；首次 success 建立 schedule，后续 success 须达到 previous `next_due_at`（含边界） |
 | evidence kind | policy primitive `success`（原始事实到 primitive 的映射属 P4.2） |
 | policy version | `mastery-policy/spaced-consecutive/v0.1` |
 | transition semantics | `T5`，唯一升入 mastered 的 transition |
@@ -217,12 +220,13 @@ successful_review_count >= 3  ->  mastered # 禁止（累计计数）
 | --- | --- |
 | 无 evidence 时的初始状态 | `new`，且 `review_status = not_scheduled` |
 | 首次成功 | → `learning`，不是 `mastered` |
-| 连续成功 | 只有跨天成功才推进；第三次跨天成功才 → `mastered` |
+| 连续成功 | 首次 success 建立首个 due；后续只有达到 previous due boundary 的 success 才推进；达到当前 policy 阈值才 → `mastered` |
+| early success | 保留为有效 evidence 并更新成功计数 / `last_review_at`；不推进 spaced-success day count、不滚动原 due |
 | 失败 | run 清零；`mastered` → `learning`，`learning` 保持 `learning` |
 | `learning` 失败 | `learning`，reason `learning_failure_keeps_learning` |
 | `mastered` 后成功 | 保持 `mastered`，reason `mastered_success_maintenance` |
 | `mastered` 后失败 | **降级**为 `learning`，reason `mastered_failure_demotes_learning` |
-| `mastered` 是否永久 | **否**。mastered 表达“当前已证明掌握”，不是终身徽章 |
+| `mastered` 是否永久 | **否**。它只表达“达到当前 Review Policy 的 mastery 阈值”，不是对真实掌握程度的绝对断言，也不是终身徽章 |
 | `successful_review_count` 是否决定 mastery | **否**。它只用于解释/统计 |
 | 连续成功与累计成功是否不同 | **是**。只有连续 run（且跨天）决定 mastery |
 | 失败是否清零连续成功 | **是**，`c = d = 0` |
@@ -236,7 +240,7 @@ successful_review_count >= 3  ->  mastered # 禁止（累计计数）
 
 ## 7. Examples
 
-以下 trace 使用 `Asia/Shanghai`，`d` = 跨天成功数。
+以下 trace 使用 `Asia/Shanghai`，`d` = spaced-success 日期数。
 
 | 事件 | occurred_at（本地） | mastery | reason | `d` | applied interval | next due |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -244,7 +248,8 @@ successful_review_count >= 3  ->  mastered # 禁止（累计计数）
 | success | 03-01 10:00 | `learning` | `success_enters_learning` | 1 | 1 天 | 03-02 |
 | success | 03-01 21:00 | `learning` | `learning_success_below_mastery` | 1 | 1 天 | 03-02（不变） |
 | success | 03-02 10:00 | `learning` | `learning_success_below_mastery` | 2 | 3 天 | 03-05 |
-| success | 03-05 10:00 | `mastered` | `learning_success_reaches_mastery` | 3 | 7 天 | 03-12 |
+| early success | 03-03 10:00 | `learning` | `learning_success_below_mastery` | 2 | 3 天（保持） | 03-05（保持） |
+| success（到期后） | 03-05 10:00 | `mastered` | `learning_success_reaches_mastery` | 3 | 7 天 | 03-12 |
 | success | 03-12 09:00 | `mastered` | `mastered_success_maintenance` | 4 | 15 天 | 03-27 |
 | failure | 03-27 20:00 | `learning` | `mastered_failure_demotes_learning` | 0 | 1 天 | 03-28 |
 | success | 03-28 09:00 | `learning` | `learning_success_below_mastery` | 1 | 1 天 | 03-29 |

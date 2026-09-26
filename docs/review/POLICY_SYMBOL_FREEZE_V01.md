@@ -7,7 +7,7 @@
 > freeze 机制，只把 **owner 为 P4.3 / P4.4 的 20 个 symbol** 从 `status: unfrozen` 更新为
 > `status: frozen`。这是 P4.3/P4.4 的历史 freeze record；后续 P4.1/P4.2 contract 与
 > P4.5 replay 已在独立文档和 engine 中收口，fixture manifest 的剩余 symbol 后由 P4.6/P4.7
-> 冻结；当前 36 个 symbol 均为 frozen，本文件不重复回写。
+> 冻结；当前 36 个 symbol 均为 frozen。此次仅修正 spaced-success 的 due-boundary eligibility，保留字段 / policy version，不增建 schema。
 
 ## 0. Policy identity
 
@@ -27,7 +27,7 @@
 | --- | --- |
 | `MASTERY_STATE_ENUM` | `["new", "learning", "mastered"]` |
 | `MASTERY_INITIAL_STATE` | `"new"` |
-| `MASTERY_SUCCESS_STREAK_TO_MASTERED` | `{"metric": "consecutive_success_day_count", "min_consecutive_successes": 3, "min_distinct_success_local_dates": 3, "reset_on_failure": true, "same_local_date_repeat_does_not_advance": true}` |
+| `MASTERY_SUCCESS_STREAK_TO_MASTERED` | `{"metric": "consecutive_success_day_count", "min_consecutive_successes": 3, "min_distinct_success_local_dates": 3, "subsequent_success_requires_due_boundary": true, "early_success_counts_as_evidence_only": true, "reset_on_failure": true, "same_local_date_repeat_does_not_advance": true}` |
 | `MASTERY_FAILURE_TRANSITION` | `{"transition": {"new": "learning", "learning": "learning", "mastered": "learning"}, "resets_consecutive_success": true}` |
 | `MASTERY_MASTERED_PERSISTENCE` | `"revocable"` |
 | `MASTERY_MASTERED_FAILURE_TRANSITION` | `"demote_to_learning"` |
@@ -41,7 +41,7 @@
 | --- | --- |
 | `SCHED_INTERVAL_LADDER` | `[1, 3, 7, 15]` |
 | `SCHED_FIRST_DUE_RULE` | `{"no_evidence": "not_scheduled", "anchor": "first_evaluated_evidence.occurred_at", "first_interval_days": 1, "due_local_date": "local_date(anchor, tz) + interval_days"}` |
-| `SCHED_SUCCESS_ADVANCE_RULE` | `{"applied_interval_days": "INTERVAL_LADDER_DAYS[min(d - 1, 3)]", "d": "distinct local dates of successes in the current run", "same_local_date": "no_advance", "cap_index": 3}` |
+| `SCHED_SUCCESS_ADVANCE_RULE` | `{"applied_interval_days": "INTERVAL_LADDER_DAYS[min(d - 1, 3)]", "d": "distinct local dates of first / due-boundary successes in the current run", "eligibility": "no_previous_due_or_occurred_at_gte_previous_next_due_at", "early_success": "evidence_only_no_advance", "same_local_date": "no_advance", "cap_index": 3}` |
 | `SCHED_FAILURE_RESET_RULE` | `{"applied_interval_days": 1, "resets": ["consecutive_success_count", "consecutive_success_day_count"], "demotes_mastered": true}` |
 | `SCHED_MASTERED_MAINTENANCE_RULE` | `{"enabled": true, "interval_days": 15, "included_in_due_count": true, "mastery_change_on_success": "none", "mastery_change_on_failure": "demote_to_learning"}` |
 | `SCHED_OVERDUE_RULE` | `{"changes_interval": false, "changes_mastery": false, "overdue_starts": "first local midnight after next_due_local_date"}` |
@@ -121,6 +121,8 @@ fixture-plan.json policy_symbols[MASTERY_STATE_ENUM].value        == engine.rule
 fixture-plan.json policy_symbols[SCHED_INTERVAL_LADDER].value     == engine.rules.INTERVAL_LADDER_DAYS
 fixture-plan.json policy_symbols[MASTERY_SUCCESS_STREAK_TO_MASTERED].value.min_consecutive_successes
                                                                  == engine.rules.MASTERY_MIN_DISTINCT_SUCCESS_DAYS
+fixture-plan.json policy_symbols[SCHED_SUCCESS_ADVANCE_RULE].value.eligibility
+                                                                 == no_previous_due_or_occurred_at_gte_previous_next_due_at
 fixture-plan.json policy_symbols[SCHED_MASTERED_MAINTENANCE_RULE].value.interval_days
                                                                  == engine.rules.MASTERED_MAINTENANCE_INTERVAL_DAYS
 ```

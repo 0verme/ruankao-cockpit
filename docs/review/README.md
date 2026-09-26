@@ -15,7 +15,7 @@
 
 | 文档 | 内容 | 状态 |
 | --- | --- | --- |
-| [`MASTERY_POLICY_V01.md`](MASTERY_POLICY_V01.md) | Mastery State Machine v0.1：状态分层、transition table、阈值绑定、mastered 维护 | FROZEN v0.1 |
+| [`MASTERY_POLICY_V01.md`](MASTERY_POLICY_V01.md) | Mastery State Machine v0.1：状态分层、due-boundary spaced-success 阈值、mastered 维护 | FROZEN v0.1 |
 | [`REVIEW_SCHEDULING_POLICY_V01.md`](REVIEW_SCHEDULING_POLICY_V01.md) | Review Scheduling Policy v0.1：interval ladder、时间语义、failure 语义、`due_count` | FROZEN v0.1 |
 | [`POLICY_TEST_MATRIX_V01.md`](POLICY_TEST_MATRIX_V01.md) | 可转成测试的案例表（input → expected） | FROZEN v0.1 |
 | [`POLICY_SYMBOL_FREEZE_V01.md`](POLICY_SYMBOL_FREEZE_V01.md) | 对并行测试设计窗口（`test/p4-review-matrix`）的 policy symbol 与 contract gap 冻结记录 | FROZEN v0.1 |
@@ -56,6 +56,6 @@ Review Model / Evidence contract
    != Planner / 30-Day Plan / UI
 ```
 
-本目录没有引入 SM-2、FSRS、forgetting curve、adaptive planner 或 AI 判断。Review Evidence 保存 policy-independent facts；P4.5 通过 [`REVIEW_OUTCOME_ADAPTER_V01.md`](REVIEW_OUTCOME_ADAPTER_V01.md) 以明确版本化 adapter 将可确定事实接入 policy，所有 replay 接受显式 `as_of` 与 IANA timezone。案例/能力 score 在 rubric 冻结前不会被猜测为 success/failure。
+本目录中的 `mastered` 只表示达到当前 Review Policy 的 mastery 阈值；它不是对真实掌握程度的绝对断言。本目录没有引入 SM-2、FSRS、forgetting curve、adaptive planner 或 AI 判断。Review Evidence 保存 policy-independent facts；P4.5 通过 [`REVIEW_OUTCOME_ADAPTER_V01.md`](REVIEW_OUTCOME_ADAPTER_V01.md) 以明确版本化 adapter 将可确定事实接入 policy，所有 replay 接受显式 `as_of` 与 IANA timezone。案例/能力 score 在 rubric 冻结前不会被猜测为 success/failure。
 
 `progress-state/v0.1` 未被本窗口修改：Phase 4 的 mastery / review 结果是**独立派生层**，不是 ProgressState 的新字段。

@@ -33,7 +33,7 @@ next_due = last_evidence_instant + interval 天（同一时刻偏移）
 ### Option B — 日历锚定 + 派生 ladder（**选定**）
 
 ```text
-applied_interval(success) = LADDER[min(d - 1, 3)]     # d = 当前 run 的跨天成功数
+applied_interval(success) = LADDER[min(d - 1, 3)]     # d = 当前 run 的 spaced-success 日期数
 applied_interval(failure) = LADDER[0] = 1
 next_due_local_date       = local_date(evidence, tz) + applied_interval 天
 next_due_at               = start_of_local_day(next_due_local_date, tz)
@@ -48,7 +48,7 @@ next_due_at               = start_of_local_day(next_due_local_date, tz)
 
 | 维度 | Option A | Option B | 结论 |
 | --- | --- | --- | --- |
-| 解释性 | “指针现在在第几档”需要读历史猜 | “这个 run 里有几个跨天成功”可直接从 evidence 数出来 | B |
+| 解释性 | “指针现在在第几档”需要读历史猜 | “这个 run 里有几次达到 due boundary 的 spaced success”可从 evidence 重建 | B |
 | 实现复杂度 | 需要额外可变状态 + 同一天防刷逻辑 | 两个派生量；同一天重复成功天然幂等 | B |
 | failure 语义 | 指针清零，语义清楚 | run 清零 + 间隔 1 天，语义相同且副作用可见 | 平（B 更可解释） |
 | mastered maintenance | 指针顶格后无定义行为 | 顶格即 15 天 maintenance，自然衔接 | B |
@@ -78,6 +78,10 @@ evidence_ordering                   utc_instant_then_evidence_id
 future_evidence                     reject
 ```
 
+spaced-success eligibility 沿用现有 due contract：首次 success 没有 previous due，允许建立第一阶；之后仅当
+`evidence.occurred_at >= previous next_due_at`（due boundary 含等号）时才推进 `d` / ladder。Early success
+仍计为 success evidence，但保留已有 interval / due，不推进 spaced mastery。
+
 约束：
 
 - ladder 必须非递减、正整数；`failure_interval_days` 必须等于 ladder 首项；
@@ -88,25 +92,27 @@ future_evidence                     reject
 
 ## 3. Scheduling transition table
 
-设 `D = local_date(evidence.occurred_at, schedule_timezone)`，
-`d' = 应用本条 evidence 之后的跨天成功数`。
+设 `D = local_date(evidence.occurred_at, schedule_timezone)`，`previous_due_at` 为应用本条 evidence 前已有的 due instant，
+`d' = 应用本条 evidence 之后的 spaced-success 日期数`。首次 success 没有 `previous_due_at`，视为可推进；后续
+success 只有在 `evidence.occurred_at >= previous_due_at` 时才可推进。
 
-| # | Prior | Evidence | interval | next_due_local_date | Reason code |
-| --- | --- | --- | --- | --- | --- |
-| S1 | 任意 | 无 evidence | — | 不排期 | `no_evidence_not_scheduled` |
-| S2 | 任意 | `success`，跨天（`D` 是 run 内新日期） | `LADDER[min(d'-1,3)]` | `D + interval` | `success_schedules_ladder_interval` |
-| S3 | 任意 | `success`，与上一条成功同一本地日期 | 不变 | 不变（重算结果相同） | `same_day_success_keeps_schedule` |
-| S4 | 任意 | `failure` | `1` | `D + 1` | `failure_schedules_retry_interval` |
-| S5 | 任意 | `insufficient` | 不变 | 不变 | （无 scheduling transition） |
+| # | Condition | interval | next_due_local_date | Reason code |
+| --- | --- | --- | --- | --- |
+| S1 | 无 evidence | — | 不排期 | `no_evidence_not_scheduled` |
+| S2 | success 且（无 previous due 或 `occurred_at >= previous_due_at`），spaced 日期新增 | `LADDER[min(d'-1,3)]` | `D + interval` | `success_schedules_ladder_interval` |
+| S3 | success 与上一条 success 同一本地日期 | 不变 | 不变 | `same_day_success_keeps_schedule` |
+| S4 | success `occurred_at < previous_due_at`，且不是同一本地日期 | 不变 | 不变（保持原 due） | `early_success_keeps_schedule` |
+| S5 | `failure` | `1` | `D + 1` | `failure_schedules_retry_interval` |
+| S6 | `insufficient` | 不变 | 不变 | （无 scheduling transition） |
 
 时间投影（无新 evidence）：
 
 | # | Prior status | 条件 | Next status |
 | --- | --- | --- | --- |
-| P1 | `not_scheduled` | 出现在 S2 / S4 之后 | `scheduled` 或 `due` |
+| P1 | `not_scheduled` | 出现在 S2 / S5 之后 | `scheduled` 或 `due` |
 | P2 | `scheduled` | `as_of >= next_due_at` | `due` |
 | P3 | `due` | `local_date(as_of) > next_due_local_date` | `overdue` |
-| P4 | `due` / `overdue` | S2 / S4 把 `next_due_at` 推到 `as_of` 之后 | `scheduled` |
+| P4 | `due` / `overdue` | S2 / S5 把 `next_due_at` 推到 `as_of` 之后 | `scheduled` |
 | P5 | `due` / `overdue` | 时间继续流逝 | 保持；**不改变 interval、不改变 mastery** |
 
 `review_status_reason`：
@@ -124,10 +130,11 @@ overdue_since_next_local_date
 
 | 事件 | 应用的 interval（天） | 说明 |
 | --- | --- | --- |
-| 第 1 次跨天成功 | 1 | 与 Issue #4 fixture 矩阵一致：首次成功后 1 天到期 |
-| 第 2 次跨天成功 | 3 | 第二次成功后 3 天到期 |
-| 第 3 次跨天成功 | 7 | 同一天进入 `mastered` |
-| 第 4 次及以后跨天成功 | 15 | maintenance 顶格 |
+| 第 1 次 spaced success | 1 | 首次 success 无 previous due；建立 1 天 due |
+| 第 2 次 spaced success | 3 | 达到前一次 due boundary 后成功；3 天后到期 |
+| 第 3 次 spaced success | 7 | 再次达到 due boundary 后成功；达到当前 mastery 阈值 |
+| 第 4 次及以后 spaced success | 15 | maintenance 顶格 |
+| early success（跨 local date 也一样） | 不变 | 记录成功，但不推进 ladder、不滚动原 due |
 | failure | 1 | 无论此前在哪个档次 |
 | 同一天重复成功 | 不变 | 不缩短也不延长 |
 | `overdue` | 不变 | overdue 是投影，不是惩罚 |
@@ -201,10 +208,11 @@ Evidence 是否产生由 P4.1/P4.2 的显式 Review Context 与事实契约约�
 
 见第 3、4 节。要点：
 
-- success：间隔由 run 派生，到期日锚定 **evidence 的本地日期**，不是上一次 due 日期；
+- 首次 / due-boundary success：间隔由 spaced-success run 派生，到期日锚定该 success 的本地日期，不从上一次 due 日期累加；
+- early success（`occurred_at < previous next_due_at`）：仍是有效 evidence，但不推进间隔 / `d`，保持原 interval 与 due；更新成功计数和 `last_review_at`；
 - failure：间隔重置为 1 天，到期日 = `D + 1`；
-- 同一天内的重复成功不改变到期日（幂等）；
-- `overdue` 不改变下一次 interval。
+- 同一天内的重复成功不改变到期日（幂等）；不同 local date 的 early success 也不改变原 due；
+- `overdue` 本身不改变 interval，但到期后成功可以正常推进 ladder。
 
 ### 5.5 到期边界
 
@@ -237,7 +245,8 @@ evidence 排序键 = (occurred_at 转换到 UTC, evidence_id) 升序
 - 与 `progress-replay/v0.1` 的 `(UTC instant, event_id)` 规则一致；
 - 输入数组顺序不影响结果；
 - 同一时间戳的多条 evidence 按 `evidence_id` 词序应用，结果稳定；
-- 同一天多次 review 全部计入计数；对 scheduling 而言同一天重复成功是幂等的；
+- 同一天多次 review 全部计入 evidence 计数；对 scheduling 而言重复成功是幂等的；
+- 不同 local date 但发生在 `previous next_due_at` 之前的 success 同样属于 early review，不推进 spaced-success day count；
 - 重复 `evidence_id` 直接被拒绝，v0.1 不做静默去重；
 - P4.2 已冻结 deterministic `evidence_id = evidence/{source_event_id}/{review_item_id}`；因此排序键中的 ID 稳定且无需 fallback。
 
@@ -286,7 +295,7 @@ same evidence (same evidence_ids, same instants, same outcomes)
 **决定：v0.1 采用 B。**
 
 - `mastered` item 保持 `review_status ∈ {scheduled, due, overdue}`，间隔固定为 ladder 末项 15 天；
-- maintenance 成功不改变 mastery（`mastered_success_maintenance`）；
+- 达到 due boundary 后的 maintenance success 不改变 mastery（`mastered_success_maintenance`），并按 15 天滚动 due；early success 保留 evidence，但不提前滚动 maintenance due；
 - maintenance 失败降级为 `learning`，并按 failure 语义安排 1 天后复习；
 - `due_count` **包含** maintenance 到期 item（见第 8 节），否则 `due_count` 将不再等于
   item-level due 投影数量。
@@ -308,7 +317,7 @@ failure 表示“有明确事实表明这次没有答对/没有达到成功标�
 
 字段变化：
 
-| 字段 | success（跨天） | success（同一天重复） | failure | insufficient |
+| 字段 | spaced success | success（同一天 / early） | failure | insufficient |
 | --- | --- | --- | --- | --- |
 | `evaluated_evidence_count` | +1 | +1 | +1 | 不变 |
 | `successful_review_count` | +1 | +1 | 不变 | 不变 |
@@ -331,6 +340,7 @@ failure 表示“有明确事实表明这次没有答对/没有达到成功标�
 
 补充冻结规则：
 
+- early success 仍增加 `evaluated_evidence_count`、`successful_review_count`、`consecutive_success_count`，并更新 `last_review_at`；不增加 `consecutive_success_day_count`，不改变 mastery / interval / due；
 - 同一天内 “success → failure → success” 不会恢复到原 interval：失败当天的重新成功只得到 1 天间隔；
 - 同一本地日内多次成功不推进 interval，也不推进 mastery；
 - failure 之后的下一次成功按 `d = 1` 重新起算，因此间隔仍为 1 天，再下一次为 3 天。

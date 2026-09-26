@@ -98,7 +98,7 @@
 
 | UI Metric | UI Meaning | Domain Field | Domain Source | Source Category | Current Availability | Null Semantics | Explain Source | Notes / Constraints |
 |---|---|---|---|---|---|---|---|---|
-| mastery | 某 review item 的掌握状态 | `mastery_state`（枚举已冻结） | MasteryReviewState v0.1（P4.5 replay） | `phase4` | `Available`（由 replay 提供） | 无 evidence → `new`（不是 `insufficient_evidence`） | `mastery_reason` + `consecutive_success_day_count` + `policy` + `as_of` | 枚举：`new` / `learning` / `mastered`；**accuracy ≠ mastery**；mastery 由 item 自身跨天连续成功数（阈值 3）决定，不读 `topic_accuracy`；UI 不得推断 |
+| mastery | item 是否达到当前 Review Policy 的 mastery 阈值 | `mastery_state`（枚举已冻结） | MasteryReviewState v0.1（P4.5 replay） | `phase4` | `Available`（由 replay 提供） | 无 evidence → `new`（不是 `insufficient_evidence`） | `mastery_reason` + `consecutive_success_day_count` + `policy` + `as_of` | `mastered` 仅表示达到当前 policy 阈值，不是绝对掌握断言；阈值 3 只计首次 / due-boundary spaced success；**accuracy ≠ mastery**，UI 不得推断 |
 | mastery 分布 | 各状态的 item 数量 | `new_count` / `learning_count` / `mastered_count` | MasteryReviewState（P4.5 replay） | `phase4` | `Available`（由 replay 提供） | 无 item → `0`（真实事实） | 状态计数 | 用于 `OperationalStatsGrid` T8 |
 | 到期复习数 `due_count` | 截至 `as_of` 到期的 item 数量 | `due_count` | MasteryReviewState（P4.5 replay） | `phase4` | `Available`（由 replay 提供） | 无 item → `0`；无 policy → 不可用 | `policy` + `as_of` + `schedule_timezone` | **unit = review_item（不是事件数）**；已冻结不变量 `due_count == due_today_count + overdue_count`；UI 不得自行重算 |
 | 下次到期时间 | 该 item 下次到期时刻 / 本地日 | `next_due_at`（UTC instant）+ `next_due_local_date`（YYYY-MM-DD） | MasteryReviewState（P4.5 replay） | `phase4` | `Available`（由 replay 提供） | 未进入调度 → `null` | `scheduling_reason` + `review_status_reason` | 二者同时保存；canonical = instant；due 边界含，overdue 边界不含 |

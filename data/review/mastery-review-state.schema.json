@@ -294,6 +294,7 @@
             "no_evidence_not_scheduled",
             "success_schedules_ladder_interval",
             "same_day_success_keeps_schedule",
+            "early_success_keeps_schedule",
             "failure_schedules_retry_interval"
           ]
         },
