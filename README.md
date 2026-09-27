@@ -1,78 +1,129 @@
 # ruankao-cockpit
 
-> 软考高级 · 系统架构设计师 30 天自适应备考工作台
+> 一个以确定性学习事实与排程为核心的软考备考 Cockpit。当前用户入口是本地 CLI MVP，不是成熟的在线备考产品。
 
-## 项目定位
+## 当前能做什么
 
-`ruankao-cockpit` 的目标不是重新生产一套软考教材，而是把分散的公开内容组织成可追踪、可解释、可自适应的备考控制面：
-
-```text
-公开内容源
-→ 统一知识索引
-→ Immutable Learning Facts
-→ Deterministic Progress Replay
-→ Mastery / Review Policy
-→ Adaptive Plan
-→ Cockpit
-```
-
-项目优先建设内容元数据、知识归一化、学习进度与计划规则；正文内容默认通过来源引用和索引接入，而不是复制第三方资料。
-
-## 这不是
-
-- 软考资料合集
-- PDF 下载站
-- 真题镜像站
-- 范文合集
-
-## 项目要解决的问题
-
-- 内容来源分散，难以统一检索和引用
-- 不同来源的 taxonomy 不统一，题目难以稳定归因
-- 学习状态难以量化，完成不等于掌握
-- 固定计划不能根据真实表现、复习欠债和可用时间调整
-- 综合、案例、论文缺乏统一的学习控制面
-
-## 当前状态
+在项目目录中，用户可以直接初始化本地数据、查看 Today Plan，并将真实综合题作答作为 immutable fact 记录下来：
 
 ```text
-Research Audit        ✅
-Repository Bootstrap  ✅
-Taxonomy v0.1         ✅
-Golden Set Expansion  ✅
-Progress Model v0.1   ✅
-Progress Replay       ✅
-Review Model / Evidence v0.1 ✅
-Mastery / Review Policy v0.1 ✅ 已实现（mastered = 达到当前 Review Policy 阈值）
-Mastery / Review      ✅ Phase 4 Gate PASS（P4.1～P4.9）
-Adaptive Planner      ⏳ Phase 5（Issue #13；Product Validation #16 的 Today MVP 已实现 review + new_learning；Rolling / 完整 policy 待完成）
-30-Day Plan           ⏳
-Cockpit UI            ⏳
+Progress / Review facts
+→ replay
+→ Today Plan
+→ 真实 attempt
+→ Progress + Review Context + Review Item
+→ replay
+→ 后续 Today Plan
 ```
 
-当前仓库已完成 Taxonomy / Progress / Phase 4 Review replay，并有显式输入的 deterministic Today Planner MVP：消费 ProgressState 与 MasteryReviewState，使用 `PlannerOutput.days[0]` 生成 review + new_learning task、解释与 unmet demand。MVP 不重算 mastery / due，不消费 DRAFT 课程正文，不做 Rolling 7-Day 策略；完整 Phase 5 policy、30 天计划实例化、task execution 和 UI 仍未实现，Phase 5 Gate 未通过。`mastered` 仅表示达到当前 Review Policy 的 mastery 阈值，不是对真实掌握程度的绝对断言。
+计划与进度来自仓库现有生产 engine；CLI 不读取 `tests/` 或 synthetic fixture 作为用户数据。
 
-## 文档入口
+## 5 分钟开始使用
 
-- [内容源审计](docs/CONTENT_SOURCE_AUDIT.md)
-- [30 天课程草案](docs/30_DAY_CURRICULUM_DRAFT.md)
+需要 Python 3.10+，不需要安装第三方运行依赖。先在仓库根目录运行：
+
+```bash
+python3 cockpit.py init
+python3 cockpit.py today
+```
+
+### 初始化
+
+```bash
+python3 cockpit.py init
+```
+
+会创建 `.local/`。重复运行不会覆盖已有事实或配置。首次默认配置为 `Asia/Shanghai`、每天 60 分钟、周一至周日均可学习；weekday 编码遵循现有 User Configuration contract（ISO：周一=1 至周日=7）。需要调整时可编辑 `.local/config.json`，字段及版本必须符合该 contract。
+
+### 查看今天计划
+
+```bash
+python3 cockpit.py today
+```
+
+CLI 在边界读取一次当前时间，按配置 timezone 转换后传给 engine；输出会显示实际使用的 `as_of`（UTC instant）和 `timezone`。复现或测试时可显式提供带时区的时间：
+
+```bash
+python3 cockpit.py today --as-of 2026-09-27T09:00:00+08:00
+```
+
+输出包含任务类型、canonical Topic ID（以及 taxonomy 已提供的名称）、时长、逾期/到期状态和可供记录使用的 `task_id`。无任务时会说明 `Today has no scheduled tasks.`。
+
+### 记录一次真实作答
+
+先从当天输出复制 `task_id`，再准备 `attempt.json`。它必须是实际作答对应的 `progress-event/v0.1`、`comprehensive_attempt`，并至少包含真实的 `event_id`、带时区的 `occurred_at`、`question` 来源引用、与计划目标一致的 `topics` 及客观 `correct` boolean。来源引用中的 source ID、不可变 source commit、仓库相对 source path 和 question ID 必须来自用户实际使用的题目来源；不要填写猜测或虚构的 provenance。不要把题干、选项、答案或解析写进 fact。
+
+```bash
+python3 cockpit.py record \
+  --task-id <从 Today 复制的 task_id> \
+  --attempt attempt.json \
+  --review-context-event-id <稳定且唯一的 Review Context ID>
+```
+
+例如可由使用者按自己的事实 ID 命名 `context-attempt-20260927-001`；该 ID 必须符合 Review Event ID contract。CLI 不随机生成 identity，也不把任务完成、计划时长或“我学完了”推断成答对。`record --as-of <ISO8601>` 可用于确定性复现；实际作答时间应不晚于该 instant。
+
+成功后会报告新增的 Progress Event、Review Item 和 Review Context 数量。相同 event ID 再提交会明确报 duplicate，不会静默去重或覆盖。
+
+### 第二天为什么计划会变化
+
+对新学习任务记录一条 topic-matched 真实 attempt 后，现有 execution adapter 会基于这条 attempt 的来源 provenance 注册稳定的 `review/topic/<topic_id>`，并写入 `initial_learning` context。之后由现有 Review replay / Policy 决定首次到期时间；topic 不再作为 new learning，首次到期时会成为 review，planner 再选择下一个无学习证据的 Topic。
+
+可使用两个固定时间验证同一组数据：
+
+```bash
+python3 cockpit.py today --as-of 2026-09-27T09:00:00+08:00
+# 复制 [NEW] task_id，使用该 topic 准备真实 attempt.json
+python3 cockpit.py record --task-id <task_id> --attempt attempt.json \
+  --review-context-event-id context-<attempt-event-id> \
+  --as-of 2026-09-27T09:00:00+08:00
+python3 cockpit.py today --as-of 2026-09-28T09:00:00+08:00
+```
+
+同一 topic 应按现有首次复习规则进入 `[REVIEW]`，下一 Topic 成为 `[NEW]`；实际输出取决于用户已有 facts、配置及 attempt 时间。
+
+### 数据保存在哪里
+
+```text
+.local/
+├── config.json                 # User Configuration v0.1
+├── progress-events.jsonl       # append-only Progress facts
+├── review-events.jsonl         # append-only Review Context facts
+├── review-items.json           # Review Item catalog；整文件 atomic replace
+└── pending/record.json         # record 中断时用于恢复的最小 staging journal
+```
+
+`.local/` 已加入 `.gitignore`，不会作为默认仓库内容提交。Progress / Review facts 只追加完整 JSON 行；无效输入会在写入前先经过 Progress 与 Review replay 校验。Review Item catalog、初始化 JSON 与 pending journal 通过同目录临时文件和 `os.replace` 原子替换。多文件本地存储不是数据库事务，突然断电时不承诺跨文件 ACID；保留的 pending journal 会在下次 `today` 或 `record` 命令时尝试完成已预验证的 transaction。
+
+## 当前限制
+
+- 当前是本地 CLI MVP；没有 Web UI、数据库或账号系统。
+- `record` 必须由用户提供真实 attempt provenance 和显式 Review Context event ID；没有 AI 自动判题。
+- 当前完整日常执行闭环仅覆盖综合题 attempt；case / essay 尚未进入完整日常闭环。
+- Planner 目前只实现 Today；没有 Rolling 7-Day 排程。
+- `exam_date` 不参与当前排程策略。
+
+## 架构 / Contract / 历史阶段文档
+
+项目不重新发布完整软考教材。优先维护内容元数据、稳定知识索引、来源引用、immutable facts 与确定性规则；对第三方内容遵循仓库版权边界，license 不明确时不复制正文。
+
 - [当前架构方向](docs/architecture/README.md)
 - [Taxonomy 边界](taxonomy/README.md)
+- [内容源审计](docs/CONTENT_SOURCE_AUDIT.md)
+- [30 天课程草案](docs/30_DAY_CURRICULUM_DRAFT.md)
 - [Golden Set 策略](data/golden-set/README.md)
 - [Phase 2 Golden Set 扩量验证报告](docs/GOLDEN_SET_EXPANSION_VALIDATION.md)
 - [Progress Model v0.1 / Replay 边界](engine/progress/README.md)
 - [Progress Model v0.1 验证报告](docs/PROGRESS_MODEL_V01_VALIDATION.md)
-- [Phase 4 Gate 验证报告](docs/PHASE4_VALIDATION_REPORT.md)
 - [Review Model v0.1](docs/review/REVIEW_MODEL_V01.md)
 - [Review Evidence v0.1](docs/review/REVIEW_EVIDENCE_V01.md)
 - [Mastery / Review Policy 文档索引](docs/review/README.md)
 - [Progress / Adaptive Engine 边界](engine/rules/README.md)
-- [Planner 输入、用户配置与输出契约（P5.1–P5.3）](docs/planner/README.md)
+- [Planner 输入、用户配置与输出契约](docs/planner/README.md)
 - [Today Planner MVP engine](engine/planner/README.md)
+- [当前执行 adapter](engine/execution/README.md)
 - [Cockpit UI / UX Blueprint（规划，未实现）](docs/ui/README.md)
+- [项目开发边界与测试策略](AGENTS.md)
 
-## 开发边界
+## 项目状态
 
-本阶段不实现 UI、数据库或 API。当前增加的 `engine/planner/` 是标准库 Today-only deterministic replay；它复用 Planner Input / Output 与 ExplainTrace、不改 Progress / Review state，不消费 `exam_date`，也不声明完整 P5.4/P5.5 或 Rolling policy 已冻结。详细的版权、数据边界、测试优先级和领域约束见 [AGENTS.md](AGENTS.md)。
-
-Cockpit UI 目前只有**规划文档**（[`docs/ui/`](docs/ui/README.md)）：信息架构、页面地图、Domain → UI 映射、UI Read Model consumer contract、Design Direction 与组件边界已冻结为可审计文档，但仍**没有**前端工程、API、数据库或账号系统。P4.5 已解锁 Mastery / Review 的 domain consumer；Today Planner engine 已有首个可执行 MVP，前端实现仍按 [`docs/ui/README.md`](docs/ui/README.md) 的 Gate 状态表推进。
+Taxonomy / Progress / Review replay、Mastery / Review Policy、Minimal Today Planner、task execution → replay → next-day replan、new learning → initial review registration，以及本仓库的最小 CLI 入口已实现。Adaptive Planner 的完整 Phase 5 policy、Rolling 计划、30 天计划实例化和 UI 不在当前 MVP 范围内；`mastered` 只表示达到当前 Review Policy 阈值，不是对真实掌握程度的绝对断言。
