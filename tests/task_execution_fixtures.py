@@ -100,6 +100,7 @@ def build_planner_input(
     *,
     as_of: str,
     capacity: int = 60,
+    review_items: Iterable[Mapping[str, Any]] | None = None,
 ) -> dict[str, Any]:
     taxonomy = fixture["taxonomy"]
     capabilities = fixture["capabilities"]
@@ -107,7 +108,7 @@ def build_planner_input(
     mastery_state = review_replay(
         progress_events,
         review_events,
-        fixture["items"],
+        fixture["items"] if review_items is None else review_items,
         taxonomy,
         capabilities,
         as_of=as_of,

@@ -1,4 +1,4 @@
-"""Translate a scheduled task result into existing Progress / Review facts.
+"""Translate scheduled task results into Progress and Review domain inputs.
 
 A PlannerOutput remains a projection. This adapter never records completion,
 planned duration, or an inferred success; callers must supply the actual
@@ -7,10 +7,15 @@ comprehensive attempt and its explicit event identity.
 from __future__ import annotations
 
 from copy import deepcopy
-from typing import Any, Mapping
+from typing import Any, Iterable, Mapping
 
 from engine.progress.model import EVENT_SCHEMA_VERSION
-from engine.review.model import REVIEW_EVENT_SCHEMA_VERSION
+from engine.review.model import (
+    ITEM_SCHEMA_VERSION,
+    REVIEW_EVENT_SCHEMA_VERSION,
+    ReviewValidationError,
+    validate_review_items,
+)
 
 
 class TaskResultError(ValueError):
@@ -84,6 +89,52 @@ def _require_attempt(result: Any) -> tuple[Mapping[str, Any], str | None]:
     return progress_event, context_id
 
 
+def build_topic_review_item_from_attempt(
+    progress_event: Mapping[str, Any],
+    topic_id: str,
+    taxonomy: Mapping[str, Any],
+    capabilities: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Build and validate a stable topic item from a real attempt's provenance."""
+    if not isinstance(progress_event, Mapping) or progress_event.get("event_type") != "comprehensive_attempt":
+        _fail("topic Review Item requires a comprehensive_attempt", "unsupported_result_type")
+    if not isinstance(progress_event.get("topics"), list) or topic_id not in progress_event["topics"]:
+        _fail(f"attempt topics must contain {topic_id!r}", "target_mismatch")
+    if not isinstance(taxonomy, Mapping) or not isinstance(capabilities, Mapping):
+        _fail("taxonomy and capabilities documents are required", "invalid_catalog")
+
+    question = progress_event.get("question")
+    if not isinstance(question, Mapping):
+        _fail("attempt.question must contain real question provenance", "missing_source_reference")
+
+    source_reference = {
+        key: question[key]
+        for key in (
+            "source_id",
+            "source_commit",
+            "source_path",
+            "source_question_id",
+            "golden_set_record_id",
+        )
+        if key in question
+    }
+    item = {
+        "schema_version": ITEM_SCHEMA_VERSION,
+        "review_item_id": f"review/topic/{topic_id}",
+        "item_kind": "topic",
+        "canonical_ref": {
+            "topic_id": topic_id,
+            "taxonomy_version": taxonomy.get("taxonomy_version"),
+        },
+        "source_reference": source_reference,
+    }
+    try:
+        validate_review_items([item], taxonomy, capabilities)
+    except ReviewValidationError as exc:
+        _fail(str(exc), exc.category)
+    return item
+
+
 def _topic_from_review_target(target_ref: Any) -> str:
     if not isinstance(target_ref, str):
         _fail("review target_ref must be a string", "target_mismatch")
@@ -103,21 +154,17 @@ def record_task_result(
     planner_output: Mapping[str, Any],
     task_id: str,
     result: Mapping[str, Any],
+    *,
+    taxonomy: Mapping[str, Any] | None = None,
+    capabilities: Mapping[str, Any] | None = None,
+    existing_review_items: Iterable[Mapping[str, Any]] | None = None,
 ) -> dict[str, list[Mapping[str, Any]]]:
-    """Return appendable Progress / Review facts for a task in ``days[0]``.
+    """Return appendable Progress, Review Context, and new Item facts.
 
-    Supported MVP paths are ``new_learning/topic`` and ``review/topic``. Both
-    require a caller-supplied ``progress_event`` that is a real
-    ``comprehensive_attempt`` whose ``topics`` contains the planned topic.
-    Review additionally requires an explicit ``review_context_event_id``; the
-    adapter constructs a ``review_context`` tied to that exact source event and
-    instant. New-learning attempts do not auto-register Review Items: the
-    current item contract requires a genuine source reference.
-
-    The event streams are returned separately and can be appended to their
-    existing facts before the normal replay functions run. Replays remain the
-    authority for full event validation, duplicate identities, catalog
-    membership, Review outcomes, and scheduling policy.
+    A new-learning attempt requires the current taxonomy, capability catalog,
+    and Review Item catalog. The adapter validates those inputs, fails closed
+    when the stable topic item already exists, and derives its source reference
+    only from the real attempt's question provenance.
     """
     if not isinstance(planner_output, Mapping):
         _fail("planner_output must be an object", "invalid_planner_output")
@@ -133,28 +180,25 @@ def record_task_result(
         if target_kind != "topic" or not isinstance(target_ref, str) or not target_ref:
             _fail("new_learning must target a topic", "target_mismatch")
         expected_topic = target_ref
-        expects_review_context = False
+        attempt_context = "initial_learning"
+        registers_item = True
     elif task_type == "review":
         if target_kind != "review_item":
             _fail("review must target a review_item", "target_mismatch")
         expected_topic = _topic_from_review_target(target_ref)
-        expects_review_context = True
+        attempt_context = "review"
+        registers_item = False
     else:
         _fail(f"task type {task_type!r} is not supported for execution", "unsupported_execution_target")
 
     progress_event, context_id = _require_attempt(result)
-    if result.keys() != ({"progress_event", "review_context_event_id"} if expects_review_context else {"progress_event"}):
+    if result.keys() != {"progress_event", "review_context_event_id"}:
         _fail(
-            "result fields must match the supported execution path exactly",
+            "result fields must include only progress_event and review_context_event_id",
             "unsupported_result_type",
         )
-    if expects_review_context and context_id is None:
-        _fail("review execution requires an explicit review_context_event_id", "invalid_review_event")
-    if not expects_review_context and context_id is not None:
-        _fail(
-            "new_learning does not create Review Context without a registered Review Item",
-            "unsupported_result_type",
-        )
+    if context_id is None:
+        _fail("execution requires an explicit review_context_event_id", "invalid_review_event")
 
     if not isinstance(progress_event.get("topics"), list) or expected_topic not in progress_event["topics"]:
         _fail(
@@ -164,23 +208,50 @@ def record_task_result(
 
     event = deepcopy(dict(progress_event))
     review_contexts: list[Mapping[str, Any]] = []
-    if expects_review_context:
-        review_contexts.append({
-            "schema_version": REVIEW_EVENT_SCHEMA_VERSION,
-            "event_id": context_id,
-            "event_type": "review_context",
-            "source_event_id": event["event_id"],
-            "review_item_id": target_ref,
-            "attempt_context": "review",
-            "occurred_at": event["occurred_at"],
-        })
+    review_items: list[Mapping[str, Any]] = []
+    if registers_item:
+        if taxonomy is None or capabilities is None or existing_review_items is None:
+            _fail(
+                "new_learning requires taxonomy, capabilities, and existing_review_items",
+                "invalid_catalog",
+            )
+        try:
+            existing_catalog = validate_review_items(existing_review_items, taxonomy, capabilities)
+        except ReviewValidationError as exc:
+            _fail(str(exc), exc.category)
+        review_item_id = f"review/topic/{expected_topic}"
+        if existing_catalog.get(review_item_id) is not None:
+            _fail(
+                f"new_learning cannot register existing review item {review_item_id!r}",
+                "duplicate_review_item",
+            )
+        review_items.append(
+            build_topic_review_item_from_attempt(event, expected_topic, taxonomy, capabilities)
+        )
+        context_item_id = review_item_id
+    else:
+        context_item_id = target_ref
 
-    # Force known schema version to remain explicit; full correctness and
-    # catalog validation still belong to the existing Progress replay.
+    review_contexts.append({
+        "schema_version": REVIEW_EVENT_SCHEMA_VERSION,
+        "event_id": context_id,
+        "event_type": "review_context",
+        "source_event_id": event["event_id"],
+        "review_item_id": context_item_id,
+        "attempt_context": attempt_context,
+        "occurred_at": event["occurred_at"],
+    })
+
+    # Keep the Progress schema version explicit; full fact validation remains
+    # owned by Progress replay and Review validation/replay.
     if event.get("schema_version") != EVENT_SCHEMA_VERSION:
         _fail(
             f"progress_event.schema_version must be {EVENT_SCHEMA_VERSION!r}",
             "invalid_progress_event",
         )
 
-    return {"progress_events": [event], "review_events": review_contexts}
+    return {
+        "progress_events": [event],
+        "review_events": review_contexts,
+        "review_items": review_items,
+    }
