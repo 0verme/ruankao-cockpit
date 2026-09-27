@@ -1,3 +1,6 @@
+# Local user study data
+.local/
+
 # Local research evidence
 research/
 *_base/
