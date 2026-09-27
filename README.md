@@ -1,6 +1,6 @@
 # ruankao-cockpit
 
-> 一个以确定性学习事实与排程为核心的软考备考 Cockpit。当前用户入口是本地 CLI MVP，不是成熟的在线备考产品。
+> ruankao-cockpit 是个人软考备考工作台（Control Plane），不是课程、题库或学习内容平台。当前可用入口是本地 CLI MVP。
 
 ## 当前能做什么
 
@@ -17,6 +17,13 @@ Progress / Review facts
 ```
 
 计划与进度来自仓库现有生产 engine；CLI 不读取 `tests/` 或 synthetic fixture 作为用户数据。
+
+## 产品边界与当前路线
+
+- 工程闭环已具备：`init → today → record → replay → next-day today`（PR #26 merged）。
+- 当前产品验证仍未完成：Issue #16 保持 OPEN，下一步是用 CLI 做真实 dogfood、记录明确摩擦；工程 PASS 不等于产品验证 PASS。
+- 未来 UI 的 MVP 目标是一个 Single Dashboard（Today / Review / Progress 信息区），且只有真实使用证明需要时才评估；不以独立页面清单作为目标。
+- Rolling 7-Day、完整 Curriculum Backbone、30-Day Plan 与长期阶段规划已由 Issue #27 deferred，不是默认下一阶段。
 
 ## 5 分钟开始使用
 
@@ -99,7 +106,7 @@ python3 cockpit.py today --as-of 2026-09-28T09:00:00+08:00
 - 当前是本地 CLI MVP；没有 Web UI、数据库或账号系统。
 - `record` 必须由用户提供真实 attempt provenance 和显式 Review Context event ID；没有 AI 自动判题。
 - 当前完整日常执行闭环仅覆盖综合题 attempt；case / essay 尚未进入完整日常闭环。
-- Planner 目前只实现 Today；没有 Rolling 7-Day 排程。
+- Planner 目前只实现 Today；Rolling 7-Day 排程已由 Issue #27 deferred，不是当前 MVP blocker。
 - `exam_date` 不参与当前排程策略。
 
 ## 架构 / Contract / 历史阶段文档
@@ -109,7 +116,7 @@ python3 cockpit.py today --as-of 2026-09-28T09:00:00+08:00
 - [当前架构方向](docs/architecture/README.md)
 - [Taxonomy 边界](taxonomy/README.md)
 - [内容源审计](docs/CONTENT_SOURCE_AUDIT.md)
-- [30 天课程草案](docs/30_DAY_CURRICULUM_DRAFT.md)
+- [30 天课程草案（历史 Draft；Deferred，不是当前 roadmap）](docs/30_DAY_CURRICULUM_DRAFT.md)
 - [Golden Set 策略](data/golden-set/README.md)
 - [Phase 2 Golden Set 扩量验证报告](docs/GOLDEN_SET_EXPANSION_VALIDATION.md)
 - [Progress Model v0.1 / Replay 边界](engine/progress/README.md)
@@ -121,9 +128,9 @@ python3 cockpit.py today --as-of 2026-09-28T09:00:00+08:00
 - [Planner 输入、用户配置与输出契约](docs/planner/README.md)
 - [Today Planner MVP engine](engine/planner/README.md)
 - [当前执行 adapter](engine/execution/README.md)
-- [Cockpit UI / UX Blueprint（规划，未实现）](docs/ui/README.md)
+- [Cockpit UI / UX Blueprint（历史设计参考，非 roadmap / 未实现）](docs/ui/README.md)
 - [项目开发边界与测试策略](AGENTS.md)
 
 ## 项目状态
 
-Taxonomy / Progress / Review replay、Mastery / Review Policy、Minimal Today Planner、task execution → replay → next-day replan、new learning → initial review registration，以及本仓库的最小 CLI 入口已实现。Adaptive Planner 的完整 Phase 5 policy、Rolling 计划、30 天计划实例化和 UI 不在当前 MVP 范围内；`mastered` 只表示达到当前 Review Policy 阈值，不是对真实掌握程度的绝对断言。
+Taxonomy / Progress / Review replay、Mastery / Review Policy、Today-only Planner、task execution → replay → next-day replan、new learning → initial review registration，以及最小 CLI 工程闭环已实现。现在的路线是 Issue #16 真实 dogfood / 产品验证；只有真实摩擦才决定下一实现 Slice。完整 Phase 5 policy、Rolling 计划、Curriculum Backbone、30 天计划实例化均由 Issue #27 deferred；UI 不自动开工，若有证据再评估 Single Dashboard。`mastered` 只表示达到当前 Review Policy 阈值，不是对真实掌握程度的绝对断言。

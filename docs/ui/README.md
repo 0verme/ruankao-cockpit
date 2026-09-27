@@ -1,35 +1,34 @@
 # Cockpit UI / UX Blueprint — 文档入口
 
-> **状态**：PLANNING CONTRACT（已冻结的规划文档，**不含任何前端实现**）
-> **上游 Epic**：Issue #5 · UI / UX Blueprint v0.1
-> **覆盖范围**：UI.1 ～ UI.8
-> **未覆盖范围**：UI.9 Wireframe / synthetic prototype、UI.10 Implementation readiness audit
+## Product Boundary Override / 2026-09-27
+
+Issue #27 是当前产品边界最高依据。本目录与 Issue #5 旧 UI Blueprint 仅为 **historical / design reference inventory**，不是 MVP implementation checklist。当前 UI 目标只有一个 Single Dashboard（Today / Review / Progress 信息区）；独立路由、多页面导航、PlanTimeline、PlanModeSwitcher、完整 Read Model 家族与大规模组件体系均 deferred。只有 #16 dogfood 产生真实摩擦后才评估最小 UI Slice。
+
+保留真实 domain → UI truthfulness、`null` / `insufficient_evidence`、Topic / Capability 隔离、Explain、responsive 与基本 accessibility。
+
+> **状态**：Historical / design reference inventory（不含前端实现；不是当前执行计划）
+> **上游 Epic**：Issue #5 · UI / UX Blueprint v0.1（受 Issue #27 override）
+> **覆盖范围**：旧 UI.1 ～ UI.8 参考材料
 > **Phase 编号**：本目录不占用、不分配任何 Phase 编号
 
 ---
 
-## 1. 当前阶段
+## 1. 当前产品状态（非功能路线图）
 
 ```text
-Research Audit            ✅
-Repository Bootstrap      ✅
-Taxonomy v0.1             ✅
-Golden Set Expansion      ✅
-Progress Model v0.1       ✅
-Deterministic Replay      ✅
-Mastery / Review          ✅  Phase 4 Gate PASS（P4.1～P4.9）；UI / Read Model 实现未开始
-Adaptive Planner          ⏳  未冻结
-30-Day Plan               ⏳  docs/30_DAY_CURRICULUM_DRAFT.md 仍是 DRAFT
-Cockpit UI                ⏳  本目录只冻结规划，不实现
+Today-only Planner + local CLI engineering loop  ✅
+真实产品验证 / Dogfood（Issue #16）             ⏳ 当前优先
+Rolling 7-Day / Curriculum Backbone / 30-Day     DEFERRED by Issue #27
+Web UI                                          未实现；不自动开工
 ```
 
-本目录是**规划层**产物。它使 Cockpit 的信息架构、页面地图、数据消费契约和实现 Gate 可审计、可版本控制，但**不产生任何可运行代码**。
+本目录保留旧信息架构、页面地图、数据消费语义与设计护栏供查阅；它不产生可运行代码，也不要求按旧页面、Read Model 或 Gate 清单继续扩张。
 
 ---
 
 ## 2. Issue #5 的定位
 
-Issue #5 是「前端开发之前的总控 Epic」，用于回答两个不可逆风险：
+Issue #5 当前仅作为 **design/reference inventory** 保留，不是前端开发 Epic 或实现排期。真实产品优先级由 Issue #27 控制；未来是否需要 UI 由 #16 的 dogfood evidence 决定。旧 blueprint 中的事实正确性护栏仍可参考，用于阻断两个不可逆风险：
 
 ```text
 风险 A：UI 自己推算 mastery / review_due / plan completion
@@ -52,19 +51,12 @@ Gate 定义沿用 Issue #5。当前真实状态如下：
 | **Gate 0** | 无领域依赖的规划 / 静态原型 | 🟡 部分允许 | 本目录（IA / Page Map / token / component 方向）已完成；wireframe 与 synthetic prototype（UI.9）**未开始** |
 | **Gate A** | Progress Contract 稳定 | ✅ PASS | `progress-event/v0.1` + `progress-state/v0.1` + `progress-replay/v0.1` 已在 main 冻结并验证 |
 | **Gate B** | Mastery / Review v0.1 Gate PASS | ✅ PASS | Phase 4 四项 Gate 已由 fixtures、tests 与正式报告验证；`engine.review.replay.replay(...)` 输出 `MasteryReviewState v0.1`。Review Queue 等 consumer 的 UI / Read Model 代码仍未实现 |
-| **Gate C** | Planner MVP Contract 冻结 | ❌ 未冻结 | Today Card / PlanTimeline / PlanModeSwitcher 的输入契约不存在 |
-| **Gate D** | Cockpit Read Model 冻结 | 🟡 本轮定义 consumer contract | 见 [`READ_MODEL_CONTRACT.md`](READ_MODEL_CONTRACT.md)；**契约定义 ≠ 实现**。Phase 4 domain fields 已 Available；整体 Read Model 仍受 Planner / Future fields 阻塞 |
+| **Gate C** | 旧 Planner / horizon consumer Gate | ⚪ **superseded / deferred by #27，非 MVP blocker** | Today-only Planner / CLI 已存在；Rolling、Backbone、PlanTimeline / PlanModeSwitcher 不要求实现 |
+| **Gate D** | 完整 Cockpit Read Model | ⚪ **非当前实现 Gate** | 不建设完整 Read Model 家族；若 dogfood 后确有 UI Slice，再定义其最小真实 domain mapping |
 
-结论：
+旧 Gate A / B 可作为 domain truthfulness 参考；Gate C 的 Rolling / Backbone 要求已由 #27 superseded / deferred，Gate D 的完整 Read Model 也不是 MVP 前置条件。当前没有 Web UI 实现计划：先完成 #16 真实 dogfood，再根据明确摩擦决定是否需要 Single Dashboard Slice。
 
-```text
-Gate A 解锁 Progress Summary / Coverage / Error 的 domain consumer
-Gate B PASS，解锁 Review Queue / DueBadge / MasteryBadge / Review Explain 的 domain consumer
-Gate C 尚未通过，Today / Plan 仍必须显示明确空态
-Gate D 尚未完成 → 正式前端实现仍未就绪
-```
-
-Gate B PASS 不代表 Cockpit UI / Read Model 已实现，也不解锁 Planner-bound 的 Today / Plan 功能。Phase 4 事实与证据见 [`docs/PHASE4_VALIDATION_REPORT.md`](../PHASE4_VALIDATION_REPORT.md)。
+Gate B PASS 只说明 Review domain output 可用，不代表 UI 已实现。Phase 4 事实与证据见 [`docs/PHASE4_VALIDATION_REPORT.md`](../PHASE4_VALIDATION_REPORT.md)。
 
 **Gate 状态以 `main` 为准**：只有合并进 `main` 的契约才能进入 Gate 判定。Phase 4 replay + fixtures + tests + P4.9 report 共同验证 Gate B 四问；合并不等于前端 UI 已实现。
 

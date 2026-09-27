@@ -21,14 +21,16 @@ Review Item / Evidence v0.1  ✅
    ↓
 Mastery / Review             ✅ Phase 4 Gate PASS（P4.1～P4.9）
    ↓
-Adaptive Planner             ⏳ Phase 5（Issue #13；contract / Gate 待完成）
+Today-only Planner + local CLI ✅（PR #26）
    ↓
-30-Day Plan                  ⏳
+Product Validation / Dogfood #16 ⏳
    ↓
-Cockpit UI                   ⏳
+Single Dashboard（仅在真实摩擦证明需要后评估；不是当前实现目标）
 ```
 
-当前仓库的依赖关系是：先保留来源与版权边界，再稳定元数据和归一化模型；学习事实只能以 append-only event 保存；ProgressState 是由事件和版本化 replay rule 计算出的结果，而不是人工维护的事实源。
+Rolling 7-Day、完整 Curriculum Backbone、30-Day Plan 实例化与长期阶段规划已由 Issue #27 **DEFERRED**，不属于默认下一阶段。当前优先真实个人使用与产品验证；不因领域依赖顺序或已存在的 contract 自动启动 Planner 扩展或 UI。
+
+底层依赖仍要求保留来源与版权边界、稳定元数据与归一化模型；学习事实只能以 append-only event 保存；ProgressState 是由事件和版本化 replay rule 计算出的结果，而不是人工维护的事实源。
 
 ## 当前阶段
 
@@ -65,7 +67,7 @@ Axis 2  Review Scheduling Projection   not_scheduled / scheduled / due / overdue
 
 完整规则见 [`docs/review/README.md`](../review/README.md)。
 
-Phase 4 P4.1～P4.9 已完成并通过 Gate；36 个冻结的 synthetic replay fixtures、validator、边界测试与正式 validation report 见 [`docs/PHASE4_VALIDATION_REPORT.md`](../PHASE4_VALIDATION_REPORT.md)。Phase 5（Issue #13）的输入 / 输出 contract 继续作为护栏；Product Validation Slice #16 已实现 Today-only MVP（review + new_learning），但不代表完整 P5.4/P5.5、Rolling 7-Day 或 Phase 5 Gate 完成。30-Day Plan 实例化、task execution、数据库、API 与 UI 仍未实现。MVP 规则见 [`engine/planner/README.md`](../../engine/planner/README.md)，contract 见 [`docs/planner/README.md`](../planner/README.md)。
+Phase 4 P4.1～P4.9 已完成并通过 Gate；36 个冻结的 synthetic replay fixtures、validator、边界测试与正式 validation report 见 [`docs/PHASE4_VALIDATION_REPORT.md`](../PHASE4_VALIDATION_REPORT.md)。已有 Planner input / output contract 继续作为护栏；Today-only Planner、真实 attempt execution → replay → next-day replan 与 CLI 工程闭环已具备（#25 CLOSED、PR #26 merged）。这不代表真实日常使用已经验证：当前锚点是 #16 dogfood。完整 P5.4–P5.10 不要求机械推进；Rolling 7-Day 与 Curriculum / 30-Day 路线已由 #27 deferred。Single Dashboard 仅在真实摩擦支持时再评估。MVP 规则见 [`engine/planner/README.md`](../../engine/planner/README.md)，contract 见 [`docs/planner/README.md`](../planner/README.md)。
 
 `progress-state/v0.1` 的字段与语义不因 Phase 4 改变：mastery / review 是**独立派生层**，不是 ProgressState 的新字段。
 
@@ -114,7 +116,8 @@ Phase 4 当前已冻结 P4.1/P4.2 的 Review Model / Evidence、P4.3/P4.4 的 Ma
 已实现：`MasteryReviewState v0.1` replay 与显式 `as_of` / timezone API（P4.5）
 已完成：fixture expected 值与 matrix validation（P4.6 / P4.7）
         Documentation sync / validation report（P4.8 / P4.9，Phase 4 Gate PASS）
-未实现：Adaptive Planner
+已实现：Today-only Planner / CLI engineering loop（见 `engine/planner/`、`cockpit.py`）
+未实现：完整 Adaptive Planner policy / Rolling 7-Day / Curriculum integration（按 #27 deferred）
 ```
 
 因此：

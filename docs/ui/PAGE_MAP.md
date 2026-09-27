@@ -1,34 +1,38 @@
 # Cockpit Page Map v0.1
 
-> **状态**：PLANNING CONTRACT（Issue #5 · UI.3）
-> **边界**：本文件冻结路由矩阵、导航结构与每个路由的 user job / data dependency / implementation gate；**不实现任何前端路由**。
+## Product Boundary Override / 2026-09-27
+
+Issue #27 是当前产品边界最高依据。本文件是 historical design/reference inventory，不是 MVP route checklist。MVP 目标为单一 `/` Dashboard，Today / Review / Progress 是信息区，不是独立页面。旧路由、导航、页面与 Gate 清单不得作为实现要求；真实 UI Slice 只能由 #16 dogfood 摩擦触发。
+
+> **状态**：Historical / design reference inventory（Issue #5 · UI.3）
+> **边界**：保留旧路由语义参考，不冻结当前实现路线，也不实现任何前端路由。
 
 ---
 
 ## 1. 路由矩阵
 
-状态图例：
+以下是历史路由草图的状态说明；当前只有 `/` Single Dashboard 是候选 MVP 表面。Today / Review / Progress 必须先理解为 Dashboard 信息区。
 
 ```text
-MVP         第一版 Cockpit 必须存在的路由
-Later       需要额外数据契约或录入流程，先以入口 + 摘要存在
-Future      无任何 contract，只规划不实现
-Not Needed  v0.1 明确不需要的页面
+MVP         仅指 Single Dashboard（`/`），不是多路由清单
+Deferred    独立页面不属于当前 MVP
+Future      无必要证据或 domain contract 时不实现
+Not Needed  当前明确不需要
 ```
 
 | 路由 | 页面 | 状态 | user job | data dependency | implementation gate |
 |---|---|---|---|---|---|
-| `/` | Cockpit Dashboard | **MVP** | 一眼知道整体状态、今天做什么、哪些要复习 | `progress-state/v0.1` + User Config | Gate A ✅；Today 区域需 Gate C |
-| `/today` | 今日学习 | **MVP** | 开始今天的任务并记录结果 | Planner 输出 + `MasteryReviewState v0.1` review output | Gate C ❌（Planner 未冻结）；Gate B ✅ PASS（Review domain Available） |
-| `/review` | 复习队列 | **MVP** | 清掉今天到期的复习 | `MasteryReviewState v0.1`（Issue #4） | Gate B ✅ PASS；UI / Read Model 未实现 |
-| `/progress` | 学习进度 / 掌握度 | **MVP** | 解释 accuracy / coverage / error / mastery | `progress-state/v0.1` + `MasteryReviewState v0.1` | Gate A ✅ + Gate B ✅ PASS；UI / Read Model 未实现 |
-| `/settings` | 配置（考试 / 时间 / 时区） | **MVP（最小）** | 设定考试日期、时区、可用时间、目标 | User Configuration | Gate 0（无账号体系） |
-| `/plan` | 学习计划 | **Later** | 看清 30 天结构与可调整的近期安排 | Planner 输出 | Gate C |
-| `/comprehensive` | 综合知识 | **Later** | 练综合题并查看 topic 级表现 | 题源接入 + 作答交互 + `progress-state/v0.1` | Gate A ✅；题源接入未就绪 |
-| `/case` | 案例分析 | **Later** | 练案例并按 capability 记录证据 | capability-level 证据录入流程 + `progress-state/v0.1` | Gate A ✅；录入流程未就绪 |
-| `/essay` | 论文 | **Future** | 论文准备到哪一步 | essay contract | 未解锁（独立 Future） |
-| `/resources` | 资源索引 | **Later** | 查看内容来源与引用 | source catalog + 版权边界确认 | 未解锁 |
-| `/explain/:kind/:id` | 解释详情（可选深链） | **Later** | 追一条状态 / 任务的原因链 | 对应 read model 的 explain 字段 | 可先以 `ExplainPanel` 内联实现 |
+| `/` | Cockpit Dashboard | **Single Dashboard MVP target** | Today / Review / Progress 信息区 | 只消费真实 domain output 与显式 user config | 实现不在当前范围；先由 #16 dogfood 判断是否需要 |
+| `/today` | 今日学习 | **Deferred：不是独立 MVP 路由** | Dashboard Today 信息区参考 | Today-only Planner output | 不创建独立路由；未来 UI 需 dogfood evidence |
+| `/review` | 复习队列 | **Deferred：不是独立 MVP 路由** | Dashboard Review 信息区参考 | `MasteryReviewState v0.1` | 不创建独立路由；保持真实 domain mapping |
+| `/progress` | 学习进度 / 掌握度 | **Deferred：不是独立 MVP 路由** | Dashboard Progress 信息区参考 | `progress-state/v0.1` + `MasteryReviewState v0.1` | 不创建独立路由；保持真实 domain mapping |
+| `/settings` | 配置（考试 / 时间 / 时区） | **非 MVP 独立路由** | 仅在真实摩擦证明需要时评估配置入口 | User Configuration | 不预设独立设置页面 |
+| `/plan` | 学习计划 | **Deferred** | 不属于 Single Dashboard MVP；不实现课程计划页 | Today-only Planner output（Rolling / Backbone deferred） | 无当前实现 Gate |
+| `/comprehensive` | 综合知识 | **Remove from MVP** | 不建设站内练题 / 学习平台页面 | 外部学习资源引用 | 不创建独立路由 |
+| `/case` | 案例分析 | **Remove from MVP** | 不建设独立案例课程 / 练习页面 | 外部学习资源引用 | 不创建独立路由 |
+| `/essay` | 论文 | **Remove from MVP** | 不建设论文工作流 | 无 MVP 依赖 | 不创建独立路由 |
+| `/resources` | 资源索引 | **Deferred：不建独立资源页** | Dashboard 可按需提供外部资源链接 | 外部资源引用 | 不托管或复制正文 |
+| `/explain/:kind/:id` | 解释详情（可选深链） | **Deferred：独立路由** | 保留 lightweight inline Explain | 真实 domain Explain source | 不建 Explain 页面 |
 | `/assessment` | 模拟考试 | **Not Needed（v0.1）** | — | assessment contract | assessment contract 未冻结 |
 
 ---
@@ -42,9 +46,9 @@ Not Needed  v0.1 明确不需要的页面
 | user job | 打开后立刻知道：整体怎么样、今天做什么、哪些要复习、离目标多远 |
 | 状态 | **MVP** |
 | data dependency | `progress-state/v0.1`（Gate A ✅）、User Configuration、Planner（Today 区域）、`MasteryReviewState v0.1`（Review 区域） |
-| implementation gate | 综合 / 案例 / 统计 / 倒计时区域：Gate A；Today 区域：Gate C；Review domain：Gate B ✅ PASS（UI / Read Model 未实现） |
+| implementation gate | 旧 Gate A / B 仅说明 domain availability；Gate C 不再是 Dashboard MVP blocker。任何 UI Slice 先等待 #16 的真实摩擦证据 |
 | 卡片组成 | `OverallProgressCard`、`TodayFocusCard`、`OperationalStatsGrid`、`ExamCountdown`、`StudyCalendar`、`SubjectStatusGrid` |
-| 未实现时的行为 | Today 区域显示 `EmptyState`「Planner contract 尚未冻结」；Review domain 已可用，正式 read model 未接入时显示实现层 unavailable |
+| 未实现时的行为 | 当前不开发 UI；若未来因真实摩擦实现，只显示有 domain source 的字段，并如实表达 unavailable / insufficient evidence |
 
 **冻结约束**：Dashboard 不得因为依赖缺失而渲染伪造数据。允许「少卡片」，不允许「假卡片」。
 
@@ -55,14 +59,14 @@ Not Needed  v0.1 明确不需要的页面
 | 项 | 内容 |
 |---|---|
 | user job | 今天做什么、开始做、做完记录 |
-| 状态 | **MVP**（Today-first 核心闭环入口） |
+| 状态 | **Deferred standalone route**；Today 是 Dashboard 信息区 |
 | data dependency | Planner 输出（tasks / theme / capacity）+ `MasteryReviewState v0.1` review output（due） |
-| implementation gate | **Gate C**（Planner）+ Gate B domain replay ✅（UI/read model 仍待实现） |
+| implementation gate | **非当前实现 Slice**；如 dogfood 证明需要 UI，使用现有 Today-only Planner 与 Review replay，不要求 Rolling / Backbone Gate |
 | 核心流程 | 见第 5 节 Flow A |
-| 未冻结时的行为 | `EmptyState`：「Planner contract 尚未冻结」；不渲染任务列表，不渲染伪造 CTA 目标 |
+| 当前状态 | 不实现独立 Today 页面；未来若 Dashboard Slice 经 dogfood 证实必要，只消费现有 Today-only output，不伪造任务或 CTA 目标 |
 | Explain | 任务展开显示触发 rule id / 信号快照 / plan version（依赖 Planner 的 explain 输出） |
 
-**Today 是核心路径**：如果只能实现一个页面，就是它。但在 Gate C 通过前，它只能是空态。
+**Today 是核心信息区，不是独立页面。** 当前 Today-only 计划可由 CLI 使用；本文件不要求启动 Web UI，也不再以旧 Gate C / Rolling / Backbone 作为 MVP blocker。
 
 ---
 
@@ -71,7 +75,7 @@ Not Needed  v0.1 明确不需要的页面
 | 项 | 内容 |
 |---|---|
 | user job | 今天有哪些内容到期、为什么到期、复习后发生什么 |
-| 状态 | **MVP**（数据依赖 P4.5 domain replay；UI 未实现） |
+| 状态 | **Deferred standalone route**；Review 是 Dashboard 信息区 |
 | data dependency | **Issue #4**：`MasteryReviewState v0.1` — P4.1～P4.9 已完成，Phase 4 Gate PASS |
 | implementation gate | **Gate B PASS**；Review consumer 已解锁；正式 UI Read Model / frontend 仍未实现 |
 | 排序 | **100% 来自 engine**；UI 不重新排序、不自行计算优先级 |
@@ -88,7 +92,7 @@ Not Needed  v0.1 明确不需要的页面
 | 项 | 内容 |
 |---|---|
 | user job | 解释 accuracy / coverage / error / mastery，而不是只看一个数字 |
-| 状态 | **MVP**（mastery domain output 已由 P4.5 提供；UI 未实现） |
+| 状态 | **Deferred standalone route**；Progress 是 Dashboard 信息区 |
 | data dependency | `progress-state/v0.1`（Gate A ✅）+ `MasteryReviewState v0.1`（mastery domain output） |
 | implementation gate | Gate A ✅（accuracy / coverage / errors）；Gate B ✅ PASS（mastery domain available，UI 未实现） |
 | 组成 | `ProgressSummary`、`TopicAccuracyList`、`CoverageBreakdown`、`ErrorCauseBreakdown`、`CapabilityEvidenceList` |
@@ -109,7 +113,7 @@ coverage（taxonomy 节点分母）!= 考试权重覆盖率
 | 项 | 内容 |
 |---|---|
 | user job | 设定考试日期、时区、每日可用时间、目标 |
-| 状态 | **MVP（最小）** |
+| 状态 | **非 MVP 独立页面**；是否需要配置入口由真实摩擦决定 |
 | data dependency | User Configuration（不是 domain 事实） |
 | implementation gate | Gate 0（但**没有账号体系**；配置属于本地用户输入） |
 | 最小字段 | `exam_date`、`timezone`、`daily_available_minutes` / 档位、目标 / 及格线（标注为「目标 / 参考」） |
@@ -125,16 +129,16 @@ coverage（taxonomy 节点分母）!= 考试权重覆盖率
 
 ---
 
-### 2.6 `/plan` — 学习计划
+### 2.6 `/plan` — 学习计划（DEFERRED）
 
 | 项 | 内容 |
 |---|---|
-| user job | 看清 30 天结构与近期可调整安排 |
-| 状态 | **Later** |
-| data dependency | Planner 输出（Backbone / Rolling 7-Day / Daily Adaptive） |
-| implementation gate | **Gate C**（Planner MVP Contract 冻结） |
+| user job | 历史规划草图；30-Day / Rolling 不是当前产品目标 |
+| 状态 | **DEFERRED；不属于 MVP** |
+| data dependency | Today-only Planner output；Rolling / Backbone deferred |
+| implementation gate | 无当前 UI Gate；该计划页已 DEFERRED，不因旧 Gate C 实现 |
 | 组成 | `PlanTimeline`、`PlanDayAccordion`、`PlanMilestoneBadge` |
-| 未冻结时的行为 | `EmptyState`：「Planner contract 尚未冻结」 |
+| 当前状态 | 不实现计划页；Rolling / Backbone / 30-Day 均 deferred |
 
 **冻结约束**：
 
@@ -262,7 +266,10 @@ P4.1 已冻结 `review_item_id` 的稳定 identity；`/explain` 深链必须使�
 
 ---
 
-## 4. 导航结构
+## 4. 历史多页面导航草图（DEFERRED）
+
+以下 PrimaryNav 只是旧 IA 参考，不是要实现的导航。MVP 不以页面数量或导航完整度为目标；Dashboard 已满足需求时不新增 route。
+
 
 ```text
 PrimaryNav（一级导航，横向）
@@ -295,7 +302,10 @@ Dashboard 内（三级入口）
 
 ---
 
-## 5. 关键用户流程
+## 5. Historical User Flow References（非当前实现计划）
+
+以下流程保留为领域闭环语义参考；它们不要求建设独立页面或启动 UI。当前工程闭环由本地 CLI 提供，产品验证由 #16 dogfood 负责。
+
 
 ### Flow A · 每天打开 Cockpit（主闭环）
 
@@ -309,7 +319,7 @@ Dashboard
 → Dashboard 更新
 ```
 
-在 Gate C 或正式 UI/read model 未实现时，Flow A 的合法形态只有：
+以下是旧 UI 草图；它不构成当前实现路线或必须达成的 UI flow：
 
 ```text
 Dashboard
@@ -374,24 +384,18 @@ P4.5 已使 Review domain output 可消费；UI 仍不得绕过 replay 或用伪
 
 ---
 
-## 6. 页面与 MVP 边界
+## 6. 当前 MVP 边界
 
 ```text
-MVP 集合（第一版 Cockpit 真正需要的路由）：
-  /              Dashboard
-  /today         Today（依赖 Planner + P4.5 review domain output）
-  /review        Review Queue（依赖 P4.5 domain replay；UI 未实现）
-  /progress      Progress Summary（mastery domain 依赖 P4.5 replay）
-  /settings      最小配置
-
-摘要入口（Later）：
-  /plan  /comprehensive  /case  /resources  /explain/:kind/:id
-
-不实现：
-  /essay（Future）  /assessment（Not Needed v0.1）
+Single Dashboard (`/`)
+├─ Today
+├─ Review
+└─ Progress
 ```
 
-**MVP 不做**：题库平台、论文编辑器、AI tutor、资源商城、社区、账号体系、复杂权限、云同步。
+以上是同一 Dashboard 的信息区，不是独立路由。独立 `/today`、`/review`、`/progress`、`/plan`、`/comprehensive`、`/case`、`/essay`、`/resources`，复杂导航、PlanTimeline、PlanModeSwitcher、完整 Read Model 家族与大规模组件体系均 DEFERRED / 不属于 MVP。Explain 保留轻量内联形态；外部资源仅做链接 / 引用。
+
+**MVP 不做**：题库 / 课程执行平台、practice / case_practice / essay / mock_exam task expansion、论文编辑器、AI tutor、资源商城、社区、账号体系、复杂权限、云同步。
 
 ---
 
