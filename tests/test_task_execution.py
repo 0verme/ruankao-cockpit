@@ -21,7 +21,16 @@ from planner_replay_fixtures import TIMEZONE
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def _plan(root: Path, fixture: dict, progress_events: list, review_events: list, *, as_of: str, capacity: int = 60) -> tuple[dict, dict]:
+def _plan(
+    root: Path,
+    fixture: dict,
+    progress_events: list,
+    review_events: list,
+    *,
+    as_of: str,
+    capacity: int = 60,
+    review_items: list | None = None,
+) -> tuple[dict, dict]:
     planner_input = build_planner_input(
         root,
         fixture,
@@ -29,6 +38,7 @@ def _plan(root: Path, fixture: dict, progress_events: list, review_events: list,
         review_events,
         as_of=as_of,
         capacity=capacity,
+        review_items=review_items,
     )
     return planner_input, plan_today(planner_input, as_of, root=root)
 
@@ -52,16 +62,97 @@ class TaskResultAdapterTests(unittest.TestCase):
             as_of=DAY_1,
         )
 
-    def test_new_learning_requires_real_matching_attempt_and_emits_progress_only(self) -> None:
+    def _record_new_learning(self, plan: dict, task: dict, event: dict, context_id: str, *, items: list | None = None) -> dict:
+        return record_task_result(
+            plan,
+            task["task_id"],
+            {"progress_event": event, "review_context_event_id": context_id},
+            taxonomy=self.fixture["taxonomy"],
+            capabilities=self.fixture["capabilities"],
+            existing_review_items=self.fixture["items"] if items is None else items,
+        )
+
+    def test_new_learning_requires_real_matching_attempt_and_emits_initial_review(self) -> None:
         task = next(task for task in self.plan["days"][0]["tasks"] if task["task_type"] == "new_learning")
         event = make_attempt("explicit-new-learning-attempt", "2026-01-01T11:30:00+08:00", task["target_ref"], correct=False)
         original_plan = copy.deepcopy(self.plan)
 
-        facts = record_task_result(self.plan, task["task_id"], {"progress_event": event})
+        facts = self._record_new_learning(self.plan, task, event, "explicit-initial-context")
 
-        self.assertEqual(facts, {"progress_events": [event], "review_events": []})
+        item = facts["review_items"][0]
+        self.assertEqual(item["review_item_id"], f"review/topic/{task['target_ref']}")
+        self.assertEqual(item["canonical_ref"], {
+            "topic_id": task["target_ref"],
+            "taxonomy_version": self.fixture["taxonomy"]["taxonomy_version"],
+        })
+        self.assertEqual(item["source_reference"], event["question"])
+        self.assertEqual(facts["progress_events"], [event])
+        self.assertEqual(facts["review_events"], [{
+            "schema_version": "review-event/v0.1",
+            "event_id": "explicit-initial-context",
+            "event_type": "review_context",
+            "source_event_id": event["event_id"],
+            "review_item_id": f"review/topic/{task['target_ref']}",
+            "attempt_context": "initial_learning",
+            "occurred_at": event["occurred_at"],
+        }])
         self.assertEqual(self.plan, original_plan)
         self.assertFalse(facts["progress_events"][0]["correct"])
+
+    def test_new_learning_rejects_duplicate_item_registration(self) -> None:
+        task = next(task for task in self.plan["days"][0]["tasks"] if task["task_type"] == "new_learning")
+        event = make_attempt("duplicate-registration-attempt", "2026-01-01T11:30:00+08:00", task["target_ref"], correct=True)
+        first = self._record_new_learning(self.plan, task, event, "duplicate-registration-context")
+        existing_items = self.fixture["items"] + first["review_items"]
+
+        with self.assertRaises(TaskResultError) as raised:
+            self._record_new_learning(
+                self.plan,
+                task,
+                event,
+                "duplicate-registration-context-2",
+                items=existing_items,
+            )
+        self.assertEqual(raised.exception.category, "duplicate_review_item")
+
+    def test_new_learning_fails_closed_for_invalid_question_provenance(self) -> None:
+        task = next(task for task in self.plan["days"][0]["tasks"] if task["task_type"] == "new_learning")
+        cases = (
+            ("missing commit", lambda question: question.pop("source_commit"), "missing_source_reference"),
+            ("illegal path", lambda question: question.update(source_path="../outside.json"), "forbidden_path"),
+            ("invalid commit", lambda question: question.update(source_commit="a" * 39), "invalid_source_reference"),
+        )
+        for label, corrupt, category in cases:
+            with self.subTest(label=label):
+                event = make_attempt(f"invalid-provenance-{label.replace(' ', '-')}", "2026-01-01T11:30:00+08:00", task["target_ref"], correct=True)
+                corrupt(event["question"])
+                with self.assertRaises(TaskResultError) as raised:
+                    self._record_new_learning(self.plan, task, event, f"invalid-provenance-context-{label}")
+                self.assertEqual(raised.exception.category, category)
+
+    def test_new_learning_requires_topic_match_and_explicit_context_identity(self) -> None:
+        task = next(task for task in self.plan["days"][0]["tasks"] if task["task_type"] == "new_learning")
+        wrong_event = make_attempt(
+            "new-learning-wrong-topic",
+            "2026-01-01T11:30:00+08:00",
+            self.fixture["topic_b"],
+            correct=True,
+        )
+        with self.assertRaises(TaskResultError) as raised:
+            self._record_new_learning(self.plan, task, wrong_event, "wrong-topic-context")
+        self.assertEqual(raised.exception.category, "target_mismatch")
+
+        with self.assertRaises(TaskResultError) as raised:
+            record_task_result(
+                self.plan,
+                task["task_id"],
+                {"progress_event": make_attempt("missing-context", "2026-01-01T11:30:00+08:00", task["target_ref"], correct=True),
+                 "review_context_event_id": None},
+                taxonomy=self.fixture["taxonomy"],
+                capabilities=self.fixture["capabilities"],
+                existing_review_items=self.fixture["items"],
+            )
+        self.assertEqual(raised.exception.category, "invalid_review_event")
 
     def test_review_requires_matching_topic_attempt_and_explicit_context_identity(self) -> None:
         task = self.plan["days"][0]["tasks"][0]
@@ -75,6 +166,7 @@ class TaskResultAdapterTests(unittest.TestCase):
         )
 
         self.assertEqual(facts["progress_events"], [event])
+        self.assertEqual(facts["review_items"], [])
         self.assertEqual(facts["review_events"], [{
             "schema_version": "review-event/v0.1",
             "event_id": "explicit-review-context",
@@ -186,22 +278,34 @@ class DayOneToDayTwoReplanTests(unittest.TestCase):
             "day1-new-learning-c-attempt",
             "2026-01-01T11:30:00+08:00",
             task_c["target_ref"],
-            correct=False,
+            correct=True,
         )
         facts_a = record_task_result(
             day1_plan,
             task_a["task_id"],
             {"progress_event": review_a, "review_context_event_id": "day1-review-a-context"},
         )
-        facts_c = record_task_result(day1_plan, task_c["task_id"], {"progress_event": learning_c})
+        facts_c = record_task_result(
+            day1_plan,
+            task_c["task_id"],
+            {"progress_event": learning_c, "review_context_event_id": "day1-new-learning-c-context"},
+            taxonomy=self.fixture["taxonomy"],
+            capabilities=self.fixture["capabilities"],
+            existing_review_items=self.fixture["items"],
+        )
         day1_progress_events = self.initial_events + facts_a["progress_events"] + facts_c["progress_events"]
         day1_review_events = self.initial_contexts + facts_a["review_events"] + facts_c["review_events"]
+        day1_review_items = self.fixture["items"] + facts_c["review_items"]
 
         self.assertEqual([event["event_id"] for event in facts_a["progress_events"]], ["day1-review-a-attempt"])
         self.assertEqual([event["event_id"] for event in facts_a["review_events"]], ["day1-review-a-context"])
         self.assertEqual([event["event_id"] for event in facts_c["progress_events"]], ["day1-new-learning-c-attempt"])
-        self.assertEqual(facts_c["review_events"], [])
+        self.assertEqual([item["review_item_id"] for item in facts_c["review_items"]], [f"review/topic/{task_c['target_ref']}"])
+        self.assertEqual(facts_c["review_items"][0]["source_reference"], learning_c["question"])
+        self.assertEqual([event["event_id"] for event in facts_c["review_events"]], ["day1-new-learning-c-context"])
+        self.assertEqual(facts_c["review_events"][0]["attempt_context"], "initial_learning")
         self.assertNotIn("day1-review-b-attempt", [event["event_id"] for event in day1_progress_events])
+        self.assertNotIn("review/topic/" + self.fixture["topic_b"], [event["review_item_id"] for event in facts_a["review_events"]])
         self.assertEqual([task["target_ref"] for task in day1_tasks if task["task_type"] == "review"], [
             f"review/topic/{self.fixture['topic_a']}", f"review/topic/{self.fixture['topic_b']}",
         ])
@@ -212,6 +316,7 @@ class DayOneToDayTwoReplanTests(unittest.TestCase):
             day1_progress_events,
             day1_review_events,
             as_of=DAY_2,
+            review_items=day1_review_items,
         )
         progress_state = day2_input["inputs"]["progress_state"]
         review_state = day2_input["inputs"]["mastery_review_state"]
@@ -221,18 +326,27 @@ class DayOneToDayTwoReplanTests(unittest.TestCase):
         self.assertEqual(a_state["next_due_local_date"], "2026-01-08")
         self.assertEqual(a_state["review_status"], "scheduled")
         self.assertEqual(b_state["review_status"], "overdue")
-        self.assertEqual(progress_state["topics"]["ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS"]["incorrect_count"], 1)
+        topic_c = "ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS"
+        c_state = review_state["items"][f"review/topic/{topic_c}"]
+        self.assertEqual(progress_state["topics"][topic_c]["attempt_count"], 1)
+        self.assertEqual(c_state["mastery_state"], "learning")
+        self.assertEqual(c_state["review_status"], "due")
+        self.assertEqual(c_state["review_interval_days"], 1)
+        self.assertEqual(c_state["next_due_local_date"], "2026-01-02")
+        self.assertEqual(c_state["evidence"][0]["attempt_context"], "initial_learning")
+        self.assertEqual(c_state["evidence"][0]["policy_outcome"], "success")
 
         day2_tasks = day2_plan["days"][0]["tasks"]
         self.assertEqual(
             [(task["task_type"], task["target_ref"], task["planned_minutes"]) for task in day2_tasks],
             [
                 ("review", f"review/topic/{self.fixture['topic_b']}", 15),
+                ("review", f"review/topic/{topic_c}", 15),
                 ("new_learning", "ARCH.CLOUD_NATIVE.EVENT_DRIVEN", 25),
             ],
         )
         self.assertNotIn(f"review/topic/{self.fixture['topic_a']}", [task["target_ref"] for task in day2_tasks])
-        self.assertNotIn("ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS", [task["target_ref"] for task in day2_tasks])
+        self.assertNotIn(topic_c, [task["target_ref"] for task in day2_tasks if task["task_type"] == "new_learning"])
 
     def test_no_execution_means_no_new_facts_or_replay_changes(self) -> None:
         _, plan = _plan(
@@ -243,6 +357,7 @@ class DayOneToDayTwoReplanTests(unittest.TestCase):
             as_of=DAY_1,
         )
         self.assertTrue(plan["days"][0]["tasks"])
+        original_plan = copy.deepcopy(plan)
 
         before_progress = progress_replay(
             self.initial_events,
@@ -276,8 +391,91 @@ class DayOneToDayTwoReplanTests(unittest.TestCase):
         )
         self.assertEqual(untouched_events, self.initial_events)
         self.assertEqual(untouched_contexts, self.initial_contexts)
+        self.assertEqual(plan, original_plan)
+        self.assertFalse(any(event.get("topics") == ["ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS"] for event in untouched_events))
+        self.assertFalse(any(event.get("review_item_id") == "review/topic/ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS" for event in untouched_contexts))
+        self.assertNotIn("review/topic/ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS", [item["review_item_id"] for item in self.fixture["items"]])
         self.assertEqual(after_progress, before_progress)
         self.assertEqual(after_review, before_review)
+        day2_input, day2_plan = _plan(
+            ROOT,
+            self.fixture,
+            untouched_events,
+            untouched_contexts,
+            as_of=DAY_2,
+        )
+        self.assertEqual(
+            [task["target_ref"] for task in day2_plan["days"][0]["tasks"] if task["task_type"] == "new_learning"],
+            ["ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS"],
+        )
+        self.assertNotIn("review/topic/ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS", day2_input["inputs"]["mastery_review_state"]["items"])
+
+    def test_new_learning_failure_is_registered_and_retried_by_existing_policy(self) -> None:
+        _, day1_plan = _plan(
+            ROOT,
+            self.fixture,
+            self.initial_events,
+            self.initial_contexts,
+            as_of=DAY_1,
+        )
+        task_a = next(task for task in day1_plan["days"][0]["tasks"] if task["task_type"] == "review")
+        task_c = next(task for task in day1_plan["days"][0]["tasks"] if task["task_type"] == "new_learning")
+        successful_review = make_attempt(
+            "day1-review-a-success-before-learning-failure",
+            "2026-01-01T11:00:00+08:00",
+            self.fixture["topic_a"],
+            correct=True,
+        )
+        facts_a = record_task_result(
+            day1_plan,
+            task_a["task_id"],
+            {"progress_event": successful_review, "review_context_event_id": "day1-review-a-success-before-learning-failure-context"},
+        )
+        failed_learning = make_attempt(
+            "day1-new-learning-c-failure",
+            "2026-01-01T11:30:00+08:00",
+            task_c["target_ref"],
+            correct=False,
+        )
+        facts = record_task_result(
+            day1_plan,
+            task_c["task_id"],
+            {"progress_event": failed_learning, "review_context_event_id": "day1-new-learning-c-failure-context"},
+            taxonomy=self.fixture["taxonomy"],
+            capabilities=self.fixture["capabilities"],
+            existing_review_items=self.fixture["items"],
+        )
+        events = self.initial_events + facts_a["progress_events"] + facts["progress_events"]
+        contexts = self.initial_contexts + facts_a["review_events"] + facts["review_events"]
+        items = self.fixture["items"] + facts["review_items"]
+        day2_input, day2_plan = _plan(
+            ROOT,
+            self.fixture,
+            events,
+            contexts,
+            as_of=DAY_2,
+            review_items=items,
+        )
+
+        topic_c = task_c["target_ref"]
+        c_state = day2_input["inputs"]["mastery_review_state"]["items"][f"review/topic/{topic_c}"]
+        c_progress = day2_input["inputs"]["progress_state"]["topics"][topic_c]
+        self.assertEqual(c_progress["incorrect_count"], 1)
+        self.assertEqual(c_state["evidence"][0]["attempt_context"], "initial_learning")
+        self.assertEqual(c_state["evidence"][0]["policy_outcome"], "failure")
+        self.assertEqual(c_state["mastery_state"], "learning")
+        self.assertEqual(c_state["failure_count"], 1)
+        self.assertEqual(c_state["review_interval_days"], 1)
+        self.assertEqual(c_state["scheduling_reason"], "failure_schedules_retry_interval")
+        self.assertEqual(c_state["next_due_local_date"], "2026-01-02")
+        self.assertEqual(c_state["review_status"], "due")
+        day2_tasks = day2_plan["days"][0]["tasks"]
+        self.assertIn(f"review/topic/{topic_c}", [task["target_ref"] for task in day2_tasks if task["task_type"] == "review"])
+        self.assertNotIn(topic_c, [task["target_ref"] for task in day2_tasks if task["task_type"] == "new_learning"])
+        self.assertEqual(
+            [task["target_ref"] for task in day2_tasks if task["task_type"] == "new_learning"],
+            ["ARCH.CLOUD_NATIVE.EVENT_DRIVEN"],
+        )
 
     def test_review_failure_uses_existing_retry_policy_for_day_two(self) -> None:
         _, day1_plan = _plan(
