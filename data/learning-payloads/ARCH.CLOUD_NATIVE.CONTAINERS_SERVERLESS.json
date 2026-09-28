@@ -1,0 +1,101 @@
+{
+  "schema_version": "learning-payload/v0.1",
+  "version": "1.0.0",
+  "topic_id": "ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS",
+  "objectives": [
+    {
+      "text": "说明容器如何封装应用及其依赖，并用是否携带独立客体操作系统区分容器与虚拟机。",
+      "evidence_refs": ["textbook-containers"]
+    },
+    {
+      "text": "概括 Kubernetes 对容器化应用的编排职责，包括调度、部署管理、自愈、服务发现和弹性伸缩。",
+      "evidence_refs": ["textbook-containers"]
+    },
+    {
+      "text": "描述 Serverless 的触发、运行和资源管理方式，并区分 FaaS 与 BaaS 的角色。",
+      "evidence_refs": ["textbook-serverless"]
+    },
+    {
+      "text": "识别 Serverless 的适用限制，特别是有状态上下文、冷启动和数据库连接开销。",
+      "evidence_refs": ["textbook-serverless"]
+    }
+  ],
+  "core_points": [
+    {
+      "heading": "容器与虚拟机：看运行边界",
+      "text": "容器把应用和运行依赖打包，以操作系统层的隔离机制运行；同一宿主上的容器共享宿主内核。虚拟机则为各个实例提供独立的客体操作系统。两者都提供隔离，但封装层次和资源开销不同；容器更轻，并不意味着它与虚拟机提供完全相同的隔离边界。",
+      "evidence_refs": ["textbook-containers"]
+    },
+    {
+      "heading": "Kubernetes：管理容器化工作负载",
+      "text": "容器解决应用及依赖的交付与运行环境问题，集群中的容器还需要编排。Kubernetes 根据工作负载和资源请求安排运行位置，并提供部署与回滚、服务发现、故障自愈及弹性伸缩等管理能力。考试场景中应把这些能力对应到题目提出的运维或资源问题，而不是只背工具名称。",
+      "evidence_refs": ["textbook-containers"]
+    },
+    {
+      "heading": "Serverless：运维抽象与事件驱动",
+      "text": "Serverless 把服务器和运行环境的许多管理工作交由云平台处理，应用可由请求或事件触发，平台按需调度执行并管理资源。FaaS 将业务逻辑组织为事件触发的函数；BaaS 则提供存储、数据库等托管后端能力。两者常组合使用，但不是同一个概念。",
+      "evidence_refs": ["textbook-serverless"]
+    },
+    {
+      "heading": "适用性：不是所有负载都适合",
+      "text": "无状态、按事件触发的工作负载更容易利用按需伸缩。若应用依赖进程内状态，平台调度本身不会替它同步上下文；冷启动以及按需建立数据库连接也可能增加延迟或开销。选型时应结合状态、运行时长、负载变化、安全和性能要求判断，而非把 Serverless 当作通用替代方案。",
+      "evidence_refs": ["textbook-serverless"]
+    }
+  ],
+  "exam_focus": [
+    {
+      "text": "综合知识样本索引中有一题涉及云计算虚拟化技术识别（2024 年上半年 Q65）；该记录与本 Topic 的交叉归类为 medium confidence。可据此练习比较虚拟机与容器的封装/运行边界，但单个样本不代表考频。",
+      "evidence_refs": ["textbook-containers", "outline-cloud-native", "golden-q65"]
+    },
+    {
+      "text": "考试大纲科目二列有云原生架构专题。遇到案例场景时，关注容器编排如何对应资源调度、部署管理、故障恢复和伸缩需求，并结合状态与运行约束判断 Serverless 是否合适；这是大纲与教材覆盖点，不是频次结论。",
+      "evidence_refs": ["textbook-containers", "textbook-serverless", "outline-cloud-native"]
+    }
+  ],
+  "source_references": [
+    {
+      "reference_id": "textbook-containers",
+      "kind": "textbook_section",
+      "display_title": "系统架构设计师教程（第 2 版）· 第 14 章 14.3.1 容器技术",
+      "source_id": "younghong1992",
+      "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+      "source_path": "01.系统架构设计师教材-清洗版/第14章-云原生架构设计理论与实践.md",
+      "source_value": "容器技术",
+      "source_anchor": "14.3.1 容器技术",
+      "confidence": "high"
+    },
+    {
+      "reference_id": "textbook-serverless",
+      "kind": "textbook_section",
+      "display_title": "系统架构设计师教程（第 2 版）· 第 14 章 14.3.3 无服务器技术",
+      "source_id": "younghong1992",
+      "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+      "source_path": "01.系统架构设计师教材-清洗版/第14章-云原生架构设计理论与实践.md",
+      "source_value": "无服务器技术",
+      "source_anchor": "14.3.3 无服务器技术",
+      "confidence": "high"
+    },
+    {
+      "reference_id": "outline-cloud-native",
+      "kind": "exam_outline",
+      "display_title": "系统架构设计师考试大纲 · 科目二：云原生架构",
+      "source_id": "younghong1992",
+      "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+      "source_path": "00.系统架构设计师考试大纲-清洗版/第04章-考试科目2-案例分析.md",
+      "source_value": "云原生架构",
+      "source_anchor": "第 4 类：云原生架构设计理论与实践",
+      "confidence": "high"
+    },
+    {
+      "reference_id": "golden-q65",
+      "kind": "golden_set_question",
+      "display_title": "2024 年上半年综合知识 · 第 65 题：云计算虚拟化技术识别",
+      "source_id": "younghong1992",
+      "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+      "source_path": "02.历年真题-清洗版/2024年上半年-系统架构设计师-综合知识.md",
+      "source_question_id": "2024-h1-comprehensive-q65",
+      "golden_set_record_id": "gs-comp-2024-h1-q65",
+      "confidence": "medium"
+    }
+  ]
+}

@@ -22,7 +22,7 @@ Progress / Review facts
 
 - 工程闭环已具备：`init → today → record → replay → next-day today`（PR #26 merged）。
 - 当前产品验证仍未完成：Issue #16 保持 OPEN；Browser Cockpit 提供本地日常入口后，下一步是继续真实 dogfood、记录明确摩擦；工程 PASS 不等于产品验证 PASS。
-- 当前 Browser Cockpit 只提供一个本地 Today 页面（含 Review / New Learning 与记录表单）；Single Dashboard 的其他区域按真实 dogfood 摩擦再评估，不以独立页面清单作为目标。
+- 当前 Browser Cockpit 只提供一个本地 Today 页面。NEW LEARNING 对 `ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS` 有一条版本化、带来源证据的短 Learning Payload；其他 Topic 仍可能显示材料尚未整理。阅读与 attempt 记录分开，验证题只是可选的后续事实记录，不表示所有 Topic 已支持学习卡。
 - Rolling 7-Day、完整 Curriculum Backbone、30-Day Plan 与长期阶段规划已由 Issue #27 deferred，不是默认下一阶段。
 
 ## 推荐：启动 Browser Cockpit
@@ -34,7 +34,7 @@ python3 -m pip install -r requirements.txt
 streamlit run streamlit_app.py
 ```
 
-首次打开浏览器页面后点击「初始化」，再查看 Today 并在学习后记录真实结果。数据保存在本机 `.local/`，这是本地单用户 MVP：无登录、无账号、无数据库、无云同步。学习资料由用户在外部自行使用；Cockpit 只保存事实和来源引用，不托管题库正文。
+首次打开浏览器页面后点击「初始化」，再查看 Today；有学习卡时先阅读目标、核心知识和考试关注点，再决定是否记录真实验证题结果。用户事实保存在本机 `.local/`，这是本地单用户 MVP：无登录、无账号、无数据库、无云同步。仓库只附带一条项目整理的短摘要与出处索引，不复制教材或题库正文；未整理的 Topic 明确显示材料缺失，不实时调用 LLM 补写。
 
 ## CLI（Advanced / Debug）
 
