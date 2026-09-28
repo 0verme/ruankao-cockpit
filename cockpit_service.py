@@ -20,7 +20,7 @@ from engine.progress import replay as progress_replay
 from engine.review.replay import replay as review_replay
 from engine.rules.review_policy_v01 import resolve_timezone
 from learning_payload import load_learning_payload
-from topic_experience import TopicExperience, build_topic_experience
+from topic_experience import TopicExperience, build_topic_experience, validate_active_topic
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent
@@ -443,6 +443,7 @@ def initialize_cockpit(local_dir: str | Path | None = None) -> bool:
 
 def get_topic_experience(topic_id: str, snapshot: TodaySnapshot) -> TopicExperience:
     """Build the shared Topic read model from an existing deterministic snapshot."""
+    validate_active_topic(topic_id, snapshot.taxonomy)
     payload = load_learning_payload(topic_id)
     verification_sources = get_comprehensive_source_references(topic_id)
     return build_topic_experience(
@@ -453,6 +454,53 @@ def get_topic_experience(topic_id: str, snapshot: TodaySnapshot) -> TopicExperie
         learning_payload=payload,
         verification_sources=verification_sources,
     )
+
+
+def get_today_topic_display_metadata(snapshot: TodaySnapshot) -> dict[str, dict[str, Any]]:
+    """Resolve display metadata for Topic-targeted tasks in Planner's first day.
+
+    Task/Review target resolution stays in the application service; transports
+    receive an already-resolved Topic display model and do not infer semantics.
+    """
+    days = snapshot.planner_output.get("days")
+    if not isinstance(days, list) or not days or not isinstance(days[0], Mapping):
+        raise CockpitError("Planner output has no Today day", "invalid_planner_output")
+    tasks = days[0].get("tasks")
+    if not isinstance(tasks, list):
+        raise CockpitError("Planner Today tasks are malformed", "invalid_planner_output")
+
+    review_items = {
+        item.get("review_item_id"): item
+        for item in snapshot.review_items
+        if isinstance(item.get("review_item_id"), str)
+    }
+    task_topics: dict[str, dict[str, Any]] = {}
+    for task in tasks:
+        if not isinstance(task, Mapping) or not isinstance(task.get("task_id"), str):
+            continue
+        topic_id = None
+        if task.get("task_type") == "new_learning" and task.get("target_kind") == "topic":
+            topic_id = task.get("target_ref")
+        elif task.get("task_type") == "review" and task.get("target_kind") == "review_item":
+            item = review_items.get(task.get("target_ref"))
+            canonical_ref = item.get("canonical_ref") if isinstance(item, Mapping) else None
+            topic_id = canonical_ref.get("topic_id") if isinstance(canonical_ref, Mapping) else None
+        if not isinstance(topic_id, str):
+            continue
+
+        experience = get_topic_experience(topic_id, snapshot)
+        task_topics[task["task_id"]] = {
+            "topic_id": experience.topic_id,
+            "topic_name": experience.topic_name,
+            "taxonomy_version": experience.taxonomy_version,
+            "breadcrumb": [
+                {"topic_id": crumb.topic_id, "name": crumb.name}
+                for crumb in experience.breadcrumb
+            ],
+            "learning_payload_status": "available" if experience.has_learning_payload else "unavailable",
+            "learning_payload_version": experience.learning_payload_version,
+        }
+    return task_topics
 
 
 def get_today(as_of: str | None = None, *, local_dir: str | Path | None = None) -> TodaySnapshot:
@@ -621,6 +669,7 @@ __all__ = [
     "TodaySnapshot",
     "get_comprehensive_source_references",
     "get_today",
+    "get_today_topic_display_metadata",
     "get_topic_experience",
     "initialize_cockpit",
     "record_browser_attempt",

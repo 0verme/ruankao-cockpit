@@ -27,7 +27,7 @@ Progress / Review facts
 
 ## 推荐：启动 Browser Cockpit
 
-需要 Python 3.10+。在仓库根目录安装唯一的 UI 依赖并启动：
+需要 Python 3.10+。在仓库根目录安装项目运行依赖并启动：
 
 ```bash
 python3 -m pip install -r requirements.txt
@@ -38,9 +38,20 @@ streamlit run streamlit_app.py
 
 ## Astro + React Frontend Migration（Slice 1 Preview）
 
-当前新增的 Astro + React 浏览器壳只覆盖 `/` Today 与 `ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS` Topic 页面；它通过 HTTP API 获取状态，不替代 Streamlit，也不复制 Python Domain Truth。FastAPI contract 尚待并行实现合并，前端目前仅可用带固定醒目标识的 `DEV FIXTURE / CONTRACT FIXTURE` 开发数据验证呈现，不代表完整 vertical slice 已通过。
+Astro + React 浏览器壳只覆盖 `/` Today 与 `ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS` Topic 页面，通过 HTTP API 获取状态，不替代 Streamlit，也不复制 Python Domain Truth。前端消费的 FastAPI contract 已随 PR #40 合并；浏览器 E2E 仍使用醒目标记的 `DEV FIXTURE / CONTRACT FIXTURE`，不等于真实 API 写入/replay 已通过。
 
-详细路由、API contract assumptions、COPY / ADAPT / REJECT、运行和测试方式见 [Frontend Migration Slice 1](docs/frontend/FRONTEND_MIGRATION_SLICE_1.md)。
+路由、API contract reconcile、COPY / ADAPT / REJECT、测试和集成限制见 [Frontend Migration Slice 1](docs/frontend/FRONTEND_MIGRATION_SLICE_1.md)。
+
+## FastAPI Transport（Frontend API v0.1）
+
+FastAPI 是现有 Python service/domain 的 HTTP adapter，不替代 Streamlit，也不在 route 中重算 Planner / Progress / Review。用绝对路径 `COCKPIT_LOCAL_DIR` 固定本地事实目录；未设置时固定使用仓库根目录下 `.local/`，不随启动 cwd 变化。GET 不会执行初始化。
+
+```bash
+# requirements.txt 同时安装 Streamlit 与 FastAPI transport 所需依赖
+COCKPIT_LOCAL_DIR=/absolute/path/to/.local uvicorn api:app --host 127.0.0.1 --port 8000
+```
+
+接口与 request/response、错误类别、timezone 和 Domain Truth 边界见 [`docs/api/FRONTEND_API_V01.md`](docs/api/FRONTEND_API_V01.md)。
 
 ## CLI（Advanced / Debug）
 
