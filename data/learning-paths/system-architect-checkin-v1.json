@@ -1,0 +1,2250 @@
+{
+  "schema_version": "learning-path/v0.1",
+  "path_id": "system-architect-checkin",
+  "version": "1.0.0",
+  "status": "draft",
+  "title": "系统架构设计师打卡学习路径",
+  "taxonomy_version": "0.1",
+  "source": {
+    "type": "user_provided_checkin_archive",
+    "archive_name": "系统架构设计师打卡.zip",
+    "archive_size_bytes": 175511,
+    "archive_sha256": "d7e8f68374f250dab72f2a08c543cbe9cbd44533fdc8e1e32c1a0d0e67fce17a",
+    "description": "用户已有系统架构设计师打卡顺序；仅作为学习路径来源与 provenance，不据此认定内容许可或复制原文。"
+  },
+  "ordering": {
+    "basis": "source_date ascending, then archive-relative source_file ascending",
+    "date_semantics": "provenance_only; source_date is not a required study date or calendar schedule",
+    "order_semantics": "one-based ordinal across all dated archive records, including NON_LEARNING records; filter NON_LEARNING to obtain the learning sequence"
+  },
+  "items": [
+    {
+      "item_id": "checkin-001",
+      "order": 1,
+      "source_date": "2026-06-08",
+      "source_file": "2026年06月/2026-06-08.md",
+      "source_title": "软件工程",
+      "topic_ids": [
+        "SOFTWARE.ENGINEERING.PROCESS"
+      ],
+      "mapping_status": "merge",
+      "mapping_confidence": "high",
+      "mapping_notes": "与第 2–5 项共同构成连续的软件过程与开发方法学习簇；本项覆盖生命周期和工程三要素。",
+      "knowledge_point_titles": [
+        "手工作坊式软件开发的弊端",
+        "软件工程",
+        "软件工程三要素"
+      ],
+      "original_topic_title": "软件工程",
+      "mapping_group_id": "merge-software-process-01"
+    },
+    {
+      "item_id": "checkin-002",
+      "order": 2,
+      "source_date": "2026-06-09",
+      "source_file": "2026年06月/2026-06-09.md",
+      "source_title": "软件工程",
+      "topic_ids": [
+        "SOFTWARE.ENGINEERING.PROCESS"
+      ],
+      "mapping_status": "merge",
+      "mapping_confidence": "high",
+      "mapping_notes": "瀑布、演化、螺旋、RAD 等开发模型是同一过程主题的分日展开。",
+      "knowledge_point_titles": [
+        "瀑布模型",
+        "演化模型（原型模型）",
+        "螺旋模型",
+        "快速应用开发（RAD）",
+        "喷泉模型",
+        "形式化开发方法"
+      ],
+      "original_topic_title": "软件工程",
+      "mapping_group_id": "merge-software-process-01"
+    },
+    {
+      "item_id": "checkin-003",
+      "order": 3,
+      "source_date": "2026-06-10",
+      "source_file": "2026年06月/2026-06-10.md",
+      "source_title": "软件工程",
+      "topic_ids": [
+        "SOFTWARE.ENGINEERING.PROCESS"
+      ],
+      "mapping_status": "merge",
+      "mapping_confidence": "high",
+      "mapping_notes": "RUP 的阶段与工作流属于软件过程方法；与相邻开发模型日合并覆盖同一 L3。",
+      "knowledge_point_titles": [
+        "统一过程 RUP"
+      ],
+      "original_topic_title": "软件工程",
+      "mapping_group_id": "merge-software-process-01"
+    },
+    {
+      "item_id": "checkin-004",
+      "order": 4,
+      "source_date": "2026-06-11",
+      "source_file": "2026年06月/2026-06-11.md",
+      "source_title": "软件工程",
+      "topic_ids": [
+        "SOFTWARE.ENGINEERING.PROCESS"
+      ],
+      "mapping_status": "merge",
+      "mapping_confidence": "high",
+      "mapping_notes": "敏捷宣言与 Scrum、XP 等方法属于软件过程方法；与相邻 check-in 合并覆盖同一 L3。",
+      "knowledge_point_titles": [
+        "敏捷开发"
+      ],
+      "original_topic_title": "软件工程",
+      "mapping_group_id": "merge-software-process-01"
+    },
+    {
+      "item_id": "checkin-005",
+      "order": 5,
+      "source_date": "2026-06-12",
+      "source_file": "2026年06月/2026-06-12.md",
+      "source_title": "软件工程",
+      "topic_ids": [
+        "SOFTWARE.ENGINEERING.PROCESS",
+        "SOFTWARE.ENGINEERING.TESTING"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "high",
+      "mapping_notes": "V/W 模型属于开发过程与验证关系，测试左移明确跨越软件过程和软件测试两个边界。",
+      "knowledge_point_titles": [
+        "V 模型",
+        "W 模型",
+        "质量左移（测试）左移"
+      ],
+      "original_topic_title": "软件工程"
+    },
+    {
+      "item_id": "checkin-006",
+      "order": 6,
+      "source_date": "2026-06-13",
+      "source_file": "2026年06月/2026-06-13.md",
+      "source_title": "软件工程",
+      "topic_ids": [
+        "SOFTWARE.ENGINEERING.COMPONENTS"
+      ],
+      "mapping_status": "exact",
+      "mapping_confidence": "high",
+      "mapping_notes": "构件开发、构件特征、适配和组装与构件技术边界一致。",
+      "knowledge_point_titles": [
+        "基于构件的软件开发方法（CBSD/CBSE）",
+        "标准化：使用的构件必须符合某种标准化的构件模型",
+        "系统需求概览",
+        "识别候选构件",
+        "根据发现的构件修改需求",
+        "架构设计",
+        "构件定制与适配",
+        "组装构件，创建系统"
+      ],
+      "original_topic_title": "软件工程"
+    },
+    {
+      "item_id": "checkin-007",
+      "order": 7,
+      "source_date": "2026-06-14",
+      "source_file": "2026年06月/2026-06-14.md",
+      "source_title": "软件工程",
+      "topic_ids": [
+        "SOFTWARE.MODELING.FORMAL_MODELING"
+      ],
+      "mapping_status": "exact",
+      "mapping_confidence": "high",
+      "mapping_notes": "计算无关、平台独立和平台特定模型直接对应模型驱动建模。",
+      "knowledge_point_titles": [
+        "模型驱动开发方法"
+      ],
+      "original_topic_title": "软件工程"
+    },
+    {
+      "item_id": "checkin-008",
+      "order": 8,
+      "source_date": "2026-06-15",
+      "source_file": "2026年06月/2026-06-15.md",
+      "source_title": "软件工程",
+      "topic_ids": [
+        "ARCH.FOUNDATION.ABSD"
+      ],
+      "mapping_status": "exact",
+      "mapping_confidence": "high",
+      "mapping_notes": "主题及 ABSD 需求、设计、文档化、复审、实现和演化活动与现有 L3 一致。",
+      "knowledge_point_titles": [
+        "基于架构的软件开发方法（ABSD）"
+      ],
+      "original_topic_title": "软件工程"
+    },
+    {
+      "item_id": "checkin-009",
+      "order": 9,
+      "source_date": "2026-06-16",
+      "source_file": "2026年06月/2026-06-16.md",
+      "source_title": "架构",
+      "topic_ids": [
+        "ARCH.FOUNDATION.CONCEPTS",
+        "ARCH.FOUNDATION.REUSE"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "high",
+      "mapping_notes": "架构概念/描述与可复用资产及架构复用是两个可区分主题。",
+      "knowledge_point_titles": [
+        "架构概述",
+        "获取可复用的软件资产",
+        "管理可复用资产",
+        "使用可复用资产"
+      ],
+      "original_topic_title": "架构"
+    },
+    {
+      "item_id": "checkin-010",
+      "order": 10,
+      "source_date": "2026-06-17",
+      "source_file": "2026年06月/2026-06-17.md",
+      "source_title": "架构",
+      "topic_ids": [
+        "ARCH.FOUNDATION.REUSE"
+      ],
+      "mapping_status": "partial",
+      "mapping_confidence": "medium",
+      "mapping_notes": "DSSA 是领域架构和复用的一个具体方法，仅覆盖架构复用主题的一部分。",
+      "knowledge_point_titles": [
+        "DSSA 的概念",
+        "DSSA 的基本活动",
+        "参与 DSSA 的 人员"
+      ],
+      "original_topic_title": "架构"
+    },
+    {
+      "item_id": "checkin-011",
+      "order": 11,
+      "source_date": "2026-06-18",
+      "source_file": "2026年06月/2026-06-18.md",
+      "source_title": "架构",
+      "topic_ids": [
+        "QUALITY.ATTRIBUTES.MODIFIABILITY",
+        "QUALITY.EVALUATION.SCENARIOS"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "high",
+      "mapping_notes": "质量属性场景覆盖评估场景，后续可修改性部分映射可修改性属性；不是完整质量属性课程。",
+      "knowledge_point_titles": [
+        "质量属性"
+      ],
+      "original_topic_title": "架构"
+    },
+    {
+      "item_id": "checkin-012",
+      "order": 12,
+      "source_date": "2026-06-19",
+      "source_file": "2026年06月/2026-06-19.md",
+      "source_title": "架构",
+      "topic_ids": [
+        "ARCH.FOUNDATION.STYLES"
+      ],
+      "mapping_status": "partial",
+      "mapping_confidence": "high",
+      "mapping_notes": "仅覆盖数据流、批处理与管道过滤器等架构风格子集。",
+      "knowledge_point_titles": [
+        "数据流架构风格"
+      ],
+      "original_topic_title": "架构"
+    },
+    {
+      "item_id": "checkin-013",
+      "order": 13,
+      "source_date": "2026-06-20",
+      "source_file": "2026年06月/2026-06-20.md",
+      "source_title": "架构",
+      "topic_ids": [
+        "ARCH.FOUNDATION.STYLES",
+        "ARCH.LAYERED.LAYERS"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "high",
+      "mapping_notes": "调用返回与面向对象风格属于架构风格；层次风格/层次组成另属层次式架构。",
+      "knowledge_point_titles": [
+        "调用/返回架构风格"
+      ],
+      "original_topic_title": "架构"
+    },
+    {
+      "item_id": "checkin-014",
+      "order": 14,
+      "source_date": "2026-06-21",
+      "source_file": "2026年06月/2026-06-21.md",
+      "source_title": "架构",
+      "topic_ids": [
+        "ARCH.FOUNDATION.STYLES"
+      ],
+      "mapping_status": "partial",
+      "mapping_confidence": "high",
+      "mapping_notes": "仓库和黑板架构只是以数据为中心风格的部分实例。",
+      "knowledge_point_titles": [
+        "以数据为中心的架构风格"
+      ],
+      "original_topic_title": "架构"
+    },
+    {
+      "item_id": "checkin-015",
+      "order": 15,
+      "source_date": "2026-06-22",
+      "source_file": "2026年06月/2026-06-22.md",
+      "source_title": "架构",
+      "topic_ids": [
+        "ARCH.FOUNDATION.STYLES"
+      ],
+      "mapping_status": "partial",
+      "mapping_confidence": "high",
+      "mapping_notes": "解释器和规则系统是架构风格专题的局部覆盖，不覆盖其他风格。",
+      "knowledge_point_titles": [
+        "解释器架构风格",
+        "规则系统"
+      ],
+      "original_topic_title": "架构"
+    },
+    {
+      "item_id": "checkin-016",
+      "order": 16,
+      "source_date": "2026-06-23",
+      "source_file": "2026年06月/2026-06-23.md",
+      "source_title": "架构",
+      "topic_ids": [
+        "ARCH.FOUNDATION.STYLES",
+        "ARCH.CLOUD_NATIVE.EVENT_DRIVEN"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "high",
+      "mapping_notes": "独立构件/进程通信属于风格分类，事件驱动部分直接映射事件驱动架构。",
+      "knowledge_point_titles": [
+        "独立构件架构风格"
+      ],
+      "original_topic_title": "架构"
+    },
+    {
+      "item_id": "checkin-017",
+      "order": 17,
+      "source_date": "2026-06-24",
+      "source_file": "2026年06月/2026-06-24.md",
+      "source_title": "架构",
+      "topic_ids": [
+        "QUALITY.EVALUATION.SCENARIOS"
+      ],
+      "mapping_status": "partial",
+      "mapping_confidence": "medium",
+      "mapping_notes": "知识点明确包含基于场景的评估，但也概述问卷和度量方法；当前 L3 仅能覆盖场景部分。",
+      "knowledge_point_titles": [
+        "架构评估"
+      ],
+      "original_topic_title": "架构"
+    },
+    {
+      "item_id": "checkin-018",
+      "order": 18,
+      "source_date": "2026-06-25",
+      "source_file": "2026年06月/2026-06-25.md",
+      "source_title": "架构",
+      "topic_ids": [
+        "QUALITY.EVALUATION.ATAM",
+        "QUALITY.EVALUATION.TRADEOFF"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "high",
+      "mapping_notes": "SAAM/ATAM 对应架构评估，CBAM 与效用权衡相关；来源同时覆盖多个评估边界。",
+      "knowledge_point_titles": [
+        "SAAM",
+        "ATAM",
+        "CBAM（成本效益分析法）"
+      ],
+      "original_topic_title": "架构"
+    },
+    {
+      "item_id": "checkin-019",
+      "order": 19,
+      "source_date": "2026-06-26",
+      "source_file": "2026年06月/2026-06-26.md",
+      "source_title": "架构",
+      "topic_ids": [
+        "QUALITY.ATTRIBUTES.PERFORMANCE"
+      ],
+      "mapping_status": "partial",
+      "mapping_confidence": "high",
+      "mapping_notes": "性能指标与并发/并行/池化战术属于性能，但只覆盖该 L3 的若干战术。",
+      "knowledge_point_titles": [
+        "性能",
+        "设计战术-并发",
+        "设计技战术-并行",
+        "设计战术-池化思想"
+      ],
+      "original_topic_title": "架构",
+      "mapping_group_id": "merge-performance-01"
+    },
+    {
+      "item_id": "checkin-020",
+      "order": 20,
+      "source_date": "2026-06-27",
+      "source_file": "2026年06月/2026-06-27 休息.md",
+      "source_title": "休息",
+      "topic_ids": [],
+      "mapping_status": "non_learning",
+      "mapping_confidence": null,
+      "mapping_notes": "文件明确标记为休息日，无知识点或学习 Prompt。",
+      "knowledge_point_titles": []
+    },
+    {
+      "item_id": "checkin-021",
+      "order": 21,
+      "source_date": "2026-06-28",
+      "source_file": "2026年06月/2026-06-28.md",
+      "source_title": "性能设计",
+      "topic_ids": [
+        "QUALITY.ATTRIBUTES.PERFORMANCE"
+      ],
+      "mapping_status": "merge",
+      "mapping_confidence": "high",
+      "mapping_notes": "资源隔离、异步、内存计算、预计算和批处理与第 19、22、23 项共同深化性能主题。",
+      "knowledge_point_titles": [
+        "性能设计战术之资源隔离",
+        "性能设计战术之异步",
+        "性能设计战术之内存计算",
+        "性能设计战术之预计算",
+        "性能设计战术之批量处理"
+      ],
+      "original_topic_title": "性能设计",
+      "mapping_group_id": "merge-performance-01"
+    },
+    {
+      "item_id": "checkin-022",
+      "order": 22,
+      "source_date": "2026-06-29",
+      "source_file": "2026年06月/2026-06-29.md",
+      "source_title": "性能设计战术",
+      "topic_ids": [
+        "QUALITY.ATTRIBUTES.PERFORMANCE",
+        "QUALITY.ATTRIBUTES.SCALABILITY"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "high",
+      "mapping_notes": "扩缩容直接涉及可伸缩性；动静分离和读写分离属于性能战术，跨两个 L3。",
+      "knowledge_point_titles": [
+        "垂直扩展",
+        "水平扩展",
+        "动静分离",
+        "读写分离"
+      ],
+      "original_topic_title": "性能设计战术",
+      "mapping_group_id": "merge-performance-01"
+    },
+    {
+      "item_id": "checkin-023",
+      "order": 23,
+      "source_date": "2026-06-30",
+      "source_file": "2026年06月/2026-06-30.md",
+      "source_title": "性能设计战术",
+      "topic_ids": [
+        "DATA.DATABASE.NORMALIZATION",
+        "QUALITY.ATTRIBUTES.PERFORMANCE"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "high",
+      "mapping_notes": "反规范化设计与数据库设计相关，降低锁粒度及写热点分散明确以性能优化为目标。",
+      "knowledge_point_titles": [
+        "反规范化设计",
+        "降低锁粒度",
+        "写热点分散"
+      ],
+      "original_topic_title": "性能设计战术",
+      "mapping_group_id": "merge-performance-01"
+    },
+    {
+      "item_id": "checkin-024",
+      "order": 24,
+      "source_date": "2026-07-01",
+      "source_file": "2026年07月/2026-07-01 安全性设计-01.md",
+      "source_title": "安全性设计-01",
+      "topic_ids": [
+        "QUALITY.ATTRIBUTES.SECURITY",
+        "SEC.INFORMATION.CRYPTOGRAPHY"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "high",
+      "mapping_notes": "安全属性、加密、摘要、签名和 PKI 分别涉及质量安全属性与密码技术。",
+      "knowledge_point_titles": [
+        "安全性",
+        "数据加密技术",
+        "数字签名",
+        "PKI"
+      ],
+      "original_topic_title": "安全性设计"
+    },
+    {
+      "item_id": "checkin-025",
+      "order": 25,
+      "source_date": "2026-07-02",
+      "source_file": "2026年07月/2026-07-02 安全性设计-02.md",
+      "source_title": "安全性设计-02",
+      "topic_ids": [
+        "SEC.INFORMATION.ACCESS_CONTROL",
+        "SEC.ARCHITECTURE.MODELS"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "high",
+      "mapping_notes": "访问控制类型/技术与 BLP、Biba、Chinese Wall 安全模型属于两个明确边界。",
+      "knowledge_point_titles": [
+        "访问控制"
+      ],
+      "original_topic_title": "安全性设计"
+    },
+    {
+      "item_id": "checkin-026",
+      "order": 26,
+      "source_date": "2026-07-03",
+      "source_file": "2026年07月/2026-07-03 休息.md",
+      "source_title": "休息",
+      "topic_ids": [],
+      "mapping_status": "non_learning",
+      "mapping_confidence": null,
+      "mapping_notes": "文件明确标记为休息日，无知识点或学习 Prompt。",
+      "knowledge_point_titles": []
+    },
+    {
+      "item_id": "checkin-027",
+      "order": 27,
+      "source_date": "2026-07-04",
+      "source_file": "2026年07月/2026-07-04 安全性设计-03.md",
+      "source_title": "安全性设计-03",
+      "topic_ids": [
+        "SEC.INFORMATION.ACCESS_CONTROL"
+      ],
+      "mapping_status": "exact",
+      "mapping_confidence": "high",
+      "mapping_notes": "身份鉴别、SSO 和 MFA 属于身份认证与访问控制；与后续令牌机制存在重复深化。",
+      "knowledge_point_titles": [
+        "什么是身份鉴别",
+        "身份鉴别的必要性",
+        "身份鉴别的方式",
+        "单点登录",
+        "多因素认证（MFA）"
+      ],
+      "original_topic_title": "安全性设计",
+      "mapping_group_id": "merge-security-access-01"
+    },
+    {
+      "item_id": "checkin-028",
+      "order": 28,
+      "source_date": "2026-07-05",
+      "source_file": "2026年07月/2026-07-05 安全性设计-04.md",
+      "source_title": "安全性设计-04",
+      "topic_ids": [
+        "SEC.INFORMATION.ACCESS_CONTROL"
+      ],
+      "mapping_status": "partial",
+      "mapping_confidence": "medium",
+      "mapping_notes": "OAuth2/JWT 主要覆盖身份授权与令牌访问，仅是访问控制主题的协议/机制子集。",
+      "knowledge_point_titles": [
+        "OAuth2",
+        "JWT"
+      ],
+      "original_topic_title": "安全性设计",
+      "mapping_group_id": "merge-security-access-01"
+    },
+    {
+      "item_id": "checkin-029",
+      "order": 29,
+      "source_date": "2026-07-06",
+      "source_file": "2026年07月/2026-07-06 安全性设计-05.md",
+      "source_title": "安全性设计-05",
+      "topic_ids": [
+        "SEC.INFORMATION.ACCESS_CONTROL",
+        "SEC.ARCHITECTURE.WPDRRC",
+        "SEC.ARCHITECTURE.NETWORK_SECURITY"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "medium",
+      "mapping_notes": "零信任包含最小权限/持续认证、安全体系措施和网络微分段；多边界映射且不等于完整安全架构。",
+      "knowledge_point_titles": [
+        "零信任安全"
+      ],
+      "original_topic_title": "安全性设计",
+      "mapping_group_id": "merge-security-access-01"
+    },
+    {
+      "item_id": "checkin-030",
+      "order": 30,
+      "source_date": "2026-07-07",
+      "source_file": "2026年07月/2026-07-07 容灾设计.md",
+      "source_title": "容灾设计",
+      "topic_ids": [
+        "QUALITY.ATTRIBUTES.AVAILABILITY",
+        "RELIABILITY.SOFTWARE.FAULT_TOLERANCE",
+        "DATA.DISTRIBUTED.REPLICATION_PARTITIONING"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "high",
+      "mapping_notes": "容灾指标、备份恢复、复制和多活架构共同涉及可用性、容错恢复与数据复制。",
+      "knowledge_point_titles": [
+        "容灾设计"
+      ],
+      "original_topic_title": "容灾设计"
+    },
+    {
+      "item_id": "checkin-031",
+      "order": 31,
+      "source_date": "2026-07-08",
+      "source_file": "2026年07月/2026-07-08 可靠性设计.md",
+      "source_title": "可靠性设计",
+      "topic_ids": [
+        "RELIABILITY.SOFTWARE.METRICS",
+        "RELIABILITY.SOFTWARE.FAULT_TOLERANCE",
+        "QUALITY.ATTRIBUTES.AVAILABILITY"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "high",
+      "mapping_notes": "可靠性指标、检错容错技术及集群/负载均衡分别覆盖指标、容错和可用性。",
+      "knowledge_point_titles": [
+        "软件可靠性",
+        "可靠性的衡量指标",
+        "可靠性设计战术"
+      ],
+      "original_topic_title": "可靠性设计"
+    },
+    {
+      "item_id": "checkin-032",
+      "order": 32,
+      "source_date": "2026-07-09",
+      "source_file": "2026年07月/2026-07-09 可观测性设计.md",
+      "source_title": "可观测性设计",
+      "topic_ids": [],
+      "mapping_status": "unmapped",
+      "mapping_confidence": "low",
+      "mapping_notes": "可观测性（指标、日志、链路追踪）没有同边界 active L3；不把可测试性或可用性强行当作可观测性。",
+      "knowledge_point_titles": [
+        "什么是可观测性",
+        "可观测性的三大支柱",
+        "可观测性工具"
+      ],
+      "original_topic_title": "可观测性设计"
+    },
+    {
+      "item_id": "checkin-033",
+      "order": 33,
+      "source_date": "2026-07-10",
+      "source_file": "2026年07月/2026-07-10 人工智能.md",
+      "source_title": "人工智能",
+      "topic_ids": [
+        "EMERGING.TECHNOLOGY.AI"
+      ],
+      "mapping_status": "exact",
+      "mapping_confidence": "high",
+      "mapping_notes": "人工智能概念、分类与关键技术与人工智能 L3 边界一致。",
+      "knowledge_point_titles": [
+        "人工智能的概念",
+        "人工智能的分类",
+        "人工智能关键技术"
+      ],
+      "original_topic_title": "人工智能"
+    },
+    {
+      "item_id": "checkin-034",
+      "order": 34,
+      "source_date": "2026-07-11",
+      "source_file": "2026年07月/2026-07-11 机器学习.md",
+      "source_title": "机器学习",
+      "topic_ids": [
+        "EMERGING.TECHNOLOGY.AI"
+      ],
+      "mapping_status": "partial",
+      "mapping_confidence": "high",
+      "mapping_notes": "机器学习和 Transformer 是人工智能主题的子集；Taxonomy 没有机器学习专属 L3。",
+      "knowledge_point_titles": [
+        "什么是机器学习",
+        "机器学习分类",
+        "Transformer 架构"
+      ],
+      "original_topic_title": "机器学习",
+      "mapping_group_id": "merge-ai-01"
+    },
+    {
+      "item_id": "checkin-035",
+      "order": 35,
+      "source_date": "2026-07-12",
+      "source_file": "2026年07月/2026-07-12 大模型应用开发.md",
+      "source_title": "大模型应用开发",
+      "topic_ids": [
+        "EMERGING.TECHNOLOGY.AI"
+      ],
+      "mapping_status": "partial",
+      "mapping_confidence": "medium",
+      "mapping_notes": "大模型及其应用属于 AI 子集，但本项混合提示词、训练、智能体、RAG 等多个内容点。",
+      "knowledge_point_titles": [
+        "基本概念",
+        "技术选型指南"
+      ],
+      "original_topic_title": "大模型应用开发",
+      "mapping_group_id": "merge-ai-01"
+    },
+    {
+      "item_id": "checkin-036",
+      "order": 36,
+      "source_date": "2026-07-13",
+      "source_file": "2026年07月/2026-07-13 检索增强生成-RAG.md",
+      "source_title": "检索增强生成-RAG",
+      "topic_ids": [
+        "EMERGING.TECHNOLOGY.AI"
+      ],
+      "mapping_status": "partial",
+      "mapping_confidence": "high",
+      "mapping_notes": "RAG 是 AI 应用技术子集；Taxonomy 没有 RAG 专属 Topic。",
+      "knowledge_point_titles": [
+        "大模型存在的缺陷",
+        "检索增强生成（RAG）"
+      ],
+      "original_topic_title": "检索增强生成（RAG）",
+      "mapping_group_id": "merge-ai-01"
+    },
+    {
+      "item_id": "checkin-037",
+      "order": 37,
+      "source_date": "2026-07-14",
+      "source_file": "2026年07月/2026-07-14 智能体架构.md",
+      "source_title": "智能体架构",
+      "topic_ids": [
+        "EMERGING.TECHNOLOGY.AI",
+        "ARCH.SOA.SERVICE_MODEL",
+        "ARCH.CLOUD_NATIVE.EVENT_DRIVEN"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "medium",
+      "mapping_notes": "智能体本体属于 AI；服务治理和基于事件的 Agent 通信跨入服务模型与事件驱动边界。",
+      "knowledge_point_titles": [
+        "什么是智能体",
+        "ReAct 设计范式",
+        "思考（Reasoning）：分析当前情况，决定下一步该做什么",
+        "行动（Acting）：执行工具调用或生成最终答案",
+        "观察（Observation）：接收工具执行的结果",
+        "迭代：基于观察结果继续思考和行动，直到完成任务",
+        "智能体的实现方式",
+        "智能体的架构组成",
+        "智能体之间的通信",
+        "大模型网关"
+      ],
+      "original_topic_title": "智能体架构",
+      "mapping_group_id": "merge-ai-01"
+    },
+    {
+      "item_id": "checkin-038",
+      "order": 38,
+      "source_date": "2026-07-15",
+      "source_file": "2026年07月/2026-07-15 知识图谱.md",
+      "source_title": "知识图谱",
+      "topic_ids": [
+        "DATA.BIGDATA.KNOWLEDGE_GRAPH",
+        "EMERGING.TECHNOLOGY.KNOWLEDGE_REPRESENTATION"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "high",
+      "mapping_notes": "知识图谱构建/存储/查询与实体、本体、谓词等知识表示概念均有明确覆盖。",
+      "knowledge_point_titles": [
+        "什么是知识图谱",
+        "知识图谱的核心概念",
+        "知识图谱的适用场景",
+        "知识图谱的构建过程",
+        "知识图谱的查询过程",
+        "知识图谱的存储层设计"
+      ],
+      "original_topic_title": "知识图谱"
+    },
+    {
+      "item_id": "checkin-039",
+      "order": 39,
+      "source_date": "2026-07-16",
+      "source_file": "2026年07月/2026-07-16 推荐系统.md",
+      "source_title": "推荐系统",
+      "topic_ids": [
+        "EMERGING.TECHNOLOGY.AI"
+      ],
+      "mapping_status": "partial",
+      "mapping_confidence": "medium",
+      "mapping_notes": "推荐算法及冷启动/同质化治理属于 AI 应用，但不是独立推荐系统 L3。",
+      "knowledge_point_titles": [
+        "什么是推荐系统",
+        "推荐系统的算法",
+        "推荐系统的建立过程",
+        "常见问题及解决方案"
+      ],
+      "original_topic_title": "推荐系统",
+      "mapping_group_id": "merge-ai-01"
+    },
+    {
+      "item_id": "checkin-040",
+      "order": 40,
+      "source_date": "2026-07-17",
+      "source_file": "2026年07月/2026-07-17 数据挖掘.md",
+      "source_title": "数据挖掘",
+      "topic_ids": [],
+      "mapping_status": "unmapped",
+      "mapping_confidence": "low",
+      "mapping_notes": "数据挖掘与 OLAP/分类聚类没有同边界 active L3；不将其宽泛归入 AI 或数据流水线。",
+      "knowledge_point_titles": [
+        "什么是数据挖掘",
+        "数据挖掘和 OLAP 的比较",
+        "数据挖掘的分析方法"
+      ],
+      "original_topic_title": "数据挖掘"
+    },
+    {
+      "item_id": "checkin-041",
+      "order": 41,
+      "source_date": "2026-07-18",
+      "source_file": "2026年07月/2026-07-18 云计算.md",
+      "source_title": "云计算",
+      "topic_ids": [
+        "EMERGING.TECHNOLOGY.CLOUD_COMPUTING"
+      ],
+      "mapping_status": "exact",
+      "mapping_confidence": "high",
+      "mapping_notes": "云计算部署模式与 IaaS/PaaS/SaaS/FaaS 等服务模式直接对应。",
+      "knowledge_point_titles": [
+        "什么是云计算",
+        "云计算的部署模式",
+        "云计算的服务模式"
+      ],
+      "original_topic_title": "云计算"
+    },
+    {
+      "item_id": "checkin-042",
+      "order": 42,
+      "source_date": "2026-07-19",
+      "source_file": "2026年07月/2026-07-19 边缘计算.md",
+      "source_title": "边缘计算",
+      "topic_ids": [
+        "EMERGING.TECHNOLOGY.EDGE"
+      ],
+      "mapping_status": "exact",
+      "mapping_confidence": "high",
+      "mapping_notes": "边缘计算概念及优缺点与边缘计算 L3 一致。",
+      "knowledge_point_titles": [
+        "什么是边缘计算",
+        "边缘计算的优点",
+        "边缘计算的缺点"
+      ],
+      "original_topic_title": "边缘计算"
+    },
+    {
+      "item_id": "checkin-043",
+      "order": 43,
+      "source_date": "2026-07-20",
+      "source_file": "2026年07月/2026-07-20 边云协同.md",
+      "source_title": "边云协同",
+      "topic_ids": [
+        "EMERGING.TECHNOLOGY.EDGE",
+        "EMERGING.TECHNOLOGY.CLOUD_COMPUTING"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "medium",
+      "mapping_notes": "边云协同同时涉及边缘计算与云计算；现有 Taxonomy 没有边云协同专属边界。",
+      "knowledge_point_titles": [
+        "边云协同",
+        "资源协同",
+        "数据协同",
+        "智能协同",
+        "应用管理协同",
+        "业务管理协同",
+        "服务协同"
+      ],
+      "original_topic_title": "边云协同"
+    },
+    {
+      "item_id": "checkin-044",
+      "order": 44,
+      "source_date": "2026-07-21",
+      "source_file": "2026年07月/2026-07-21 物联网.md",
+      "source_title": "物联网",
+      "topic_ids": [
+        "ARCH.LAYERED.IOT",
+        "ARCH.COMMUNICATION.NETWORK_ARCHITECTURE"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "high",
+      "mapping_notes": "物联网系统架构与 MQTT 通信协议分别对应 IoT 层次架构和通信网络架构。",
+      "knowledge_point_titles": [
+        "什么是物联网",
+        "物联网系统架构",
+        "MQTT 协议"
+      ],
+      "original_topic_title": "物联网"
+    },
+    {
+      "item_id": "checkin-045",
+      "order": 45,
+      "source_date": "2026-07-22",
+      "source_file": "2026年07月/2026-07-22 区块链.md",
+      "source_title": "区块链",
+      "topic_ids": [],
+      "mapping_status": "unmapped",
+      "mapping_confidence": "low",
+      "mapping_notes": "区块链/智能合约没有同边界 active L3；不以分布式一致性替代区块链专题。",
+      "knowledge_point_titles": [
+        "什么是区块链",
+        "区块链的特点",
+        "区块链的类型",
+        "智能合约",
+        "区块链的层次架构"
+      ],
+      "original_topic_title": "区块链"
+    },
+    {
+      "item_id": "checkin-046",
+      "order": 46,
+      "source_date": "2026-07-23",
+      "source_file": "2026年07月/2026-07-23 锁.md",
+      "source_title": "锁",
+      "topic_ids": [
+        "SYSTEM.COMPUTER.OPERATING_SYSTEMS",
+        "DATA.DATABASE.TRANSACTION",
+        "QUALITY.ATTRIBUTES.PERFORMANCE"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "medium",
+      "mapping_notes": "通用锁、死锁、数据库并发锁及降低锁粒度分别涉及 OS 同步、数据库事务和性能战术。",
+      "knowledge_point_titles": [
+        "基本概念",
+        "锁的分类",
+        "死锁",
+        "锁的优化"
+      ],
+      "original_topic_title": "锁"
+    },
+    {
+      "item_id": "checkin-047",
+      "order": 47,
+      "source_date": "2026-07-24",
+      "source_file": "2026年07月/2026-07-24 分布式锁.md",
+      "source_title": "分布式锁",
+      "topic_ids": [
+        "DATA.DISTRIBUTED.DISTRIBUTED_LOCK"
+      ],
+      "mapping_status": "exact",
+      "mapping_confidence": "high",
+      "mapping_notes": "关系库、Redis、ZooKeeper、Etcd 分布式锁机制与分布式锁 L3 一致。",
+      "knowledge_point_titles": [
+        "基于关系型数据库的分布式锁",
+        "基于 Redis 的分布式锁",
+        "基于 ZooKeeper 的分布式锁",
+        "基于 Etcd 的分布式锁"
+      ],
+      "original_topic_title": "分布式锁"
+    },
+    {
+      "item_id": "checkin-048",
+      "order": 48,
+      "source_date": "2026-07-25",
+      "source_file": "2026年07月/2026-07-25 微服务架构.md",
+      "source_title": "微服务架构",
+      "topic_ids": [
+        "ARCH.CLOUD_NATIVE.MICROSERVICES"
+      ],
+      "mapping_status": "exact",
+      "mapping_confidence": "high",
+      "mapping_notes": "微服务架构概念、特征、原则和模式与微服务 L3 边界一致。",
+      "knowledge_point_titles": [
+        "单体架构面临的挑战",
+        "微服务架构"
+      ],
+      "original_topic_title": "微服务架构"
+    },
+    {
+      "item_id": "checkin-049",
+      "order": 49,
+      "source_date": "2026-07-26",
+      "source_file": "2026年07月/2026-07-26 服务间的通信.md",
+      "source_title": "服务间的通信",
+      "topic_ids": [
+        "ARCH.SOA.SERVICE_PROTOCOLS",
+        "ARCH.SOA.SERVICE_BUS"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "high",
+      "mapping_notes": "HTTP/REST、gRPC 属于服务协议；同步/异步通信范式还覆盖消息服务总线。",
+      "knowledge_point_titles": [
+        "同步通信",
+        "异步通信",
+        "HTTP/REST",
+        "gRPC"
+      ],
+      "original_topic_title": "服务间的通信"
+    },
+    {
+      "item_id": "checkin-050",
+      "order": 50,
+      "source_date": "2026-07-27",
+      "source_file": "2026年07月/2026-07-27 服务治理.md",
+      "source_title": "服务治理",
+      "topic_ids": [
+        "ARCH.SOA.SERVICE_MODEL",
+        "QUALITY.ATTRIBUTES.AVAILABILITY",
+        "QUALITY.ATTRIBUTES.PERFORMANCE"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "medium",
+      "mapping_notes": "注册发现、治理属于服务模型；负载均衡/熔断/限流覆盖可用性与性能；没有把治理等同于 Service Mesh。",
+      "knowledge_point_titles": [
+        "服务治理",
+        "服务注册与发现",
+        "负载均衡",
+        "资源隔离",
+        "熔断",
+        "降级",
+        "限流",
+        "配置管理",
+        "API 网关",
+        "可观测性"
+      ],
+      "original_topic_title": "微服务架构-服务治理"
+    },
+    {
+      "item_id": "checkin-051",
+      "order": 51,
+      "source_date": "2026-07-28",
+      "source_file": "2026年07月/2026-07-28 负载均衡.md",
+      "source_title": "负载均衡",
+      "topic_ids": [
+        "ARCH.COMMUNICATION.HIGH_AVAILABILITY",
+        "QUALITY.ATTRIBUTES.PERFORMANCE"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "medium",
+      "mapping_notes": "负载均衡算法和部署层次涉及性能，并与网络高可用有交集，但不能代表该主题全部内容。",
+      "knowledge_point_titles": [
+        "什么是负载均衡",
+        "负载均衡的类型",
+        "负载均衡算法"
+      ],
+      "original_topic_title": "负载均衡"
+    },
+    {
+      "item_id": "checkin-052",
+      "order": 52,
+      "source_date": "2026-07-29",
+      "source_file": "2026年07月/2026-07-29 限流.md",
+      "source_title": "限流",
+      "topic_ids": [
+        "QUALITY.ATTRIBUTES.PERFORMANCE"
+      ],
+      "mapping_status": "partial",
+      "mapping_confidence": "high",
+      "mapping_notes": "限流算法和请求处置是性能/容量控制战术的一部分。",
+      "knowledge_point_titles": [
+        "限流算法",
+        "限流方式",
+        "限流维度",
+        "被限流请求的处置策略"
+      ],
+      "original_topic_title": "限流"
+    },
+    {
+      "item_id": "checkin-053",
+      "order": 53,
+      "source_date": "2026-07-30",
+      "source_file": "2026年07月/2026-07-30 重试策略.md",
+      "source_title": "重试策略",
+      "topic_ids": [
+        "RELIABILITY.SOFTWARE.FAULT_TOLERANCE"
+      ],
+      "mapping_status": "partial",
+      "mapping_confidence": "high",
+      "mapping_notes": "重试条件与退避策略属于容错恢复战术，但仅覆盖可靠性 L3 的一部分。",
+      "knowledge_point_titles": [
+        "重试",
+        "重试的条件",
+        "重试策略"
+      ],
+      "original_topic_title": "重试策略"
+    },
+    {
+      "item_id": "checkin-054",
+      "order": 54,
+      "source_date": "2026-07-31",
+      "source_file": "2026年07月/2026-07-31 微服务划分.md",
+      "source_title": "微服务划分",
+      "topic_ids": [
+        "ARCH.CLOUD_NATIVE.MICROSERVICES"
+      ],
+      "mapping_status": "partial",
+      "mapping_confidence": "high",
+      "mapping_notes": "微服务拆分原则与因素直接关联微服务架构，但没有覆盖其完整边界。",
+      "knowledge_point_titles": [
+        "微服务划分原则",
+        "微服务划分需要考虑的因素"
+      ],
+      "original_topic_title": "微服务划分"
+    },
+    {
+      "item_id": "checkin-055",
+      "order": 55,
+      "source_date": "2026-08-01",
+      "source_file": "2026年08月/2026-08-01 领域驱动设计-核心理念.md",
+      "source_title": "领域驱动设计-核心理念",
+      "topic_ids": [],
+      "mapping_status": "unmapped",
+      "mapping_confidence": "low",
+      "mapping_notes": "DDD 核心理念没有同边界 active L3；架构复用/建模主题不足以代表领域驱动设计。",
+      "knowledge_point_titles": [
+        "什么是领域驱动设计",
+        "核心思想"
+      ],
+      "original_topic_title": "领域驱动设计"
+    },
+    {
+      "item_id": "checkin-056",
+      "order": 56,
+      "source_date": "2026-08-05",
+      "source_file": "2026年08月/2026-08-05 领域驱动设计-战略设计.md",
+      "source_title": "领域驱动设计-战略设计",
+      "topic_ids": [],
+      "mapping_status": "unmapped",
+      "mapping_confidence": "low",
+      "mapping_notes": "DDD 战略设计、限界上下文、上下文映射和事件风暴无专属 L3，不强行归入微服务。",
+      "knowledge_point_titles": [
+        "战略设计",
+        "领域的类型",
+        "限界上下文",
+        "事件风暴会议"
+      ],
+      "original_topic_title": "领域驱动设计-战略设计"
+    },
+    {
+      "item_id": "checkin-057",
+      "order": 57,
+      "source_date": "2026-08-07",
+      "source_file": "2026年08月/2026-08-07 领域驱动设计-战术设计.md",
+      "source_title": "领域驱动设计-战术设计",
+      "topic_ids": [],
+      "mapping_status": "unmapped",
+      "mapping_confidence": "low",
+      "mapping_notes": "DDD 战术设计的实体/值对象/聚合等没有同边界 active L3，不以架构基础代替；文件名/知识点为“战术设计”，Prompt 标题误写“战略设计”。",
+      "knowledge_point_titles": [
+        "战术设计",
+        "领域模型",
+        "实体",
+        "值对象",
+        "实体和值对象的区别",
+        "领域事件",
+        "聚合",
+        "领域服务",
+        "应用服务",
+        "工厂",
+        "仓储",
+        "网关"
+      ],
+      "original_topic_title": "领域驱动设计-战略设计"
+    },
+    {
+      "item_id": "checkin-058",
+      "order": 58,
+      "source_date": "2026-08-08",
+      "source_file": "2026年08月/2026-08-08 领域驱动设计-架构模式.md",
+      "source_title": "领域驱动设计-架构模式",
+      "topic_ids": [
+        "ARCH.FOUNDATION.STYLES",
+        "ARCH.LAYERED.LAYERS",
+        "ARCH.CLOUD_NATIVE.EVENT_DRIVEN"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "medium",
+      "mapping_notes": "分层/六边形/洋葱属于架构风格或层次；事件溯源与 CQRS 是事件驱动相关，但 CQRS 未独立建模。",
+      "knowledge_point_titles": [
+        "层次架构",
+        "六边形架构",
+        "洋葱架构",
+        "事件溯源架构",
+        "CQRS 架构"
+      ],
+      "original_topic_title": "领域驱动设计-架构模式"
+    },
+    {
+      "item_id": "checkin-059",
+      "order": 59,
+      "source_date": "2026-08-09",
+      "source_file": "2026年08月/2026-08-09 云原生架构概述.md",
+      "source_title": "云原生架构概述",
+      "topic_ids": [],
+      "mapping_status": "unmapped",
+      "mapping_confidence": "low",
+      "mapping_notes": "云原生通用原则超出现有四个云原生子主题的明确边界；不映射到父级或任意子 Topic。",
+      "knowledge_point_titles": [
+        "传统开发模式面临的挑战",
+        "云原生架构",
+        "云原生架构的特性",
+        "云原生架构原则"
+      ],
+      "original_topic_title": "云原生架构-概述"
+    },
+    {
+      "item_id": "checkin-060",
+      "order": 60,
+      "source_date": "2026-08-10",
+      "source_file": "2026年08月/2026-08-10 云原生架构-容器技术.md",
+      "source_title": "云原生架构-容器技术",
+      "topic_ids": [
+        "ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS"
+      ],
+      "mapping_status": "partial",
+      "mapping_confidence": "high",
+      "mapping_notes": "容器、镜像、引擎和编排直接对应容器子主题，但不覆盖 Serverless 部分。",
+      "knowledge_point_titles": [
+        "传统部署运维方式存在的弊端",
+        "容器技术",
+        "容器优化"
+      ],
+      "original_topic_title": "云原生架构-容器技术"
+    },
+    {
+      "item_id": "checkin-061",
+      "order": 61,
+      "source_date": "2026-08-11",
+      "source_file": "2026年08月/2026-08-11 云原生架构-架构模式.md",
+      "source_title": "云原生架构-架构模式",
+      "topic_ids": [
+        "ARCH.SOA.SERVICE_MODEL",
+        "ARCH.CLOUD_NATIVE.SERVICE_MESH",
+        "ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS",
+        "DATA.DISTRIBUTED.CONSISTENCY"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "medium",
+      "mapping_notes": "清单跨服务化、服务网格、Serverless、分布式事务；存储计算分离和可观测性没有精确 L3。",
+      "knowledge_point_titles": [
+        "服务化架构模式",
+        "服务网格架构模式",
+        "无服务架构模式",
+        "存储计算分离架构模式",
+        "分布式事务模式",
+        "可观测架构"
+      ],
+      "original_topic_title": "云原生架构-架构模式"
+    },
+    {
+      "item_id": "checkin-062",
+      "order": 62,
+      "source_date": "2026-08-12",
+      "source_file": "2026年08月/2026-08-12 Kubernetes 资源类型.md",
+      "source_title": "Kubernetes 资源类型",
+      "topic_ids": [
+        "ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS"
+      ],
+      "mapping_status": "partial",
+      "mapping_confidence": "high",
+      "mapping_notes": "Kubernetes 资源和探针是容器编排实现细节，不等于容器与 Serverless 全部边界。",
+      "knowledge_point_titles": [
+        "Namespace",
+        "Pod",
+        "Deployment",
+        "DaemonSet",
+        "StatefulSet",
+        "Job",
+        "CronJob",
+        "Service",
+        "Ingress",
+        "ConfigMap",
+        "Secret",
+        "HPA",
+        "VPA"
+      ],
+      "original_topic_title": "云原生架构-Kubernetes 资源类型"
+    },
+    {
+      "item_id": "checkin-063",
+      "order": 63,
+      "source_date": "2026-08-13",
+      "source_file": "2026年08月/2026-08-13 消息中间件-概述.md",
+      "source_title": "消息中间件-概述",
+      "topic_ids": [
+        "ARCH.SOA.SERVICE_BUS"
+      ],
+      "mapping_status": "partial",
+      "mapping_confidence": "medium",
+      "mapping_notes": "消息中间件作用、通信与消费模式属于消息服务总线的一部分。",
+      "knowledge_point_titles": [
+        "什么是消息中间件",
+        "消息中间件的作用",
+        "消息中间件的通信模式",
+        "消息中间件的消费模式"
+      ],
+      "original_topic_title": "热门技术-消息中间件-概述"
+    },
+    {
+      "item_id": "checkin-064",
+      "order": 64,
+      "source_date": "2026-08-14",
+      "source_file": "2026年08月/2026-08-14 消息中间件-kafka.md",
+      "source_title": "消息中间件-kafka",
+      "topic_ids": [
+        "ARCH.SOA.SERVICE_BUS"
+      ],
+      "mapping_status": "partial",
+      "mapping_confidence": "high",
+      "mapping_notes": "Kafka 组件与消费模型属于消息中间件专题；现有 L3 不细分具体产品或分区机制。",
+      "knowledge_point_titles": [
+        "架构组成"
+      ],
+      "original_topic_title": "热门技术-消息中间件-kafka"
+    },
+    {
+      "item_id": "checkin-065",
+      "order": 65,
+      "source_date": "2026-08-15",
+      "source_file": "2026年08月/2026-08-15 消息中间件-常见问题及解决方案.md",
+      "source_title": "消息中间件-常见问题及解决方案",
+      "topic_ids": [
+        "ARCH.SOA.SERVICE_BUS",
+        "DATA.DISTRIBUTED.CONSISTENCY",
+        "RELIABILITY.SOFTWARE.FAULT_TOLERANCE"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "medium",
+      "mapping_notes": "消息可靠投递属于服务总线，顺序/重复/事务涉及一致性，丢失与积压治理涉及容错。",
+      "knowledge_point_titles": [
+        "消息丢失问题",
+        "消息积压问题",
+        "消息消费乱序",
+        "重复消费问题",
+        "消息发送和数据库事务的原子性问题"
+      ],
+      "original_topic_title": "热门技术-消息中间件-常见问题及解决方案"
+    },
+    {
+      "item_id": "checkin-066",
+      "order": 66,
+      "source_date": "2026-08-16",
+      "source_file": "2026年08月/2026-08-16 Redis-数据类型.md",
+      "source_title": "Redis-数据类型",
+      "topic_ids": [],
+      "mapping_status": "unmapped",
+      "mapping_confidence": "low",
+      "mapping_notes": "Redis 数据结构没有 active L3；不能因为它是缓存产品就映射到缓存读写或失效治理。",
+      "knowledge_point_titles": [
+        "String",
+        "Hash",
+        "List",
+        "Set",
+        "SortedSet",
+        "Bitmap",
+        "Geo",
+        "HyperLogLog",
+        "Stream"
+      ],
+      "original_topic_title": "热门技术-Redis-数据类型"
+    },
+    {
+      "item_id": "checkin-067",
+      "order": 67,
+      "source_date": "2026-08-17",
+      "source_file": "2026年08月/2026-08-17 Redis-持久化.md",
+      "source_title": "Redis-持久化",
+      "topic_ids": [
+        "DATA.CACHE.CACHE_PERSISTENCE"
+      ],
+      "mapping_status": "partial",
+      "mapping_confidence": "high",
+      "mapping_notes": "RDB/AOF/混合持久化直接覆盖缓存持久化的一部分；未覆盖复制。",
+      "knowledge_point_titles": [
+        "RDB",
+        "AOF",
+        "混合持久化"
+      ],
+      "original_topic_title": "热门技术-Redis-持久化策略",
+      "mapping_group_id": "merge-cache-persistence-01"
+    },
+    {
+      "item_id": "checkin-068",
+      "order": 68,
+      "source_date": "2026-08-18",
+      "source_file": "2026年08月/2026-08-18 Redis-数据过期与内存淘汰机制.md",
+      "source_title": "Redis-数据过期与内存淘汰机制",
+      "topic_ids": [
+        "DATA.CACHE.CACHE_FAILURE"
+      ],
+      "mapping_status": "partial",
+      "mapping_confidence": "medium",
+      "mapping_notes": "键过期和淘汰与缓存失效治理相邻，但不等于击穿/穿透/雪崩等完整边界。",
+      "knowledge_point_titles": [
+        "数据过期策略",
+        "内存淘汰策略"
+      ],
+      "original_topic_title": "热门技术-Redis-数据过期与内存淘汰机制",
+      "mapping_group_id": "merge-cache-failure-01"
+    },
+    {
+      "item_id": "checkin-069",
+      "order": 69,
+      "source_date": "2026-08-19",
+      "source_file": "2026年08月/2026-08-19 Redis-批量操作与事务.md",
+      "source_title": "Redis-批量操作与事务",
+      "topic_ids": [],
+      "mapping_status": "unmapped",
+      "mapping_confidence": "low",
+      "mapping_notes": "Redis Pipeline/Lua/事务语义没有同边界 active L3；不直接套用关系数据库事务。",
+      "knowledge_point_titles": [
+        "Redis 批量操作",
+        "Redis 事务"
+      ],
+      "original_topic_title": "热门技术-Redis-批量操作与事务"
+    },
+    {
+      "item_id": "checkin-070",
+      "order": 70,
+      "source_date": "2026-08-20",
+      "source_file": "2026年08月/2026-08-20 Redis-集群架构.md",
+      "source_title": "Redis-集群架构",
+      "topic_ids": [
+        "DATA.CACHE.CACHE_PERSISTENCE",
+        "DATA.DISTRIBUTED.REPLICATION_PARTITIONING"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "high",
+      "mapping_notes": "Redis 主从/哨兵复制与 Cluster 分片分别涉及缓存复制和通用数据分布。",
+      "knowledge_point_titles": [
+        "Redis 主从复制集群",
+        "Redis 哨兵集群",
+        "Redis Cluster 集群"
+      ],
+      "original_topic_title": "热门技术-Redis-集群架构",
+      "mapping_group_id": "merge-cache-persistence-01"
+    },
+    {
+      "item_id": "checkin-071",
+      "order": 71,
+      "source_date": "2026-08-21",
+      "source_file": "2026年08月/2026-08-21 Redis-缓存更新模式.md",
+      "source_title": "Redis-缓存更新模式",
+      "topic_ids": [
+        "DATA.CACHE.CACHE_ASIDE"
+      ],
+      "mapping_status": "partial",
+      "mapping_confidence": "high",
+      "mapping_notes": "旁路缓存与 Cache-Aside 对齐；读写穿透、写回及 CDC 异步更新超出该 L3。",
+      "knowledge_point_titles": [
+        "旁路缓存模式",
+        "读/写穿透模式",
+        "写回模式",
+        "CDC + 异步更新"
+      ],
+      "original_topic_title": "热门技术-Redis-缓存更新模式"
+    },
+    {
+      "item_id": "checkin-072",
+      "order": 72,
+      "source_date": "2026-08-22",
+      "source_file": "2026年08月/2026-08-22 Redis-常见问题及解决方案.md",
+      "source_title": "Redis-常见问题及解决方案",
+      "topic_ids": [
+        "DATA.CACHE.CACHE_FAILURE"
+      ],
+      "mapping_status": "merge",
+      "mapping_confidence": "high",
+      "mapping_notes": "击穿/穿透/雪崩覆盖缓存失效主题核心，与第 68 项共同覆盖；冷启动和 BigKey 是相邻补充。",
+      "knowledge_point_titles": [
+        "缓存击穿",
+        "缓存穿透",
+        "缓存雪崩",
+        "冷启动",
+        "BigKey"
+      ],
+      "original_topic_title": "热门技术-Redis-常见问题及解决方案",
+      "mapping_group_id": "merge-cache-failure-01"
+    },
+    {
+      "item_id": "checkin-073",
+      "order": 73,
+      "source_date": "2026-08-23",
+      "source_file": "2026年08月/2026-08-23 大数据架构-概述.md",
+      "source_title": "大数据架构-概述",
+      "topic_ids": [
+        "DATA.BIGDATA.DATA_PIPELINE"
+      ],
+      "mapping_status": "exact",
+      "mapping_confidence": "high",
+      "mapping_notes": "数据采集、清洗、存储、分析及批/流处理架构与数据处理流水线一致。",
+      "knowledge_point_titles": [
+        "大数据处理流程",
+        "大数据处理架构类型",
+        "关键技术"
+      ],
+      "original_topic_title": "热门技术-大数据架构-概述"
+    },
+    {
+      "item_id": "checkin-074",
+      "order": 74,
+      "source_date": "2026-08-24",
+      "source_file": "2026年08月/2026-08-24 大数据架构-架构模式.md",
+      "source_title": "大数据架构-架构模式",
+      "topic_ids": [
+        "DATA.BIGDATA.LAMBDA_KAPPA"
+      ],
+      "mapping_status": "exact",
+      "mapping_confidence": "high",
+      "mapping_notes": "Lambda 与 Kappa 架构名称及实现原理直接对应现有 L3。",
+      "knowledge_point_titles": [
+        "Lambda 架构",
+        "Kappa 架构"
+      ],
+      "original_topic_title": "热门技术-大数据架构-架构模式"
+    },
+    {
+      "item_id": "checkin-075",
+      "order": 75,
+      "source_date": "2026-08-25",
+      "source_file": "2026年08月/2026-08-25 大数据架构-湖仓一体架构.md",
+      "source_title": "大数据架构-湖仓一体架构",
+      "topic_ids": [],
+      "mapping_status": "unmapped",
+      "mapping_confidence": "low",
+      "mapping_notes": "数据湖、数据仓库与湖仓一体缺少同边界 active L3；数据流水线不覆盖其存储/计算架构。",
+      "knowledge_point_titles": [
+        "数据湖",
+        "数据仓库",
+        "湖仓一体架构"
+      ],
+      "original_topic_title": "热门技术-大数据架构-湖仓一体架构"
+    },
+    {
+      "item_id": "checkin-076",
+      "order": 76,
+      "source_date": "2026-08-26",
+      "source_file": "2026年08月/2026-08-26 软件工程-需求工程-概述.md",
+      "source_title": "软件工程-需求工程-概述",
+      "topic_ids": [
+        "SOFTWARE.ENGINEERING.REQUIREMENTS"
+      ],
+      "mapping_status": "exact",
+      "mapping_confidence": "high",
+      "mapping_notes": "需求工程、基线、需求开发/管理和跟踪与需求工程 L3 一致；文件名指向需求工程，Prompt 标题泛化为“软件工程”。",
+      "knowledge_point_titles": [
+        "需求工程概述"
+      ],
+      "original_topic_title": "软件工程"
+    },
+    {
+      "item_id": "checkin-077",
+      "order": 77,
+      "source_date": "2026-08-27",
+      "source_file": "2026年08月/2026-08-27 分布式协调.md",
+      "source_title": "分布式协调",
+      "topic_ids": [
+        "DATA.DISTRIBUTED.DISTRIBUTED_LOCK",
+        "ARCH.SOA.SERVICE_MODEL"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "medium",
+      "mapping_notes": "ZooKeeper 协调包含分布式锁和服务注册/集群治理；队列/配置等细目没有独立映射。",
+      "knowledge_point_titles": [
+        "分布式协调",
+        "ZooKeeper"
+      ],
+      "original_topic_title": "分布式系统设计-分布式协调"
+    },
+    {
+      "item_id": "checkin-078",
+      "order": 78,
+      "source_date": "2026-08-28",
+      "source_file": "2026年08月/2026-08-28 分布式事务.md",
+      "source_title": "分布式事务",
+      "topic_ids": [
+        "DATA.DISTRIBUTED.CONSISTENCY",
+        "DATA.DATABASE.TRANSACTION",
+        "ARCH.SOA.SERVICE_BUS"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "high",
+      "mapping_notes": "CAP/BASE、2PC/TCC/Saga、最终一致性及消息事务横跨分布式一致性、事务与消息总线。",
+      "knowledge_point_titles": [
+        "CAP 理论",
+        "BASE 理论",
+        "常见的分布式事务解决方案"
+      ],
+      "original_topic_title": "分布式系统设计-分布式事务"
+    },
+    {
+      "item_id": "checkin-079",
+      "order": 79,
+      "source_date": "2026-09-01",
+      "source_file": "2026年09月/2026-09-01 结构化需求分析.md",
+      "source_title": "结构化需求分析",
+      "topic_ids": [
+        "SOFTWARE.ENGINEERING.ANALYSIS_DESIGN"
+      ],
+      "mapping_status": "exact",
+      "mapping_confidence": "high",
+      "mapping_notes": "结构化分析、DFD 功能模型及分析过程与系统分析 L3 对齐。",
+      "knowledge_point_titles": [
+        "结构化分析方法",
+        "功能模型：数据流图"
+      ],
+      "original_topic_title": "结构化分析方法"
+    },
+    {
+      "item_id": "checkin-080",
+      "order": 80,
+      "source_date": "2026-09-02",
+      "source_file": "2026年09月/2026-09-02 结构化需求分析.md",
+      "source_title": "结构化需求分析",
+      "topic_ids": [
+        "SOFTWARE.ENGINEERING.ANALYSIS_DESIGN"
+      ],
+      "mapping_status": "partial",
+      "mapping_confidence": "high",
+      "mapping_notes": "ER 图和数据字典是结构化分析模型的一部分，仅覆盖系统分析与设计边界的一段。",
+      "knowledge_point_titles": [
+        "数据模型：E-R 图",
+        "结构化分析模型的核心：数据字典"
+      ],
+      "original_topic_title": "结构化分析方法",
+      "mapping_group_id": "merge-analysis-01"
+    },
+    {
+      "item_id": "checkin-081",
+      "order": 81,
+      "source_date": "2026-09-03",
+      "source_file": "2026年09月/2026-09-03 面向对象分析.md",
+      "source_title": "面向对象分析",
+      "topic_ids": [
+        "SOFTWARE.ENGINEERING.ANALYSIS_DESIGN"
+      ],
+      "mapping_status": "partial",
+      "mapping_confidence": "high",
+      "mapping_notes": "面向对象分析概念与模型是系统分析/设计的一种方法，未单独映射为 UML。",
+      "knowledge_point_titles": [
+        "什么是面向对象分析",
+        "面向对象方法的优点",
+        "面向对象的基本特征",
+        "面向对象的基本概念",
+        "面向对象模型的组成"
+      ],
+      "original_topic_title": "面向对象分析方法",
+      "mapping_group_id": "merge-analysis-01"
+    },
+    {
+      "item_id": "checkin-082",
+      "order": 82,
+      "source_date": "2026-09-04",
+      "source_file": "2026年09月/2026-09-04 面向对象分析.md",
+      "source_title": "面向对象分析",
+      "topic_ids": [
+        "SOFTWARE.ENGINEERING.ANALYSIS_DESIGN",
+        "SOFTWARE.MODELING.UML"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "high",
+      "mapping_notes": "用例模型与分析模型兼具系统分析和 UML 建模内容。",
+      "knowledge_point_titles": [
+        "用例模型",
+        "分析模型"
+      ],
+      "original_topic_title": "面向对象分析方法",
+      "mapping_group_id": "merge-uml-01"
+    },
+    {
+      "item_id": "checkin-083",
+      "order": 83,
+      "source_date": "2026-09-05",
+      "source_file": "2026年09月/2026-09-05 面向对象分析.md",
+      "source_title": "面向对象分析",
+      "topic_ids": [
+        "SOFTWARE.MODELING.UML"
+      ],
+      "mapping_status": "merge",
+      "mapping_confidence": "high",
+      "mapping_notes": "UML 静态/动态图分类与第 82、84 项共同覆盖 UML 建模主题。",
+      "knowledge_point_titles": [
+        "UML  图的分类"
+      ],
+      "original_topic_title": "面向对象分析方法",
+      "mapping_group_id": "merge-uml-01"
+    },
+    {
+      "item_id": "checkin-084",
+      "order": 84,
+      "source_date": "2026-09-06",
+      "source_file": "2026年09月/2026-09-06 面向对象分析.md",
+      "source_title": "面向对象分析",
+      "topic_ids": [
+        "SOFTWARE.MODELING.UML",
+        "ARCH.FOUNDATION.VIEWS"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "high",
+      "mapping_notes": "活动/顺序/通信/状态图属于 UML；4+1 视图属于架构视图，明确跨两个 Topic。",
+      "knowledge_point_titles": [
+        "活动图",
+        "顺序图",
+        "通信图",
+        "状态图",
+        "UML 4 + 1 视图"
+      ],
+      "original_topic_title": "面向对象分析方法",
+      "mapping_group_id": "merge-uml-01"
+    },
+    {
+      "item_id": "checkin-085",
+      "order": 85,
+      "source_date": "2026-09-07",
+      "source_file": "2026年09月/2026-09-07 需求验证.md",
+      "source_title": "需求验证",
+      "topic_ids": [
+        "SOFTWARE.ENGINEERING.REQUIREMENTS"
+      ],
+      "mapping_status": "partial",
+      "mapping_confidence": "high",
+      "mapping_notes": "需求评审与需求测试直接覆盖需求验证，但只覆盖需求工程的一部分；与 8 月 26 日主题相隔数项。",
+      "knowledge_point_titles": [
+        "什么是需求验证",
+        "需求验证的重要性",
+        "需求验证的主要内容",
+        "需求验证方法"
+      ],
+      "original_topic_title": "需求工程"
+    },
+    {
+      "item_id": "checkin-086",
+      "order": 86,
+      "source_date": "2026-09-08",
+      "source_file": "2026年09月/2026-09-08 系统设计.md",
+      "source_title": "系统设计",
+      "topic_ids": [
+        "SOFTWARE.ENGINEERING.ANALYSIS_DESIGN",
+        "SOFTWARE.MODELING.BUSINESS_PROCESS"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "high",
+      "mapping_notes": "系统设计/UI 与业务处理流程、WFMS 是系统设计和业务流程建模两个边界。",
+      "knowledge_point_titles": [
+        "系统设计"
+      ],
+      "original_topic_title": "系统设计"
+    },
+    {
+      "item_id": "checkin-087",
+      "order": 87,
+      "source_date": "2026-09-09",
+      "source_file": "2026年09月/2026-09-09 结构化设计.md",
+      "source_title": "结构化设计",
+      "topic_ids": [
+        "SOFTWARE.ENGINEERING.ANALYSIS_DESIGN"
+      ],
+      "mapping_status": "partial",
+      "mapping_confidence": "high",
+      "mapping_notes": "模块、耦合与内聚属于结构化系统设计的局部内容。",
+      "knowledge_point_titles": [
+        "模块设计原则",
+        "耦合",
+        "内聚"
+      ],
+      "original_topic_title": "结构化设计"
+    },
+    {
+      "item_id": "checkin-088",
+      "order": 88,
+      "source_date": "2026-09-10",
+      "source_file": "2026年09月/2026-09-10 面向对象设计.md",
+      "source_title": "面向对象设计",
+      "topic_ids": [
+        "SOFTWARE.ENGINEERING.ANALYSIS_DESIGN",
+        "ARCH.FOUNDATION.DESIGN_PATTERNS"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "high",
+      "mapping_notes": "面向对象设计原则与设计活动属于系统设计；设计模式是独立架构基础 Topic。",
+      "knowledge_point_titles": [
+        "设计软件类",
+        "面向对象设计原则",
+        "设计模式"
+      ],
+      "original_topic_title": "面向对象设计"
+    },
+    {
+      "item_id": "checkin-089",
+      "order": 89,
+      "source_date": "2026-09-11",
+      "source_file": "2026年09月/2026-09-11 软件测试概述.md",
+      "source_title": "软件测试概述",
+      "topic_ids": [
+        "SOFTWARE.ENGINEERING.TESTING"
+      ],
+      "mapping_status": "merge",
+      "mapping_confidence": "high",
+      "mapping_notes": "测试定义/分类及缺陷管理开启连续测试专题，与后续测试方法和阶段项共同覆盖同一 L3。",
+      "knowledge_point_titles": [
+        "什么是软件测试",
+        "软件测试方法",
+        "软件测试类型",
+        "缺陷管理",
+        "及时同步缺陷状态"
+      ],
+      "original_topic_title": "软件测试概述",
+      "mapping_group_id": "merge-testing-01"
+    },
+    {
+      "item_id": "checkin-090",
+      "order": 90,
+      "source_date": "2026-09-12",
+      "source_file": "2026年09月/2026-09-12 黑盒测试.md",
+      "source_title": "黑盒测试",
+      "topic_ids": [
+        "SOFTWARE.ENGINEERING.TESTING"
+      ],
+      "mapping_status": "merge",
+      "mapping_confidence": "high",
+      "mapping_notes": "黑盒测试及等价类、边界值和判定表是软件测试方法的深化。",
+      "knowledge_point_titles": [
+        "什么是黑盒测试",
+        "常见的黑盒测试方法"
+      ],
+      "original_topic_title": "黑盒测试",
+      "mapping_group_id": "merge-testing-01"
+    },
+    {
+      "item_id": "checkin-091",
+      "order": 91,
+      "source_date": "2026-09-13",
+      "source_file": "2026年09月/2026-09-13 静态测试.md",
+      "source_title": "静态测试",
+      "topic_ids": [
+        "SOFTWARE.ENGINEERING.TESTING"
+      ],
+      "mapping_status": "merge",
+      "mapping_confidence": "high",
+      "mapping_notes": "静态测试、走查、审查与静态分析属于软件测试专题的一部分。",
+      "knowledge_point_titles": [
+        "静态测试",
+        "测试左移/质量左移/安全左移",
+        "常见的静态测试方法",
+        "常见的静态测试工具"
+      ],
+      "original_topic_title": "静态测试",
+      "mapping_group_id": "merge-testing-01"
+    },
+    {
+      "item_id": "checkin-092",
+      "order": 92,
+      "source_date": "2026-09-14",
+      "source_file": "2026年09月/2026-09-14 白盒测试.md",
+      "source_title": "白盒测试",
+      "topic_ids": [
+        "SOFTWARE.ENGINEERING.TESTING"
+      ],
+      "mapping_status": "merge",
+      "mapping_confidence": "high",
+      "mapping_notes": "知识点正文为白盒测试；文件名为“白盒测试”，但 Prompt 标题误写“静态测试”，按正文映射并保留该异常。",
+      "knowledge_point_titles": [
+        "白盒测试",
+        "白盒测试的覆盖标准",
+        "逻辑覆盖",
+        "如何确定覆盖标准"
+      ],
+      "original_topic_title": "静态测试",
+      "mapping_group_id": "merge-testing-01"
+    },
+    {
+      "item_id": "checkin-093",
+      "order": 93,
+      "source_date": "2026-09-15",
+      "source_file": "2026年09月/2026-09-15 单元测试.md",
+      "source_title": "单元测试",
+      "topic_ids": [
+        "SOFTWARE.ENGINEERING.TESTING"
+      ],
+      "mapping_status": "merge",
+      "mapping_confidence": "high",
+      "mapping_notes": "单元测试方法、覆盖、自动化及依赖隔离深化软件测试主题。",
+      "knowledge_point_titles": [
+        "单元测试"
+      ],
+      "original_topic_title": "单元测试",
+      "mapping_group_id": "merge-testing-01"
+    },
+    {
+      "item_id": "checkin-094",
+      "order": 94,
+      "source_date": "2026-09-16",
+      "source_file": "2026年09月/2026-09-16 集成测试.md",
+      "source_title": "集成测试",
+      "topic_ids": [
+        "SOFTWARE.ENGINEERING.TESTING"
+      ],
+      "mapping_status": "merge",
+      "mapping_confidence": "high",
+      "mapping_notes": "集成测试策略与集成方向属于软件测试主题。",
+      "knowledge_point_titles": [
+        "什么是集成测试",
+        "集成测试的工作内容",
+        "集成测试的策略",
+        "集成测试的方法"
+      ],
+      "original_topic_title": "集成测试",
+      "mapping_group_id": "merge-testing-01"
+    },
+    {
+      "item_id": "checkin-095",
+      "order": 95,
+      "source_date": "2026-09-17",
+      "source_file": "2026年09月/2026-09-17 性能测试.md",
+      "source_title": "性能测试",
+      "topic_ids": [
+        "SOFTWARE.ENGINEERING.TESTING",
+        "QUALITY.ATTRIBUTES.PERFORMANCE"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "high",
+      "mapping_notes": "测试类型/过程属于软件测试；负载、稳定、压力等测试目标直接关联性能属性。",
+      "knowledge_point_titles": [
+        "性能测试的概念",
+        "性能的衡量指标",
+        "性能测试的作用",
+        "性能测试的类型",
+        "性能测试方法",
+        "梯度压力测试策略",
+        "性能测试过程"
+      ],
+      "original_topic_title": "性能测试",
+      "mapping_group_id": "merge-testing-01"
+    },
+    {
+      "item_id": "checkin-096",
+      "order": 96,
+      "source_date": "2026-09-18",
+      "source_file": "2026年09月/2026-09-18 安全性测试.md",
+      "source_title": "安全性测试",
+      "topic_ids": [
+        "SOFTWARE.ENGINEERING.TESTING",
+        "QUALITY.ATTRIBUTES.SECURITY",
+        "SEC.ARCHITECTURE.VULNERABILITY"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "medium",
+      "mapping_notes": "安全测试活动跨软件测试、安全属性与脆弱性分析；社会工程等细项并无单独 L3。",
+      "knowledge_point_titles": [
+        "安全性测试的概念",
+        "安全性测试的工作内容"
+      ],
+      "original_topic_title": "安全性测试",
+      "mapping_group_id": "merge-testing-01"
+    },
+    {
+      "item_id": "checkin-097",
+      "order": 97,
+      "source_date": "2026-09-19",
+      "source_file": "2026年09月/2026-09-19 可靠性测试.md",
+      "source_title": "可靠性测试",
+      "topic_ids": [
+        "SOFTWARE.ENGINEERING.TESTING",
+        "RELIABILITY.SOFTWARE.EVALUATION"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "high",
+      "mapping_notes": "可靠性测试既是测试活动，也对应可靠性测试与评价 Topic。",
+      "knowledge_point_titles": [
+        "可靠性测试"
+      ],
+      "original_topic_title": "可靠性测试",
+      "mapping_group_id": "merge-testing-01"
+    },
+    {
+      "item_id": "checkin-098",
+      "order": 98,
+      "source_date": "2026-09-20",
+      "source_file": "2026年09月/2026-09-20 自动化测试.md",
+      "source_title": "自动化测试",
+      "topic_ids": [
+        "SOFTWARE.ENGINEERING.TESTING"
+      ],
+      "mapping_status": "merge",
+      "mapping_confidence": "high",
+      "mapping_notes": "自动化测试、CI 触发和 UI 自动化是连续测试专题的后续深化。",
+      "knowledge_point_titles": [
+        "传统人工手动测试方式的弊端",
+        "自动化测试"
+      ],
+      "original_topic_title": "自动化测试",
+      "mapping_group_id": "merge-testing-01"
+    },
+    {
+      "item_id": "checkin-099",
+      "order": 99,
+      "source_date": "2026-09-21",
+      "source_file": "2026年09月/2026-09-21 关系模型.md",
+      "source_title": "关系模型",
+      "topic_ids": [
+        "DATA.DATABASE.RELATIONAL",
+        "DATA.DATABASE.NORMALIZATION"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "high",
+      "mapping_notes": "关系运算属于关系数据库；关系模式分解及无损/依赖保持进入规范化与数据库设计。",
+      "knowledge_point_titles": [
+        "关系运算",
+        "关系模式分解"
+      ],
+      "original_topic_title": "关系模型",
+      "mapping_group_id": "merge-database-model-01"
+    },
+    {
+      "item_id": "checkin-100",
+      "order": 100,
+      "source_date": "2026-09-22",
+      "source_file": "2026年09月/2026-09-22 规范化设计.md",
+      "source_title": "规范化设计",
+      "topic_ids": [
+        "DATA.DATABASE.NORMALIZATION"
+      ],
+      "mapping_status": "merge",
+      "mapping_confidence": "high",
+      "mapping_notes": "范式和反规范化原则与关系模式/数据库设计日共同覆盖规范化主题。",
+      "knowledge_point_titles": [
+        "规范化设计",
+        "1NF",
+        "2NF",
+        "3NF",
+        "BCNF",
+        "4NF"
+      ],
+      "original_topic_title": "规范化设计",
+      "mapping_group_id": "merge-database-model-01"
+    },
+    {
+      "item_id": "checkin-101",
+      "order": 101,
+      "source_date": "2026-09-23",
+      "source_file": "2026年09月/2026-09-23 数据库索引.md",
+      "source_title": "数据库索引",
+      "topic_ids": [
+        "DATA.DATABASE.RELATIONAL"
+      ],
+      "mapping_status": "partial",
+      "mapping_confidence": "high",
+      "mapping_notes": "数据库索引属于关系数据库实现，但现有 Taxonomy 没有索引专属 L3。",
+      "knowledge_point_titles": [
+        "数据库索引"
+      ],
+      "original_topic_title": "数据库索引",
+      "mapping_group_id": "merge-database-relational-01"
+    },
+    {
+      "item_id": "checkin-102",
+      "order": 102,
+      "source_date": "2026-09-24",
+      "source_file": "2026年09月/2026-09-24 反规范化设计.md",
+      "source_title": "反规范化设计",
+      "topic_ids": [
+        "DATA.DATABASE.NORMALIZATION",
+        "QUALITY.ATTRIBUTES.PERFORMANCE"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "high",
+      "mapping_notes": "反规范化与数据库设计相关，来源明确以性能为取舍依据。",
+      "knowledge_point_titles": [
+        "反规范化设计",
+        "常见的反规范化设计方法"
+      ],
+      "original_topic_title": "反规范化设计",
+      "mapping_group_id": "merge-database-model-01"
+    },
+    {
+      "item_id": "checkin-103",
+      "order": 103,
+      "source_date": "2026-09-25",
+      "source_file": "2026年09月/2026-09-25 视图-触发器-锁-存储过程.md",
+      "source_title": "视图-触发器-锁-存储过程",
+      "topic_ids": [
+        "DATA.DATABASE.RELATIONAL",
+        "DATA.DATABASE.TRANSACTION"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "medium",
+      "mapping_notes": "视图/触发器/存储过程属于关系数据库对象，锁属于数据库并发事务机制。",
+      "knowledge_point_titles": [
+        "视图",
+        "触发器",
+        "锁",
+        "存储过程"
+      ],
+      "original_topic_title": "视图-触发器-锁-存储过程",
+      "mapping_group_id": "merge-database-relational-01"
+    },
+    {
+      "item_id": "checkin-104",
+      "order": 104,
+      "source_date": "2026-09-26",
+      "source_file": "2026年09月/2026-09-26 数据库事务.md",
+      "source_title": "数据库事务",
+      "topic_ids": [
+        "DATA.DATABASE.TRANSACTION"
+      ],
+      "mapping_status": "merge",
+      "mapping_confidence": "high",
+      "mapping_notes": "事务 ACID、并发异常和隔离级别与第 103 项的锁共同覆盖数据库事务边界。",
+      "knowledge_point_titles": [
+        "什么是数据库事务",
+        "事务的特性",
+        "并发访问冲突",
+        "事务隔离级别"
+      ],
+      "original_topic_title": "数据库事务",
+      "mapping_group_id": "merge-database-transaction-01"
+    },
+    {
+      "item_id": "checkin-105",
+      "order": 105,
+      "source_date": "2026-09-27",
+      "source_file": "2026年09月/2026-09-27 数据库设计过程.md",
+      "source_title": "数据库设计过程",
+      "topic_ids": [
+        "DATA.DATABASE.NORMALIZATION"
+      ],
+      "mapping_status": "partial",
+      "mapping_confidence": "high",
+      "mapping_notes": "三级模式、独立性和设计过程属于数据库设计，但没有覆盖规范化概念全貌。",
+      "knowledge_point_titles": [
+        "数据库三级模式",
+        "数据库设计过程"
+      ],
+      "original_topic_title": "数据库设计"
+    },
+    {
+      "item_id": "checkin-106",
+      "order": 106,
+      "source_date": "2026-09-28",
+      "source_file": "2026年09月/2026-09-28 MySQL 集群架构.md",
+      "source_title": "MySQL 集群架构",
+      "topic_ids": [
+        "DATA.DATABASE.RELATIONAL",
+        "DATA.DISTRIBUTED.REPLICATION_PARTITIONING"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "high",
+      "mapping_notes": "MySQL 关系数据库主从/读写分离同时覆盖关系数据库和分布式复制。",
+      "knowledge_point_titles": [
+        "MySQL 主从复制集群",
+        "读写分离"
+      ],
+      "original_topic_title": "数据架构设计-数据库主从复制集群",
+      "mapping_group_id": "merge-database-relational-01"
+    },
+    {
+      "item_id": "checkin-107",
+      "order": 107,
+      "source_date": "2026-09-30",
+      "source_file": "2026年09月/2026-09-30 NoSQL数据库.md",
+      "source_title": "NoSQL数据库",
+      "topic_ids": [
+        "DATA.DATABASE.NOSQL"
+      ],
+      "mapping_status": "exact",
+      "mapping_confidence": "high",
+      "mapping_notes": "NoSQL 概念、分类及与关系数据库比较与 NoSQL L3 一致。",
+      "knowledge_point_titles": [
+        "传统关系型数据库面临的挑战",
+        "NoSQL 数据库",
+        "NoSQL 数据库分类"
+      ],
+      "original_topic_title": "数据架构设计-NoSQL 数据库"
+    },
+    {
+      "item_id": "checkin-108",
+      "order": 108,
+      "source_date": "2026-10-01",
+      "source_file": "2026年10月/2026-10-01.md",
+      "source_title": "数据架构设计-数据仓库",
+      "topic_ids": [],
+      "mapping_status": "unmapped",
+      "mapping_confidence": "low",
+      "mapping_notes": "OLAP、数据仓库层次和湖仓一体没有同边界 active L3；不将其强塞入数据处理流水线。",
+      "knowledge_point_titles": [
+        "数据仓库",
+        "数据分析方法",
+        "数据仓库的层次架构"
+      ],
+      "original_topic_title": "数据架构设计-数据仓库"
+    },
+    {
+      "item_id": "checkin-109",
+      "order": 109,
+      "source_date": "2026-10-02",
+      "source_file": "2026年10月/2026-10-02.md",
+      "source_title": "数据架构设计-数据同步",
+      "topic_ids": [
+        "DATA.DISTRIBUTED.REPLICATION_PARTITIONING",
+        "DATA.BIGDATA.DATA_PIPELINE",
+        "ARCH.SOA.SERVICE_BUS"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "medium",
+      "mapping_notes": "全量/增量同步、CDC/消息与零停机迁移跨复制分布、数据处理和消息技术。",
+      "knowledge_point_titles": [
+        "数据同步的目标",
+        "数据同步的方式",
+        "数据同步的关键技术",
+        "常见问题及其解决方案"
+      ],
+      "original_topic_title": "数据架构设计-数据同步"
+    },
+    {
+      "item_id": "checkin-110",
+      "order": 110,
+      "source_date": "2026-10-03",
+      "source_file": "2026年10月/2026-10-03.md",
+      "source_title": "数据架构设计-数据分片技术",
+      "topic_ids": [
+        "DATA.DISTRIBUTED.REPLICATION_PARTITIONING"
+      ],
+      "mapping_status": "exact",
+      "mapping_confidence": "high",
+      "mapping_notes": "垂直/水平分片、哈希/范围算法与分片实现直接对应复制、分片与数据分布。",
+      "knowledge_point_titles": [
+        "数据分片技术",
+        "数据分片的方式",
+        "数据分片算法",
+        "数据分片的实现方式"
+      ],
+      "original_topic_title": "数据架构设计-数据分片技术"
+    },
+    {
+      "item_id": "checkin-111",
+      "order": 111,
+      "source_date": "2026-10-04",
+      "source_file": "2026年10月/2026-10-04.md",
+      "source_title": "数据架构设计-数据分片技术-分布式 ID",
+      "topic_ids": [],
+      "mapping_status": "unmapped",
+      "mapping_confidence": "low",
+      "mapping_notes": "分布式 ID 的生成算法没有同边界 active L3；不以分布式分片主题替代 ID 设计。",
+      "knowledge_point_titles": [
+        "分布式 ID 的基本要求",
+        "分布式 ID 的实现方式"
+      ],
+      "original_topic_title": "数据架构设计-数据分片技术-分布式 ID"
+    },
+    {
+      "item_id": "checkin-112",
+      "order": 112,
+      "source_date": "2026-10-05",
+      "source_file": "2026年10月/2026-10-05.md",
+      "source_title": "数据架构设计-数据分片技术-常见问题及其解决方案",
+      "topic_ids": [
+        "DATA.DISTRIBUTED.REPLICATION_PARTITIONING",
+        "DATA.DISTRIBUTED.CONSISTENCY",
+        "DATA.DATABASE.TRANSACTION"
+      ],
+      "mapping_status": "split",
+      "mapping_confidence": "medium",
+      "mapping_notes": "分片问题涉及数据分布、跨分片一致性与事务/查询治理，映射到三个相关 L3。",
+      "knowledge_point_titles": [
+        "分布式事务",
+        "跨分片查询",
+        "非分片键查询"
+      ],
+      "original_topic_title": "数据架构设计-数据分片技术-常见问题及其解决方案",
+      "mapping_group_id": "merge-database-transaction-01"
+    }
+  ]
+}
