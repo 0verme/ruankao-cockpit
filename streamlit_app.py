@@ -1,0 +1,297 @@
+"""Single-page local Streamlit entry for the ruankao-cockpit MVP."""
+from __future__ import annotations
+
+import os
+from pathlib import Path
+from typing import Any, Mapping
+
+import streamlit as st
+
+from cockpit_service import (
+    PROJECT_ROOT,
+    CockpitError,
+    TodaySnapshot,
+    get_comprehensive_source_references,
+    get_today,
+    initialize_cockpit,
+    record_browser_attempt,
+)
+
+
+ERROR_CAUSES = {
+    "knowledge_gap": "知识缺口",
+    "reading_error": "阅读错误",
+    "calculation_error": "计算错误",
+    "scoring_point_expression": "得分点表达",
+}
+
+
+def _local_dir() -> Path:
+    configured = os.environ.get("COCKPIT_LOCAL_DIR")
+    return Path(configured).expanduser() if configured else PROJECT_ROOT / ".local"
+
+
+def _debug_enabled() -> bool:
+    return os.environ.get("COCKPIT_DEBUG", "").lower() in {"1", "true", "yes"}
+
+
+def _friendly_error(exc: BaseException) -> str:
+    category = getattr(exc, "category", "")
+    messages = {
+        "not_initialized": "Cockpit 尚未初始化。请先点击初始化。",
+        "incomplete_local_data": "本地数据不完整；为避免覆盖事实，Cockpit 未自动重建。",
+        "task_not_scheduled": "该任务已不属于当前 Today 计划，请刷新后重试。",
+        "unknown_task": "当前 Today 计划中找不到该任务，请刷新后重试。",
+        "missing_source_reference": "来源信息不完整，无法记录。",
+        "invalid_source_reference": "来源引用格式不符合要求，无法记录。",
+        "forbidden_path": "来源路径必须是安全的仓库相对路径，不能包含绝对路径或目录跳转。",
+        "target_mismatch": "作答 Topic 与当前任务不一致，未写入记录。",
+        "invalid_timestamp": "作答时间必须是有效且带时区的 ISO 8601 时间。",
+        "future_evidence": "作答时间晚于当前 Today 的重放时间，请修正时间或刷新页面。",
+        "invalid_event": "作答事实或来源字段不符合现有 contract，请检查引用格式。",
+        "invalid_schema_version": "事件版本与当前支持的事实格式不一致，未写入记录。",
+        "invalid_replay_input": "Progress / Review replay 校验未通过，记录没有写入。",
+        "duplicate_event": "相同记录身份已存在；系统未重复写入，请刷新 Today 确认状态。",
+        "duplicate_event_id": "Progress event ID 已存在；系统未重复写入。",
+        "duplicate_review_event": "Review Context ID 已存在；系统未重复写入。",
+        "duplicate_review_context": "该 Progress fact 已关联过此 Review 项，未重复写入。",
+        "invalid_review_target": "复习目标缺少有效 Topic 映射，已停止记录。",
+        "unsupported_execution_target": "当前任务类型不支持此记录表单。",
+    }
+    if category in messages:
+        return messages[category]
+    return "未能完成记录；事实未通过现有校验。请检查必填来源、作答时间及输入格式。"
+
+
+def _task_target(task: Mapping[str, Any], snapshot: TodaySnapshot) -> tuple[str, str]:
+    review_catalog = {item["review_item_id"]: item for item in snapshot.review_items}
+    if task.get("task_type") == "review":
+        item = review_catalog.get(task.get("target_ref"), {})
+        topic_id = item.get("canonical_ref", {}).get("topic_id")
+    else:
+        topic_id = task.get("target_ref")
+    names = {
+        node["id"]: node["name"]
+        for node in snapshot.taxonomy.get("nodes", [])
+        if isinstance(node, Mapping) and isinstance(node.get("id"), str)
+    }
+    if isinstance(topic_id, str):
+        return topic_id, names.get(topic_id, topic_id)
+    target_ref = str(task.get("target_ref", "未知目标"))
+    return target_ref, target_ref
+
+
+def _task_reason(task: Mapping[str, Any], planner_output: Mapping[str, Any]) -> tuple[str, str]:
+    trace_id = task.get("explain_trace_id")
+    trace = next(
+        (item for item in planner_output.get("explain_traces", []) if item.get("trace_id") == trace_id),
+        None,
+    )
+    if not isinstance(trace, Mapping):
+        return "原因不可用（Planner 未提供 Explain Trace）", ""
+    return str(trace.get("display_message") or "原因不可用"), str(trace.get("reason_code") or "")
+
+
+def _render_task(task: Mapping[str, Any], snapshot: TodaySnapshot, local_dir: Path) -> bool:
+    planner_output = snapshot.planner_output
+    task_type = task.get("task_type")
+    label = {"review": "REVIEW", "new_learning": "NEW LEARNING"}.get(task_type, str(task_type))
+    topic_id, topic_name = _task_target(task, snapshot)
+    reason, reason_code = _task_reason(task, planner_output)
+
+    with st.container(border=True):
+        st.markdown(f"#### {label} · {topic_name}")
+        st.caption(f"目标：`{topic_id}` · 计划 {task['planned_minutes']} 分钟")
+        st.caption(reason)
+        with st.expander("查看安排原因"):
+            if reason_code:
+                st.code(reason_code, language=None)
+            else:
+                st.write("Planner 未提供结构化 reason code。")
+
+        if task_type not in {"review", "new_learning"}:
+            return False
+
+        prefix = f"record-{task['task_id']}"
+        source_records = get_comprehensive_source_references(topic_id)
+        source_options: dict[str, Mapping[str, Any]] = {}
+        for record in source_records:
+            reference = record["source_reference"]
+            label_text = (
+                f"{reference.get('source_id')} · {reference.get('source_question_id')}"
+                f" ({record.get('record_id')})"
+            )
+            source_options[label_text] = reference
+        choices = ["请选择来源", "手动填写引用", *source_options]
+        if not source_options:
+            choices = ["手动填写引用"]
+        source_choice = st.selectbox(
+            "来源引用（仅选择你实际使用的题目）",
+            choices,
+            key=f"{prefix}-source-choice",
+        )
+        question: dict[str, Any] | None = dict(source_options[source_choice]) if source_choice in source_options else None
+        if question is not None:
+            st.caption(
+                f"已选择索引引用：{question['source_id']} / {question['source_question_id']} · {question['source_path']}"
+            )
+
+        with st.form(key=f"form-{task['task_id']}"):
+            st.markdown("**记录一次真实综合题作答**")
+            st.caption("只记录事实和来源引用；请勿粘贴题干、选项、答案或解析。")
+            if source_choice == "手动填写引用":
+                source_id = st.text_input("来源 ID", key=f"{prefix}-source-id")
+                source_commit = st.text_input(
+                    "来源不可变版本（40 位小写 commit）", key=f"{prefix}-source-commit"
+                )
+                source_path = st.text_input(
+                    "来源相对路径", key=f"{prefix}-source-path", help="必须是来源仓库内的相对路径，不含绝对路径或 ..。"
+                )
+                source_question_id = st.text_input(
+                    "来源题目 ID", key=f"{prefix}-source-question-id"
+                )
+            occurred_at = st.text_input(
+                "实际作答时间（必填，ISO 8601，含时区）",
+                key=f"{prefix}-occurred-at",
+                help="请填写真实作答时间，例如 2026-09-28T10:15:00+08:00；不会替你推断。",
+            )
+            outcome = st.selectbox(
+                "作答结果（必选）", ["请选择", "答对", "答错"], key=f"{prefix}-outcome"
+            )
+            cause_label = st.selectbox(
+                "错误原因（答错时可选；不确定可不填）",
+                ["不填写", *ERROR_CAUSES.values()],
+                key=f"{prefix}-error-cause",
+            )
+            submitted = st.form_submit_button("记录结果", type="primary", use_container_width=True)
+
+        if not submitted:
+            return False
+        if outcome == "请选择":
+            st.error("请明确选择答对或答错。")
+            return False
+        if source_choice == "手动填写引用":
+            question = {
+                "source_id": source_id.strip(),
+                "source_commit": source_commit.strip(),
+                "source_path": source_path.strip(),
+                "source_question_id": source_question_id.strip(),
+            }
+        if question is None or any(
+            not isinstance(question.get(key), str) or not question[key].strip()
+            for key in ("source_id", "source_commit", "source_path", "source_question_id")
+        ):
+            st.error("请明确选择已索引来源或填写完整引用；信息不完整时不会写入事实。")
+            return False
+        if not occurred_at.strip():
+            st.error("请填写实际作答时间；页面不会替你推断。")
+            return False
+
+        error_cause = None
+        if outcome == "答错" and cause_label != "不填写":
+            error_cause = next(key for key, value in ERROR_CAUSES.items() if value == cause_label)
+        try:
+            result = record_browser_attempt(
+                task["task_id"],
+                occurred_at=occurred_at.strip(),
+                question=question,
+                correct=outcome == "答对",
+                error_cause=error_cause,
+                as_of=planner_output["as_of"],
+                local_dir=local_dir,
+            )
+        except (CockpitError, OSError, ValueError, KeyError, TypeError) as exc:
+            st.error(_friendly_error(exc))
+            if _debug_enabled():
+                with st.expander("诊断详情"):
+                    st.exception(exc)
+            return False
+
+        # Flash metadata only; every rerun reloads domain state from .local via get_today().
+        st.session_state["cockpit_record_notice"] = {
+            "progress": result.progress_event_count,
+            "review_items": result.review_item_count,
+            "review_contexts": result.review_context_count,
+        }
+        st.rerun()
+        return True
+
+
+def _render_today(snapshot: TodaySnapshot, local_dir: Path) -> None:
+    planner_output = snapshot.planner_output
+    day = planner_output["days"][0]
+    st.subheader(f"今天 · {day['local_date']}")
+    st.caption(f"按现有 Today Planner 输出 · as_of {planner_output['as_of']} · {planner_output['timezone']}")
+
+    available, planned, remaining = st.columns(3)
+    available.metric("今日可用", f"{day['capacity_minutes']} min")
+    planned.metric("已安排", f"{day['planned_minutes']} min")
+    remaining.metric("剩余容量", f"{day['remaining_minutes']} min")
+
+    unmet_demand = day.get("unmet_demand", [])
+    if unmet_demand:
+        st.info(f"还有 {len(unmet_demand)} 项今天无法安排。")
+
+    tasks = day.get("tasks", [])
+    if not tasks:
+        st.info("Today Planner 当前没有安排任务。")
+        return
+    for task in tasks:
+        _render_task(task, snapshot, local_dir)
+
+
+def main() -> None:
+    st.set_page_config(page_title="ruankao-cockpit", page_icon="📚", layout="wide")
+    st.markdown(
+        """
+        <style>
+        [data-testid="stAppViewContainer"] { background: #f8f7f4; }
+        .block-container { max-width: 1080px; padding-top: 2rem; }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.title("ruankao-cockpit")
+    st.caption("本地单用户备考工作台 · 数据保存在本机 · 不托管题库正文")
+
+    local_dir = _local_dir()
+    if not local_dir.exists():
+        st.warning("Cockpit 尚未初始化")
+        st.write("初始化只会在本地创建必要配置和空事实文件，不会覆盖已有事实。")
+        if st.button("初始化", type="primary"):
+            try:
+                initialize_cockpit(local_dir)
+            except (CockpitError, OSError, ValueError, TypeError) as exc:
+                st.error(_friendly_error(exc))
+                if _debug_enabled():
+                    with st.expander("诊断详情"):
+                        st.exception(exc)
+            else:
+                st.session_state["cockpit_initialized_notice"] = True
+                st.rerun()
+        return
+
+    try:
+        snapshot = get_today(local_dir=local_dir)
+    except (CockpitError, OSError, ValueError, KeyError, TypeError) as exc:
+        st.error(_friendly_error(exc))
+        if _debug_enabled():
+            with st.expander("诊断详情"):
+                st.exception(exc)
+        return
+
+    if st.session_state.pop("cockpit_initialized_notice", False):
+        st.success("Cockpit 已初始化。")
+    notice = st.session_state.pop("cockpit_record_notice", None)
+    if isinstance(notice, Mapping):
+        st.success(
+            "记录成功：Progress fact 已写入；Review Context 已写入，Review / Progress 已重放并更新。"
+        )
+        if notice.get("review_items"):
+            st.caption(f"已注册 {notice['review_items']} 个 Review Item。")
+
+    _render_today(snapshot, local_dir)
+
+
+if __name__ == "__main__":
+    main()
