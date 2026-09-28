@@ -27,7 +27,7 @@ Progress / Review facts
 
 ## 推荐：启动 Browser Cockpit
 
-需要 Python 3.10+。在仓库根目录安装唯一的 UI 依赖并启动：
+需要 Python 3.10+。在仓库根目录安装项目运行依赖并启动：
 
 ```bash
 python3 -m pip install -r requirements.txt
@@ -35,6 +35,17 @@ streamlit run streamlit_app.py
 ```
 
 首次打开浏览器页面后点击「初始化」，再查看 Today；有学习卡时先阅读目标、核心知识和考试关注点，再决定是否记录真实验证题结果。用户事实保存在本机 `.local/`，这是本地单用户 MVP：无登录、无账号、无数据库、无云同步。仓库只附带一条项目整理的短摘要与出处索引，不复制教材或题库正文；未整理的 Topic 明确显示材料缺失，不实时调用 LLM 补写。
+
+## FastAPI Transport（Frontend API v0.1）
+
+FastAPI 是现有 Python service/domain 的 HTTP adapter，不替代 Streamlit，也不在 route 中重算 Planner / Progress / Review。用绝对路径 `COCKPIT_LOCAL_DIR` 固定本地事实目录；未设置时固定使用仓库根目录下 `.local/`，不随启动 cwd 变化。GET 不会执行初始化。
+
+```bash
+# requirements.txt 同时安装 Streamlit 与 FastAPI transport 所需依赖
+COCKPIT_LOCAL_DIR=/absolute/path/to/.local uvicorn api:app --host 127.0.0.1 --port 8000
+```
+
+接口与 request/response、错误类别、timezone 和 Domain Truth 边界见 [`docs/api/FRONTEND_API_V01.md`](docs/api/FRONTEND_API_V01.md)。
 
 ## CLI（Advanced / Debug）
 

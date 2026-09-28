@@ -13,6 +13,10 @@ from typing import Any, Mapping, Sequence
 class TopicExperienceError(ValueError):
     """The existing Topic/read-model inputs cannot form a safe experience."""
 
+    def __init__(self, message: str, category: str = "invalid_topic_experience") -> None:
+        self.category = category
+        super().__init__(message)
+
 
 @dataclass(frozen=True)
 class TopicBreadcrumb:
@@ -60,8 +64,13 @@ def _taxonomy_breadcrumb(
         if isinstance(node, Mapping) and isinstance(node.get("id"), str)
     }
     node = nodes_by_id.get(topic_id)
-    if not isinstance(node, Mapping) or node.get("level") != 3 or node.get("status") != "active":
-        raise TopicExperienceError(f"{topic_id!r} is not an active L3 Knowledge Topic")
+    if not isinstance(node, Mapping):
+        raise TopicExperienceError(f"Unknown Knowledge Topic {topic_id!r}", "unknown_topic")
+    if node.get("level") != 3 or node.get("status") != "active":
+        raise TopicExperienceError(
+            f"{topic_id!r} is not an active L3 Knowledge Topic",
+            "non_active_topic",
+        )
 
     chain: list[TopicBreadcrumb] = []
     visited: set[str] = set()
@@ -142,6 +151,11 @@ def _topic_review(
     return mastery_state, review_status, due_date, policy_version
 
 
+def validate_active_topic(topic_id: str, taxonomy: Mapping[str, Any]) -> None:
+    """Classify a requested ID before payload loading, without changing domain rules."""
+    _taxonomy_breadcrumb(topic_id, taxonomy)
+
+
 def build_topic_experience(
     topic_id: str,
     *,
@@ -182,4 +196,5 @@ __all__ = [
     "TopicExperience",
     "TopicExperienceError",
     "build_topic_experience",
+    "validate_active_topic",
 ]
