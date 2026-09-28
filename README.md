@@ -38,7 +38,7 @@ streamlit run streamlit_app.py
 
 ## Astro + React Frontend Migration（Slice 1 Preview）
 
-Astro + React 浏览器壳只覆盖 `/` Today 与 `ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS` Topic 页面，通过 HTTP API 获取状态，不替代 Streamlit，也不复制 Python Domain Truth。前端消费的 FastAPI contract 已随 PR #40 合并；浏览器 E2E 仍使用醒目标记的 `DEV FIXTURE / CONTRACT FIXTURE`，不等于真实 API 写入/replay 已通过。
+Astro + React 浏览器壳只覆盖 `/` Today 与 `ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS` Topic 页面，通过 HTTP API 获取状态，不替代 Streamlit，也不复制 Python Domain Truth。前端消费的 FastAPI contract 已随 PR #40 合并；TypeScript HTTP client 已在临时本地目录对接 Uvicorn，验证 attempt 持久化、replay 与重新读取。Playwright E2E 仍使用醒目标记的 `DEV FIXTURE / CONTRACT FIXTURE`，尚未验证部署态同源浏览器集成。
 
 路由、API contract reconcile、COPY / ADAPT / REJECT、测试和集成限制见 [Frontend Migration Slice 1](docs/frontend/FRONTEND_MIGRATION_SLICE_1.md)。
 

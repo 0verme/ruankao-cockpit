@@ -5,15 +5,16 @@ import type {
   AttemptRequest,
   AttemptResponse,
   LearningPayload,
+  PlannerOutput,
   TodayResponse,
-  TopicExperience,
+  TopicResponse,
 } from './types';
 
 /**
  * DEV FIXTURE / CONTRACT FIXTURE ONLY.
- * The response shapes exercise the browser contract; they are not a live API,
- * replay result, or production truth. The checked-in payload is shown under an
- * always-visible fixture banner and is not revalidated by this adapter.
+ * The response shapes mirror the merged FastAPI v0.1 wire contract. They are
+ * not a live API, replay result, or production truth. The checked-in payload
+ * is shown under an always-visible fixture banner and is not revalidated here.
  */
 export type FixtureScenario =
   | 'ready'
@@ -28,10 +29,11 @@ export type FixtureScenario =
 const payload = payloadDocument as LearningPayload;
 const taskId = 'contract-fixture-task-001';
 
-const todayFixture: TodayResponse = {
-  as_of: '2026-09-28T09:00:00+08:00',
+const planner: PlannerOutput = {
+  schema_version: 'planner-output/v0.1',
+  as_of: '2026-09-28T01:00:00Z',
   timezone: 'Asia/Shanghai',
-  day: {
+  days: [{
     local_date: '2026-09-28',
     capacity_minutes: 60,
     planned_minutes: 25,
@@ -39,30 +41,55 @@ const todayFixture: TodayResponse = {
     tasks: [{
       task_id: taskId,
       task_type: 'new_learning',
-      topic_id: 'ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS',
-      topic_name: '容器与 Serverless',
+      target_kind: 'topic',
+      target_ref: 'ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS',
       planned_minutes: 25,
-      display_reason: 'DEV FIXTURE：演示 Today 到单一 Topic 页面导航。',
+      explain_trace_id: 'contract-fixture-trace-001',
     }],
-  },
+  }],
 };
 
-const topicFixture: TopicExperience = {
-  topic_id: 'ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS',
-  topic_name: '容器与 Serverless',
-  taxonomy_version: '0.1',
-  breadcrumb: [
-    { topic_id: 'ARCH', name: '系统架构设计基础知识' },
-    { topic_id: 'ARCH.CLOUD_NATIVE', name: '云原生架构设计' },
-    { topic_id: 'ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS', name: '容器与 Serverless' },
-  ],
+const todayFixture: TodayResponse = {
+  planner,
+  task_topics: {
+    [taskId]: {
+      topic_id: 'ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS',
+      topic_name: '容器与 Serverless',
+      taxonomy_version: '0.1',
+      breadcrumb: [
+        { topic_id: 'ARCH', name: '系统架构设计基础知识' },
+        { topic_id: 'ARCH.CLOUD_NATIVE', name: '云原生架构设计' },
+        { topic_id: 'ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS', name: '容器与 Serverless' },
+      ],
+      learning_payload_status: 'available',
+      learning_payload_version: '1.0.0',
+    },
+  },
+  progress: {},
+  review: { state: {}, items: [] },
+};
+
+const topicFixture: TopicResponse = {
+  topic: {
+    topic_id: 'ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS',
+    name: '容器与 Serverless',
+    taxonomy_version: '0.1',
+    breadcrumb: [
+      { topic_id: 'ARCH', name: '系统架构设计基础知识' },
+      { topic_id: 'ARCH.CLOUD_NATIVE', name: '云原生架构设计' },
+      { topic_id: 'ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS', name: '容器与 Serverless' },
+    ],
+  },
+  learning_payload_status: 'available',
+  learning_payload_version: '1.0.0',
   learning_payload: payload,
-  progress_attempt_count: 0,
-  progress_accuracy: null,
-  review_mastery_state: null,
-  review_status: null,
-  review_next_due_local_date: null,
-  review_policy_version: null,
+  progress: { attempt_count: 0, accuracy: null },
+  review: {
+    mastery_state: null,
+    status: null,
+    next_due_local_date: null,
+    policy_version: null,
+  },
   verification_sources: [{
     record_id: 'gs-comp-2024-h1-q65',
     display_title: '2024年上半年综合知识 · 第 65 题：云计算虚拟化技术识别',
@@ -76,15 +103,22 @@ const topicFixture: TopicExperience = {
   }],
 };
 
-// A pre-recorded response fixture, not a client-side replay calculation.
-const topicAfterAttemptFixture: TopicExperience = {
+// Pre-recorded API response fixture, not a client-side replay calculation.
+const topicAfterAttemptFixture: TopicResponse = {
   ...topicFixture,
-  progress_attempt_count: 1,
-  progress_accuracy: 1,
-  review_mastery_state: 'learning',
-  review_status: 'scheduled',
-  review_next_due_local_date: '2026-09-29',
-  review_policy_version: 'review-policy/simple-ladder/v0.1',
+  progress: { attempt_count: 1, accuracy: 1 },
+  review: {
+    mastery_state: 'learning',
+    status: 'scheduled',
+    next_due_local_date: '2026-09-29',
+    policy_version: 'review-policy/simple-ladder/v0.1',
+  },
+};
+
+const replayFixture: AttemptResponse['today'] = {
+  planner,
+  progress: {},
+  review: { state: {}, items: [] },
 };
 
 export function createFixtureApiClient(scenario: FixtureScenario = 'ready'): CockpitApiClient {
@@ -107,21 +141,26 @@ export function createFixtureApiClient(scenario: FixtureScenario = 'ready'): Coc
     },
     async initialize() {
       initialized = true;
-      return { initialized: true };
+      return { state: 'created' };
     },
     async getTopic(topicId) {
       if (scenario === 'invalid-provenance') {
         throw new CockpitApiError(
-          'invalid_payload_provenance',
+          'invalid_source_provenance',
           'DEV FIXTURE：Learning Payload provenance validation failed.',
           422,
         );
       }
-      if (topicId !== topicFixture.topic_id) {
+      if (topicId !== topicFixture.topic.topic_id) {
         throw new CockpitApiError('unknown_topic', '此 Topic 不在当前 Slice 的实现范围内。', 404);
       }
       if (scenario === 'payload-unavailable') {
-        return { ...structuredClone(topicFixture), learning_payload: null };
+        return {
+          ...structuredClone(topicFixture),
+          learning_payload_status: 'unavailable',
+          learning_payload_version: null,
+          learning_payload: null,
+        };
       }
       return structuredClone(hasRecordedAttempt ? topicAfterAttemptFixture : topicFixture);
     },
@@ -130,10 +169,17 @@ export function createFixtureApiClient(scenario: FixtureScenario = 'ready'): Coc
         throw new CockpitApiError('task_not_scheduled', 'DEV FIXTURE：任务已不在当前 Today 计划中。', 409);
       }
       if (scenario === 'attempt-invalid-input') {
-        throw new CockpitApiError('invalid_input', 'DEV FIXTURE：来源引用未通过 API 校验。', 422);
+        throw new CockpitApiError('invalid_source_reference', 'DEV FIXTURE：来源引用未通过 API 校验。', 422);
       }
       hasRecordedAttempt = true;
-      return { accepted: true };
+      return {
+        recorded: {
+          progress_event_count: 1,
+          review_item_count: 1,
+          review_context_count: 1,
+        },
+        today: structuredClone(replayFixture),
+      };
     },
   };
 }

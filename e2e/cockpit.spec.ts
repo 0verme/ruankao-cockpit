@@ -4,6 +4,7 @@ const topicPath = '/topics/ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS';
 
 async function submitIndexedAttempt(page: import('@playwright/test').Page, outcome: '答对' | '答错' = '答对') {
   await page.getByLabel('验证题来源（只选择实际使用过的题目）').selectOption('gs-comp-2024-h1-q65');
+  await page.getByLabel('实际作答时间（必填；浏览器本地时间）').fill('2026-09-27T18:00');
   await page.getByRole('radio', { name: outcome }).check();
   await page.getByRole('button', { name: '提交真实 attempt' }).click();
 }
@@ -101,6 +102,6 @@ test('Verification success rereads server contract replay response', async ({ pa
 test('Verification API failure is visible and does not claim a replay success', async ({ page }) => {
   await page.goto(`${topicPath}?task_id=contract-fixture-task-001&fixture=attempt-invalid-input`);
   await submitIndexedAttempt(page);
-  await expect(page.getByRole('alert')).toContainText('提交未通过 API 输入校验');
+  await expect(page.getByRole('alert')).toContainText('提交未通过 API 输入或来源校验');
   await expect(page.getByText(/API 已接受 attempt/)).toHaveCount(0);
 });

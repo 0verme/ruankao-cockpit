@@ -5,7 +5,7 @@ import type {
   LearningPayload,
   LearningSourceReference,
   TodayResponse,
-  TopicExperience,
+  TopicResponse,
 } from '../api/types';
 import { ApiNotice } from './ApiNotice';
 import { AppShell } from './AppShell';
@@ -13,7 +13,7 @@ import { VerificationForm } from './VerificationForm';
 
 type LoadState =
   | { kind: 'loading' }
-  | { kind: 'ready'; topic: TopicExperience }
+  | { kind: 'ready'; topic: TopicResponse }
   | { kind: 'error'; error: unknown };
 
 function errorCode(error: unknown): string {
@@ -46,7 +46,7 @@ export function TopicApp({ topicId }: { topicId: string }) {
     void load();
   }, [load]);
 
-  function refreshed(topic: TopicExperience, today: TodayResponse) {
+  function refreshed(topic: TopicResponse, today: TodayResponse) {
     setState({ kind: 'ready', topic });
     setLastToday(today);
   }
@@ -62,7 +62,7 @@ export function TopicApp({ topicId }: { topicId: string }) {
       {state.kind === 'error' && (
         <section className="empty-state">
           <a className="back-link" href="/">← 返回 Today</a>
-          <h1>{errorCode(state.error) === 'invalid_payload_provenance' ? '材料来源校验未通过' : 'Topic 暂时不可用'}</h1>
+          <h1>{['invalid_source_provenance', 'invalid_learning_payload'].includes(errorCode(state.error)) ? '材料来源校验未通过' : 'Topic 暂时不可用'}</h1>
           <ApiNotice code={errorCode(state.error)} />
           <button className="button button--secondary" type="button" onClick={() => void load()}>重试读取</button>
         </section>
@@ -70,7 +70,7 @@ export function TopicApp({ topicId }: { topicId: string }) {
       {state.kind === 'ready' && (
         <TopicContent topic={state.topic} taskId={taskId} onRefresh={refreshed} />
       )}
-      {lastToday && <span className="visually-hidden" aria-live="polite">Today replay 已重新读取：{lastToday.day.local_date}</span>}
+      {lastToday && <span className="visually-hidden" aria-live="polite">Today replay 已重新读取：{lastToday.planner.days[0]?.local_date}</span>}
     </AppShell>
   );
 }
@@ -80,49 +80,49 @@ function TopicContent({
   taskId,
   onRefresh,
 }: {
-  topic: TopicExperience;
+  topic: TopicResponse;
   taskId: string;
-  onRefresh: (topic: TopicExperience, today: TodayResponse) => void;
+  onRefresh: (topic: TopicResponse, today: TodayResponse) => void;
 }) {
-  const payload = topic.learning_payload;
+  const payload = topic.learning_payload_status === 'available' ? topic.learning_payload : null;
   return (
     <article className="topic-page">
       <a className="back-link" href="/">← 返回 Today</a>
       <header className="topic-header">
         <nav className="breadcrumbs" aria-label="面包屑">
           <a href="/">Today</a>
-          {topic.breadcrumb.map((crumb, index) => (
+          {topic.topic.breadcrumb.map((crumb, index) => (
             <span className="breadcrumb-item" key={crumb.topic_id}>
               <span className="breadcrumb-separator" aria-hidden="true">/</span>
-              <span aria-current={index === topic.breadcrumb.length - 1 ? 'page' : undefined}>{crumb.name}</span>
+              <span aria-current={index === topic.topic.breadcrumb.length - 1 ? 'page' : undefined}>{crumb.name}</span>
             </span>
           ))}
         </nav>
         <div className="topic-title-row">
           <div>
             <p className="eyebrow">Knowledge Topic</p>
-            <h1>{topic.topic_name}</h1>
-            <p className="topic-id">{topic.topic_id}</p>
+            <h1>{topic.topic.name}</h1>
+            <p className="topic-id">{topic.topic.topic_id}</p>
           </div>
           <div className={`payload-badge ${payload ? 'payload-badge--available' : 'payload-badge--unavailable'}`}>
             <span className="payload-badge__dot" aria-hidden="true" />
-            {payload ? `Learning Payload · v${payload.version}` : '材料尚未整理'}
+            {payload ? `Learning Payload · v${topic.learning_payload_version ?? payload.version}` : '材料尚未整理'}
           </div>
         </div>
-        <p className="topic-version">Taxonomy v{topic.taxonomy_version}{payload?.taxonomy_version ? ` · Payload schema ${payload.schema_version}` : ''}</p>
+        <p className="topic-version">Taxonomy v{topic.topic.taxonomy_version}{payload?.taxonomy_version ? ` · Payload schema ${payload.schema_version}` : ''}</p>
       </header>
 
       <aside className="state-grid" aria-label="Progress 与 Review 状态">
         <div className="state-card">
           <span className="state-label">Progress</span>
-          <strong>{topic.progress_attempt_count} 次验证 attempt</strong>
-          <span>{topic.progress_accuracy === null ? '准确率：尚无可用数据' : `准确率：${new Intl.NumberFormat('zh-CN', { style: 'percent', maximumFractionDigits: 0 }).format(topic.progress_accuracy)}`}</span>
+          <strong>{topic.progress.attempt_count} 次验证 attempt</strong>
+          <span>{topic.progress.accuracy === null ? '准确率：尚无可用数据' : `准确率：${new Intl.NumberFormat('zh-CN', { style: 'percent', maximumFractionDigits: 0 }).format(topic.progress.accuracy)}`}</span>
         </div>
         <div className="state-card">
           <span className="state-label">Review</span>
-          <strong>{reviewMasteryLabel(topic.review_mastery_state)}</strong>
-          <span>{reviewStatusLabel(topic.review_status)}{topic.review_next_due_local_date ? ` · 下次复习 ${topic.review_next_due_local_date}` : ''}</span>
-          {topic.review_policy_version && <small>Policy · {topic.review_policy_version}</small>}
+          <strong>{reviewMasteryLabel(topic.review.mastery_state)}</strong>
+          <span>{reviewStatusLabel(topic.review.status)}{topic.review.next_due_local_date ? ` · 下次复习 ${topic.review.next_due_local_date}` : ''}</span>
+          {topic.review.policy_version && <small>Policy · {topic.review.policy_version}</small>}
         </div>
       </aside>
 
@@ -211,12 +211,10 @@ function EvidenceReferences({
 }
 
 function SourceCard({ source }: { source: LearningSourceReference }) {
-  const safeUrl = safeExternalUrl(source.source_url);
   return (
     <article className="source-card">
       <div className="source-card__heading">
         <h3>{source.display_title}</h3>
-        {safeUrl && <a href={safeUrl} target="_blank" rel="noreferrer">打开来源 <span aria-hidden="true">↗</span></a>}
       </div>
       <dl className="provenance-list">
         <div><dt>来源类型</dt><dd>{source.kind}</dd></div>
@@ -233,17 +231,7 @@ function SourceCard({ source }: { source: LearningSourceReference }) {
   );
 }
 
-function safeExternalUrl(value?: string): string | undefined {
-  if (!value) return undefined;
-  try {
-    const url = new URL(value);
-    return url.protocol === 'https:' || url.protocol === 'http:' ? url.toString() : undefined;
-  } catch {
-    return undefined;
-  }
-}
-
-function reviewMasteryLabel(value: TopicExperience['review_mastery_state']): string {
+function reviewMasteryLabel(value: TopicResponse['review']['mastery_state']): string {
   switch (value) {
     case 'new': return '新建';
     case 'learning': return '学习中';
@@ -252,7 +240,7 @@ function reviewMasteryLabel(value: TopicExperience['review_mastery_state']): str
   }
 }
 
-function reviewStatusLabel(value: TopicExperience['review_status']): string {
+function reviewStatusLabel(value: TopicResponse['review']['status']): string {
   switch (value) {
     case 'not_scheduled': return '尚未排期';
     case 'scheduled': return '已安排';

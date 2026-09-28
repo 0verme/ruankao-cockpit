@@ -4,13 +4,13 @@ import type {
   AttemptResponse,
   InitializeResponse,
   TodayResponse,
-  TopicExperience,
+  TopicResponse,
 } from './types';
 
 export interface CockpitApiClient {
   readonly kind: ApiAdapterKind;
   getToday(): Promise<TodayResponse>;
   initialize(): Promise<InitializeResponse>;
-  getTopic(topicId: string): Promise<TopicExperience>;
+  getTopic(topicId: string): Promise<TopicResponse>;
   recordAttempt(input: AttemptRequest): Promise<AttemptResponse>;
 }

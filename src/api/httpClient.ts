@@ -7,36 +7,34 @@ import type {
   AttemptResponse,
   InitializeResponse,
   TodayResponse,
-  TopicExperience,
+  TopicResponse,
 } from './types';
 
 const knownErrorCodes = new Set<ApiErrorCode>([
-  'not_initialized',
-  'payload_unavailable',
-  'unknown_topic',
-  'invalid_payload_provenance',
-  'invalid_input',
-  'task_not_scheduled',
-  'duplicate_attempt',
-  'network_error',
-  'api_error',
+  'not_initialized', 'incomplete_local_data', 'unknown_topic', 'unknown_task',
+  'non_active_topic', 'invalid_request', 'invalid_timestamp', 'invalid_attempt',
+  'invalid_source_reference', 'invalid_source_provenance', 'invalid_learning_payload',
+  'forbidden_path', 'future_evidence', 'target_mismatch', 'task_not_scheduled',
+  'duplicate_event', 'pending_transaction', 'conflicting_transaction', 'storage_error',
+  'invalid_local_data', 'invalid_catalog', 'invalid_learning_catalog',
+  'invalid_topic_experience', 'invalid_planner_output', 'domain_error', 'api_error',
 ]);
 
 function responseError(body: unknown, status: number): CockpitApiError {
   const maybeEnvelope = body as Partial<ApiErrorEnvelope> | null;
   const error = maybeEnvelope && typeof maybeEnvelope === 'object' ? maybeEnvelope.error : undefined;
-  const rawCode = error && typeof error.code === 'string' ? error.code : undefined;
-  const code = rawCode && knownErrorCodes.has(rawCode as ApiErrorCode)
-    ? (rawCode as ApiErrorCode)
+  const rawCategory = error && typeof error.category === 'string' ? error.category : undefined;
+  const category = rawCategory && knownErrorCodes.has(rawCategory as ApiErrorCode)
+    ? (rawCategory as ApiErrorCode)
     : status === 404
       ? 'unknown_topic'
       : status >= 500
         ? 'api_error'
-        : 'invalid_input';
+        : 'invalid_request';
   const message = error && typeof error.message === 'string'
     ? error.message
     : `API request failed with HTTP ${status}`;
-  return new CockpitApiError(code, message, status);
+  return new CockpitApiError(category, message, status);
 }
 
 export function createHttpApiClient(
@@ -76,7 +74,7 @@ export function createHttpApiClient(
     kind: 'http',
     getToday: () => request<TodayResponse>('/api/today'),
     initialize: () => request<InitializeResponse>('/api/init', { method: 'POST' }),
-    getTopic: (topicId) => request<TopicExperience>(`/api/topics/${encodeURIComponent(topicId)}`),
+    getTopic: (topicId) => request<TopicResponse>(`/api/topics/${encodeURIComponent(topicId)}`),
     recordAttempt: (input: AttemptRequest) => request<AttemptResponse>('/api/attempts', {
       method: 'POST',
       body: JSON.stringify(input),

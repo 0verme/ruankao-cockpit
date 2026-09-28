@@ -20,6 +20,9 @@ function chooseIndexedSourceAndCorrectAnswer() {
   fireEvent.change(screen.getByLabelText('验证题来源（只选择实际使用过的题目）'), {
     target: { value: 'gs-comp-2024-h1-q65' },
   });
+  fireEvent.change(screen.getByLabelText('实际作答时间（必填；浏览器本地时间）'), {
+    target: { value: '2026-09-27T18:00:00' },
+  });
   fireEvent.click(screen.getByRole('radio', { name: /答对/ }));
 }
 
@@ -92,12 +95,31 @@ describe('Topic island and Verification', () => {
     }
   });
 
-  it('shows local invalid input without making an API write', async () => {
+  it('requires the user to enter the actual answer time; it never defaults to now', async () => {
     enterFromToday();
     const api = createFixtureApiClient();
     const recordAttempt = vi.spyOn(api, 'recordAttempt');
     renderWithApi(<TopicApp topicId={topicId} />, api);
     expect(await screen.findByRole('heading', { name: 'Verification' })).toBeInTheDocument();
+    expect(screen.getByLabelText('实际作答时间（必填；浏览器本地时间）')).toHaveValue('');
+    fireEvent.change(screen.getByLabelText('验证题来源（只选择实际使用过的题目）'), {
+      target: { value: 'gs-comp-2024-h1-q65' },
+    });
+    fireEvent.click(screen.getByRole('radio', { name: /答对/ }));
+    fireEvent.click(screen.getByRole('button', { name: '提交真实 attempt' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('请填写有效的实际作答时间');
+    expect(recordAttempt).not.toHaveBeenCalled();
+  });
+
+  it('shows local invalid source input without making an API write', async () => {
+    enterFromToday();
+    const api = createFixtureApiClient();
+    const recordAttempt = vi.spyOn(api, 'recordAttempt');
+    renderWithApi(<TopicApp topicId={topicId} />, api);
+    expect(await screen.findByRole('heading', { name: 'Verification' })).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText('实际作答时间（必填；浏览器本地时间）'), {
+      target: { value: '2026-09-27T18:00:00' },
+    });
     fireEvent.click(screen.getByRole('radio', { name: /答对/ }));
     fireEvent.click(screen.getByRole('button', { name: '提交真实 attempt' }));
     expect(await screen.findByRole('alert')).toHaveTextContent('请选择实际使用的已索引来源');
@@ -112,7 +134,7 @@ describe('Topic island and Verification', () => {
     expect(await screen.findByRole('heading', { name: 'Verification' })).toBeInTheDocument();
     chooseIndexedSourceAndCorrectAnswer();
     fireEvent.click(screen.getByRole('button', { name: '提交真实 attempt' }));
-    await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent('提交未通过 API 输入校验'));
+    await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent('提交未通过 API 输入或来源校验'));
     expect(screen.queryByText(/API 已接受 attempt/)).not.toBeInTheDocument();
     expect(getToday).not.toHaveBeenCalled();
   });

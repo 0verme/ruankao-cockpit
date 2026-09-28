@@ -100,21 +100,23 @@ export function TodayApp() {
 }
 
 function TodayContent({ data }: { data: TodayResponse }) {
-  const tasks = data.day.tasks;
+  const planner = data.planner;
+  const day = planner.days[0];
+  const tasks = day.tasks;
   return (
     <>
       <section className="today-overview" aria-labelledby="today-overview-title">
         <div className="section-heading">
           <div>
-            <p className="eyebrow">{data.timezone}</p>
-            <h2 id="today-overview-title">今天 · {data.day.local_date}</h2>
+            <p className="eyebrow">{planner.timezone}</p>
+            <h2 id="today-overview-title">今天 · {day.local_date}</h2>
           </div>
-          <p className="source-caption">服务端计划 · as_of {data.as_of}</p>
+          <p className="source-caption">服务端计划 · as_of {planner.as_of}</p>
         </div>
         <div className="metric-grid" aria-label="Today 计划容量">
-          <Metric label="今日可用" value={`${data.day.capacity_minutes} min`} />
-          <Metric label="已安排" value={`${data.day.planned_minutes} min`} />
-          <Metric label="剩余容量" value={`${data.day.remaining_minutes} min`} />
+          <Metric label="今日可用" value={`${day.capacity_minutes} min`} />
+          <Metric label="已安排" value={`${day.planned_minutes} min`} />
+          <Metric label="剩余容量" value={`${day.remaining_minutes} min`} />
         </div>
       </section>
 
@@ -130,17 +132,22 @@ function TodayContent({ data }: { data: TodayResponse }) {
         ) : (
           <div className="task-list">
             {tasks.map((task) => {
-              const supported = task.topic_id === IMPLEMENTED_TOPIC_ID;
+              const topic = data.task_topics[task.task_id];
+              const supported = topic?.topic_id === IMPLEMENTED_TOPIC_ID;
+              const taskLabel = task.task_type === 'review'
+                ? 'REVIEW'
+                : task.task_type === 'new_learning'
+                  ? 'NEW LEARNING'
+                  : task.task_type;
               return (
                 <article className="task-card" key={task.task_id}>
                   <div className="task-card__topline">
-                    <span className="task-kind">{task.task_type === 'review' ? 'REVIEW' : 'NEW LEARNING'}</span>
+                    <span className="task-kind">{taskLabel}</span>
                     <span className="task-duration">{task.planned_minutes} 分钟</span>
                   </div>
-                  <h3>{task.topic_name}</h3>
-                  <p className="task-reason">{task.display_reason}</p>
+                  <h3>{topic?.topic_name ?? '当前任务没有 Knowledge Topic 映射'}</h3>
                   {supported ? (
-                    <a className="button button--primary" href={topicHref(task.topic_id, task.task_id)}>
+                    <a className="button button--primary" href={topicHref(topic.topic_id, task.task_id)}>
                       打开 Topic 学习体验 <span aria-hidden="true">→</span>
                     </a>
                   ) : (

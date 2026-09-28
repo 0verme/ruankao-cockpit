@@ -4,7 +4,7 @@ import { useCockpitApi } from '../api/context';
 import type {
   ErrorCause,
   TodayResponse,
-  TopicExperience,
+  TopicResponse,
   VerificationSource,
 } from '../api/types';
 import { ApiNotice, messageForApiError } from './ApiNotice';
@@ -18,11 +18,6 @@ const ERROR_CAUSES: { value: ErrorCause; label: string }[] = [
 const MANUAL_SOURCE = '__manual_source__';
 
 type SubmitState = 'idle' | 'submitting' | 'success' | 'refresh-error';
-
-function localDateTimeValue(date: Date): string {
-  const pad = (part: number) => String(part).padStart(2, '0');
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
-}
 
 function toUtcIso(value: string): string | null {
   const parsed = new Date(value);
@@ -38,14 +33,14 @@ export function VerificationForm({
   taskId,
   onRefresh,
 }: {
-  topic: TopicExperience;
+  topic: TopicResponse;
   taskId: string;
-  onRefresh: (topic: TopicExperience, today: TodayResponse) => void;
+  onRefresh: (topic: TopicResponse, today: TodayResponse) => void;
 }) {
   const api = useCockpitApi();
   const sources = topic.verification_sources;
   const [sourceChoice, setSourceChoice] = useState(sources.length ? '' : MANUAL_SOURCE);
-  const [occurredAt, setOccurredAt] = useState(() => localDateTimeValue(new Date()));
+  const [occurredAt, setOccurredAt] = useState('');
   const [outcome, setOutcome] = useState<'correct' | 'incorrect' | ''>('');
   const [errorCause, setErrorCause] = useState<ErrorCause | ''>('');
   const [manualReference, setManualReference] = useState({
@@ -77,7 +72,7 @@ export function VerificationForm({
   async function refreshFromServer() {
     try {
       const [latestTopic, latestToday] = await Promise.all([
-        api.getTopic(topic.topic_id),
+        api.getTopic(topic.topic.topic_id),
         api.getToday(),
       ]);
       onRefresh(latestTopic, latestToday);
@@ -122,7 +117,7 @@ export function VerificationForm({
       await api.recordAttempt({
         task_id: taskId,
         occurred_at: occurredAtIso,
-        source_reference: reference,
+        question: reference,
         correct: outcome === 'correct',
         ...(outcome === 'incorrect' && errorCause ? { error_cause: errorCause } : {}),
       });
@@ -193,10 +188,10 @@ export function VerificationForm({
           )}
 
           <label className="field">
-            <span>实际作答时间（浏览器本地时间）</span>
-            <input type="datetime-local" step="1" required value={occurredAt} onChange={(event) => setOccurredAt(event.currentTarget.value)} disabled={submitted || submitState === 'submitting'} />
-            <small>提交时转换为带 UTC 时区的 ISO 8601 时间；可修改为实际作答时间。</small>
+            <span>实际作答时间（必填；浏览器本地时间）</span>
+            <input type="datetime-local" step="1" required value={occurredAt} onChange={(event) => setOccurredAt(event.currentTarget.value)} disabled={submitted || submitState === 'submitting'} aria-describedby="occurred-at-help" />
           </label>
+          <small id="occurred-at-help" className="field-help">请填写真实作答时间；提交时转换为带 UTC 时区的 ISO 8601 时间，不会自动填入当前时间。</small>
 
           <fieldset className="outcome-fieldset">
             <legend>作答结果（必选）</legend>

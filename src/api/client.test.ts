@@ -2,9 +2,14 @@ import { describe, expect, it, vi } from 'vitest';
 import { CockpitApiError } from './errors';
 import { createFixtureApiClient } from './fixtureClient';
 import { createHttpApiClient } from './httpClient';
-import type { AttemptRequest, TodayResponse } from './types';
+import type { AttemptRequest, AttemptResponse, TodayResponse, TopicResponse } from './types';
 
 const topicId = 'ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS';
+const replay = {
+  planner: { schema_version: 'planner-output/v0.1', as_of: '2026-09-28T01:00:00Z', timezone: 'Asia/Shanghai', days: [] },
+  progress: {},
+  review: { state: {}, items: [] },
+};
 
 function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -13,23 +18,48 @@ function jsonResponse(body: unknown, status = 200): Response {
   });
 }
 
-describe('HTTP API client contract assumptions', () => {
-  it('uses only the frozen API paths and sends attempt facts, not generated IDs or replay fields', async () => {
+function topicResponse(): TopicResponse {
+  return {
+    topic: {
+      topic_id: topicId,
+      name: '容器与 Serverless',
+      taxonomy_version: '0.1',
+      breadcrumb: [{ topic_id: topicId, name: '容器与 Serverless' }],
+    },
+    learning_payload_status: 'unavailable',
+    learning_payload_version: null,
+    learning_payload: null,
+    progress: { attempt_count: 0, accuracy: null },
+    review: { mastery_state: null, status: null, next_due_local_date: null, policy_version: null },
+    verification_sources: [],
+  };
+}
+
+describe('HTTP API client — merged FastAPI v0.1 contract', () => {
+  it('uses the frozen endpoints and sends only attempt facts in the server request shape', async () => {
     const today: TodayResponse = {
-      as_of: '2026-09-28T09:00:00+08:00',
-      timezone: 'Asia/Shanghai',
-      day: { local_date: '2026-09-28', capacity_minutes: 60, planned_minutes: 25, remaining_minutes: 35, tasks: [] },
+      ...replay,
+      planner: {
+        ...replay.planner,
+        days: [{ local_date: '2026-09-28', capacity_minutes: 60, planned_minutes: 25, remaining_minutes: 35, tasks: [] }],
+      },
+      task_topics: {},
+    };
+    const topic = topicResponse();
+    const recorded: AttemptResponse = {
+      recorded: { progress_event_count: 1, review_item_count: 1, review_context_count: 1 },
+      today: replay,
     };
     const fetcher = vi.fn<typeof fetch>()
-      .mockResolvedValueOnce(jsonResponse({ initialized: true }))
+      .mockResolvedValueOnce(jsonResponse({ state: 'created' }))
       .mockResolvedValueOnce(jsonResponse(today))
-      .mockResolvedValueOnce(jsonResponse({ topic_id: topicId }))
-      .mockResolvedValueOnce(jsonResponse({ accepted: true }));
+      .mockResolvedValueOnce(jsonResponse(topic))
+      .mockResolvedValueOnce(jsonResponse(recorded));
     const client = createHttpApiClient('', fetcher);
     const request: AttemptRequest = {
       task_id: 'task-from-today',
       occurred_at: '2026-09-28T01:00:00.000Z',
-      source_reference: {
+      question: {
         source_id: 'source',
         source_commit: 'a'.repeat(40),
         source_path: 'questions/q1.md',
@@ -39,10 +69,10 @@ describe('HTTP API client contract assumptions', () => {
       error_cause: 'knowledge_gap',
     };
 
-    await expect(client.initialize()).resolves.toEqual({ initialized: true });
+    await expect(client.initialize()).resolves.toEqual({ state: 'created' });
     await expect(client.getToday()).resolves.toEqual(today);
-    await expect(client.getTopic(topicId)).resolves.toEqual({ topic_id: topicId });
-    await expect(client.recordAttempt(request)).resolves.toEqual({ accepted: true });
+    await expect(client.getTopic(topicId)).resolves.toEqual(topic);
+    await expect(client.recordAttempt(request)).resolves.toEqual(recorded);
 
     expect(fetcher.mock.calls.map(([url, init]) => [url, init?.method ?? 'GET'])).toEqual([
       ['/api/init', 'POST'],
@@ -52,14 +82,14 @@ describe('HTTP API client contract assumptions', () => {
     ]);
     const body = JSON.parse(String(fetcher.mock.calls[3]?.[1]?.body)) as Record<string, unknown>;
     expect(body).toEqual(request);
-    for (const forbidden of ['event_id', 'review_context_id', 'mastery', 'review_due', 'progress_percent']) {
+    for (const forbidden of ['event_id', 'review_context_id', 'mastery', 'review_due', 'topic_progress', 'as_of']) {
       expect(body).not.toHaveProperty(forbidden);
     }
   });
 
-  it('preserves typed API errors and distinguishes an unreachable API', async () => {
+  it('reads error.category and distinguishes an unreachable API', async () => {
     const client = createHttpApiClient('', vi.fn<typeof fetch>().mockResolvedValueOnce(
-      jsonResponse({ error: { code: 'not_initialized', message: 'not initialized' } }, 409),
+      jsonResponse({ error: { category: 'not_initialized', message: 'not initialized' } }, 409),
     ));
     await expect(client.getToday()).rejects.toMatchObject({ code: 'not_initialized', status: 409 });
 
@@ -73,16 +103,19 @@ describe('DEV FIXTURE / CONTRACT FIXTURE adapter', () => {
   it('is explicitly labeled and distinguishes unavailable payload from invalid provenance', async () => {
     const unavailable = createFixtureApiClient('payload-unavailable');
     expect(unavailable.kind).toBe('contract-fixture');
-    await expect(unavailable.getTopic(topicId)).resolves.toMatchObject({ learning_payload: null });
+    await expect(unavailable.getTopic(topicId)).resolves.toMatchObject({
+      learning_payload_status: 'unavailable',
+      learning_payload: null,
+    });
 
     const invalid = createFixtureApiClient('invalid-provenance');
-    await expect(invalid.getTopic(topicId)).rejects.toMatchObject({ code: 'invalid_payload_provenance' });
+    await expect(invalid.getTopic(topicId)).rejects.toMatchObject({ code: 'invalid_source_provenance' });
   });
 
   it('models initialization as an explicit POST-like action', async () => {
     const client = createFixtureApiClient('not-initialized');
     await expect(client.getToday()).rejects.toMatchObject({ code: 'not_initialized' });
-    await expect(client.initialize()).resolves.toEqual({ initialized: true });
-    await expect(client.getToday()).resolves.toHaveProperty('day.tasks.length', 1);
+    await expect(client.initialize()).resolves.toEqual({ state: 'created' });
+    await expect(client.getToday()).resolves.toHaveProperty('planner.days.0.tasks.length', 1);
   });
 });

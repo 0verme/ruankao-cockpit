@@ -1,52 +1,54 @@
 # Frontend Migration Slice 1 — Astro + React Topic Shell
 
-**Status: `BACKEND_INTEGRATION_PENDING`**
+**Status: `BACKEND_CONTRACT_RECONCILED`; TypeScript HTTP client ↔ live FastAPI round-trip PASS in an isolated local directory. Playwright remains fixture-backed; deployed same-origin browser serving is not tested.**
 
-This slice owns Browser Presentation only. Astro emits static routes and shell; React islands fetch the API. Python remains the only domain/application truth source.
+This slice owns Browser Presentation only. Astro emits two static routes and shell; React islands fetch the merged FastAPI contract. Python `cockpit_service` and domain replay remain the only business truth source.
 
 ```text
 Browser
   → Astro static routes + React islands
   → same-origin HTTP /api/*
-  → FastAPI transport adapter (parallel implementation)
+  → FastAPI transport (merged PR #40)
   → cockpit_service
   → Planner / Progress replay / Review replay / validated Learning Payload / Taxonomy
 ```
 
 ## Routes and scope
 
-- `/` — Today API read, explicit initialization action when API reports `not_initialized`, server-provided tasks/capacity, entry to the supported Topic.
-- `/topics/ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS` — static Astro route with a React island that fetches `TopicExperience`.
-- The Topic page renders the existing read model: header and Taxonomy breadcrumb, payload state/version, objectives, core knowledge, exam context, source/provenance metadata, light Progress/Review read state, and an optional Verification form.
-- Missing payload is rendered as **材料尚未整理**. Invalid payload/provenance is a distinct fail-closed API error. No runtime content generation is attempted.
-- Verification is available only when entered from a Today task (`task_id` query parameter). The browser submits actual answer time, indexed/manual source reference, correct/incorrect and optional error cause, then rereads Topic and Today from the API.
+- `/` — Today API read, explicit initialization action only after API returns `not_initialized`, server-provided tasks/capacity, entry to the supported Topic.
+- `/topics/ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS` — static Astro route with a React island that fetches the API's Topic response.
+- The Topic page renders the existing TopicExperience projection: header and Taxonomy breadcrumb, payload state/version, objectives, core knowledge, exam context, source/provenance metadata, light Progress/Review read state, and an optional Verification form.
+- API `learning_payload_status="unavailable"` is rendered as **材料尚未整理**. `invalid_learning_payload` / `invalid_source_provenance` is a distinct fail-closed API error. No runtime content generation is attempted.
+- Verification is available only when entered from a Today task (`task_id` query parameter). The browser sends actual answer time, source reference, correct/incorrect and optional error cause, then rereads Topic and Today from the API.
 
-No browser-owned planner, taxonomy mapping, provenance validator, Progress/Review policy, localStorage learning truth, `event_id`, `review_context_id`, mastery, due date or progress percentage is introduced.
+The frontend has no browser-owned planner, task→Topic mapping, provenance validator, Progress/Review policy, localStorage learning truth, `event_id`, `review_context_id`, mastery, due date or progress percentage.
 
-## API contract assumptions (to reconcile with backend)
+## Reconciled FastAPI v0.1 contract (merged PR #40)
 
-The API paths are fixed by Issue #34. Until the FastAPI contract merges, the following minimal JSON shapes are **consumer assumptions**, not a claim of an integrated contract:
+The consumer types now match [`docs/api/FRONTEND_API_V01.md`](../api/FRONTEND_API_V01.md). Contract facts below are served by the backend; the frontend does only view/presentation mapping.
 
-| Endpoint | Assumption consumed by this browser |
+| Endpoint | Merged wire contract consumed |
 |---|---|
-| `POST /api/init` | Explicit initialization; returns `{ "initialized": boolean }`. GET requests never initialize local facts. |
-| `GET /api/today` | `{ as_of, timezone, day: { local_date, capacity_minutes, planned_minutes, remaining_minutes, tasks[] } }`. Each task includes `task_id`, `task_type`, backend-resolved `topic_id`/`topic_name`, `planned_minutes`, and `display_reason`. In particular, review task → Topic mapping belongs to Python/service, not TypeScript. |
-| `GET /api/topics/{topic_id}` | JSON projection of `TopicExperience` from PR #36 (snake_case); `learning_payload: null` means valid Topic with no payload. A malformed/unverified payload/provenance must fail closed with a typed API error, not return guessed content. |
-| `POST /api/attempts` | Request: `task_id`, timezone-aware `occurred_at`, `source_reference`, `correct`, optional `error_cause`. Response `{ "accepted": true }`; it contains no client-generated or client-controlled domain IDs/policies. Client then rereads Today and Topic. |
+| `POST /api/init` | No body. Returns `{ state: "created" | "already_exists" }`. Initialization is explicit; GET never initializes. |
+| `GET /api/today` | Returns `{ planner, task_topics, progress, review }`. Today is `planner.days[0]`. Each mapped task's `task_id` indexes Python-resolved `task_topics[task_id]` (`topic_id`, `topic_name`, Taxonomy breadcrumb and Payload availability/version). React does not map review item IDs to Topics. |
+| `GET /api/topics/{topic_id}` | Returns `{ topic, learning_payload_status, learning_payload_version, learning_payload, progress, review, verification_sources }`. `topic` holds canonical name/id/version/breadcrumb; progress/review fields remain server projections. A legal missing Payload is explicit `unavailable` with a null object/version. Invalid provenance and non-active Topics use distinct API categories. |
+| `POST /api/attempts` | Request is `{ task_id, occurred_at, question, correct, error_cause? }`; `question` contains source reference metadata. Response includes server-owned `recorded` counts and replayed `today`. Client rereads `GET /api/today` and `GET /api/topics/{topic_id}` for the refreshed page. |
 
-Expected error body: `{ "error": { "code": string, "message": string } }`. Important codes include `not_initialized`, `payload_unavailable`, `unknown_topic`, `invalid_payload_provenance`, `invalid_input`, `task_not_scheduled`, and `duplicate_attempt`. HTTP status is not the only semantic signal; the stable error code drives user-facing copy.
+Error envelope is `{ "error": { "category": string, "message": string } }`. The frontend branches on stable `category`, never parses message text. It handles `not_initialized`, `incomplete_local_data`, `unknown_topic`, `unknown_task`, `non_active_topic`, `invalid_request`, `invalid_timestamp`, `invalid_attempt`, `invalid_source_reference`, `invalid_source_provenance`, `invalid_learning_payload`, `forbidden_path`, `future_evidence`, `target_mismatch`, `task_not_scheduled`, `duplicate_event`, transaction conflicts, storage/catalog errors, network failure and generic API failure.
 
-The API may return optional server-computed `source_url` on validated provenance references. The browser only renders `http(s)` links supplied by the API; absent links are shown as provenance metadata, not synthesized from source IDs.
+The contract does not return source URLs. The page shows returned provenance metadata (source ID/commit/path/anchor/question ID/confidence) and does not synthesize links. No frontend-specific adapter fields are required for the merged contract.
 
-Before integration is declared complete, reconcile these field names, optionality, error envelope/status mapping, Today task target projection, source link policy, POST response, and task/attempt validation with the merged backend contract. Do not add a second frontend business model to preserve this provisional shape.
+## Fixture mode and integration limit
 
-## Fixture mode
-
-`PUBLIC_API_MODE=contract-fixture` selects an in-memory adapter. The UI always displays:
+`PUBLIC_API_MODE=contract-fixture` selects an in-memory fixture adapter. The UI always displays:
 
 > DEV FIXTURE / CONTRACT FIXTURE — 仅用于浏览器开发与契约测试，不是 production truth。
 
-The Topic content fixture imports the one checked-in Learning Payload; the static fixture responses and pre-recorded post-attempt replay are only for testing UI states. They do not validate provenance, execute a planner, persist an attempt or establish real Progress/Review facts. `?fixture=` can select deterministic unavailable, invalid-provenance, uninitialized and API-failure cases. Normal mode defaults to HTTP, not fixtures.
+The fixture wire responses mirror PR #40; its Topic content imports the one checked-in Learning Payload. The pre-recorded after-attempt response only exercises UI state. It does not call FastAPI, validate provenance, persist an attempt, run replay or establish production Progress/Review facts. Query `?fixture=` selects deterministic unavailable, invalid-provenance, uninitialized and API/network failure states. Normal mode defaults to HTTP, not fixtures.
+
+Unit/component/E2E tests use the marked fixture adapter. Separately, the real TypeScript `createHttpApiClient` was loaded through Vite and run against a loopback Uvicorn server with a newly created temporary `COCKPIT_LOCAL_DIR`: explicit init → Today → Topic/source → POST test attempt → fresh Topic/Today reads. The isolated run confirmed one persisted Progress event and the server replay attempt count in both POST response and reread; its temporary data directory was deleted. This synthetic attempt was test-only and never touched user `.local` data. The Python FastAPI transport suite also passed (8 tests).
+
+This verifies the HTTP client and API persistence/replay contract, but is not a real-browser test against the backend: Playwright still exercises only the visible contract fixture, and a deployed same-origin frontend/API setup has not been validated.
 
 ## COPY / ADAPT / REJECT
 
@@ -56,9 +58,9 @@ No helper was copied from `data-warehouse-visualized` in this slice. The audit's
 
 ### ADAPT
 
-- LearnShell → a much smaller Topic shell: shared content width, light surface/card hierarchy, semantic links, plain document scrolling, clear loading/error/unavailable states, breadcrumb and mobile-safe layout.
-- LessonViewport → Topic content sections with the single document as scroll owner; no lesson next/previous or completion semantics.
-- Source/provenance and verification sections adapt PR #36 `TopicExperience`; all facts are fetched from HTTP.
+- LearnShell → a smaller Topic shell: content width, light surface/card hierarchy, semantic links, document scrolling, loading/error/unavailable states, breadcrumb and mobile-safe layout.
+- LessonViewport → Topic content sections with the document as sole scroll owner; no lesson next/previous or completion semantics.
+- PR #36 `TopicExperience` is rendered from the merged API response; all domain facts are fetched from HTTP.
 - The current slice intentionally has no taxonomy sidebar/drawer and no route-transition persistence.
 
 ### REJECT
@@ -73,7 +75,7 @@ No Course/Chapter/Lesson model, `completedLessonIds`, localStorage progress, les
 
 ## Test / integration gates
 
-- Vitest: typed API endpoint/error contract, fixture labels, component loading/initialization/unavailable/error, and Verification success/failure + reread behavior.
+- Vitest: exact wire endpoint/request/response contract, error categories, fixture labels, component loading/initialization/unavailable/error, Verification success/failure and reread behavior.
 - Astro check/build: static two-route build.
-- Playwright: Today, Topic, unavailable, not initialized, API error, keyboard navigation, mobile overflow, document scroll ownership, refresh, and Verification success/failure using only the marked contract fixture.
-- These tests validate Browser Presentation and assumptions only. They are **not** a FastAPI/cockpit_service integration test, do not prove writes/replay persistence, and do not complete the migration gate in #34.
+- Playwright: Today, Topic, unavailable, not initialized, API/network error, keyboard navigation, mobile overflow, document scroll ownership, refresh, and Verification success/failure using only the marked contract fixture.
+- Those browser tests validate Browser Presentation and fixture behavior only. The separate live TypeScript HTTP client ↔ Uvicorn run and Python transport tests validate API persistence/replay; neither is a deployed-browser/same-origin test. No broader production integration is claimed.
