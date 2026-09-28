@@ -80,7 +80,11 @@ class StreamlitAppSmokeTests(unittest.TestCase):
         self.assertEqual([metric.label for metric in at.metric], ["今日可用", "已安排", "剩余容量"])
         markdown_values = [item.value for item in at.markdown]
         self.assertTrue(any("NEW LEARNING" in value for value in markdown_values))
+        self.assertTrue(any("### 容器与 Serverless" in value for value in markdown_values))
         self.assertTrue(any("今天学会什么" in value for value in markdown_values))
+        self.assertTrue(any("Learning Payload 1.0.0" in item.value for item in at.caption))
+        self.assertTrue(any("系统架构设计基础知识 › 云原生架构设计 › 容器与 Serverless" in item.value for item in at.caption))
+        self.assertEqual((local / "progress-events.jsonl").read_text(encoding="utf-8"), "")
         self.assertTrue(any("说明容器如何封装应用及其依赖" in value for value in markdown_values))
         self.assertTrue(any("容器与虚拟机：看运行边界" in value for value in markdown_values))
         self.assertTrue(any("软考关注点" in value for value in markdown_values))
@@ -135,11 +139,11 @@ class StreamlitAppSmokeTests(unittest.TestCase):
         at = self.run_app()
         self.assertFalse(at.exception)
         labels = [item.value for item in at.markdown]
-        self.assertTrue(any("REVIEW ·" in value for value in labels), labels)
-        self.assertTrue(any("NEW LEARNING ·" in value for value in labels), labels)
+        self.assertIn("#### REVIEW", labels)
+        self.assertIn("#### NEW LEARNING", labels)
         self.assertTrue(any("今天到期，需要复习" in item.value or "超过计划复习时间" in item.value for item in at.caption))
-        self.assertNotIn("今天学会什么", "\n".join(labels))
-        self.assertNotIn("容器与虚拟机：看运行边界", "\n".join(labels))
+        self.assertEqual("\n".join(labels).count("**今天学会什么**"), 1)
+        self.assertIn("容器与虚拟机：看运行边界", "\n".join(labels))
         self.assertNotEqual(review_topic, next_new_topic)
 
     def test_missing_learning_payload_is_explicit_and_does_not_crash(self) -> None:
@@ -166,8 +170,13 @@ class StreamlitAppSmokeTests(unittest.TestCase):
         )
         at = self.run_app()
         self.assertFalse(at.exception)
-        self.assertTrue(any("当前尚未整理该知识点的学习材料" in item.value for item in at.info))
-        self.assertFalse(any("容器与虚拟机：看运行边界" in item.value for item in at.markdown))
+        self.assertTrue(any("材料尚未整理" in item.value for item in at.info))
+        labels = "\n".join(item.value for item in at.markdown)
+        self.assertIn("#### REVIEW", labels)
+        self.assertIn("### 容器与 Serverless", labels)
+        self.assertIn("#### NEW LEARNING", labels)
+        self.assertIn("### 事件驱动架构", labels)
+        self.assertIn("容器与虚拟机：看运行边界", labels)
 
     def test_attempt_time_uses_configured_timezone_and_needs_no_manual_entry(self) -> None:
         at = self.run_app()
