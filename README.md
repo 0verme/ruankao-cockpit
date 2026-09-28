@@ -1,10 +1,10 @@
 # ruankao-cockpit
 
-> ruankao-cockpit 是个人软考备考工作台（Control Plane），不是课程、题库或学习内容平台。当前可用入口是本地 CLI MVP。
+> ruankao-cockpit 是个人软考备考工作台（Control Plane），不是课程、题库或学习内容平台。推荐使用本地 Browser Cockpit；CLI 保留为 Advanced / Debug 入口。
 
 ## 当前能做什么
 
-在项目目录中，用户可以直接初始化本地数据、查看 Today Plan，并将真实综合题作答作为 immutable fact 记录下来：
+用户可通过 Browser Cockpit（推荐）或 CLI 初始化本地数据、查看 Today Plan，并将真实综合题作答作为 immutable fact 记录下来：
 
 ```text
 Progress / Review facts
@@ -21,13 +21,24 @@ Progress / Review facts
 ## 产品边界与当前路线
 
 - 工程闭环已具备：`init → today → record → replay → next-day today`（PR #26 merged）。
-- 当前产品验证仍未完成：Issue #16 保持 OPEN，下一步是用 CLI 做真实 dogfood、记录明确摩擦；工程 PASS 不等于产品验证 PASS。
-- 未来 UI 的 MVP 目标是一个 Single Dashboard（Today / Review / Progress 信息区），且只有真实使用证明需要时才评估；不以独立页面清单作为目标。
+- 当前产品验证仍未完成：Issue #16 保持 OPEN；Browser Cockpit 提供本地日常入口后，下一步是继续真实 dogfood、记录明确摩擦；工程 PASS 不等于产品验证 PASS。
+- 当前 Browser Cockpit 只提供一个本地 Today 页面（含 Review / New Learning 与记录表单）；Single Dashboard 的其他区域按真实 dogfood 摩擦再评估，不以独立页面清单作为目标。
 - Rolling 7-Day、完整 Curriculum Backbone、30-Day Plan 与长期阶段规划已由 Issue #27 deferred，不是默认下一阶段。
 
-## 5 分钟开始使用
+## 推荐：启动 Browser Cockpit
 
-需要 Python 3.10+，不需要安装第三方运行依赖。先在仓库根目录运行：
+需要 Python 3.10+。在仓库根目录安装唯一的 UI 依赖并启动：
+
+```bash
+python3 -m pip install -r requirements.txt
+streamlit run streamlit_app.py
+```
+
+首次打开浏览器页面后点击「初始化」，再查看 Today 并在学习后记录真实结果。数据保存在本机 `.local/`，这是本地单用户 MVP：无登录、无账号、无数据库、无云同步。学习资料由用户在外部自行使用；Cockpit 只保存事实和来源引用，不托管题库正文。
+
+## CLI（Advanced / Debug）
+
+CLI 可用于脚本、工程验证和诊断；CLI 本身使用 Python 标准库。先在仓库根目录运行：
 
 ```bash
 python3 cockpit.py init
@@ -67,7 +78,7 @@ python3 cockpit.py record \
   --review-context-event-id <稳定且唯一的 Review Context ID>
 ```
 
-例如可由使用者按自己的事实 ID 命名 `context-attempt-20260927-001`；该 ID 必须符合 Review Event ID contract。CLI 不随机生成 identity，也不把任务完成、计划时长或“我学完了”推断成答对。`record --as-of <ISO8601>` 可用于确定性复现；实际作答时间应不晚于该 instant。
+例如可由使用者按自己的事实 ID 命名 `context-attempt-20260927-001`；该 ID 必须符合 Review Event ID contract。CLI 不随机生成 identity，也不把任务完成、计划时长或“我学完了”推断成答对。Browser Cockpit 对技术 event ID 使用 attempt 事实内容与 task ID 的确定性 SHA-256 identity，并从该 identity 派生 Review Context ID；相同事实重提会得到相同 ID 并被 duplicate 校验拒绝。已索引的题目来源会按当前 Topic 提供引用选择器（只选择实际使用过的题目）；其他来源仍可手动填写。CLI 原有显式参数行为不变。`record --as-of <ISO8601>` 可用于确定性复现；实际作答时间应不晚于该 instant。
 
 成功后会报告新增的 Progress Event、Review Item 和 Review Context 数量。相同 event ID 再提交会明确报 duplicate，不会静默去重或覆盖。
 
@@ -103,7 +114,7 @@ python3 cockpit.py today --as-of 2026-09-28T09:00:00+08:00
 
 ## 当前限制
 
-- 当前是本地 CLI MVP；没有 Web UI、数据库或账号系统。
+- 当前是本地单用户 Browser Cockpit MVP；没有数据库、登录、账号或云同步。
 - `record` 必须由用户提供真实 attempt provenance 和显式 Review Context event ID；没有 AI 自动判题。
 - 当前完整日常执行闭环仅覆盖综合题 attempt；case / essay 尚未进入完整日常闭环。
 - Planner 目前只实现 Today；Rolling 7-Day 排程已由 Issue #27 deferred，不是当前 MVP blocker。
@@ -133,4 +144,4 @@ python3 cockpit.py today --as-of 2026-09-28T09:00:00+08:00
 
 ## 项目状态
 
-Taxonomy / Progress / Review replay、Mastery / Review Policy、Today-only Planner、task execution → replay → next-day replan、new learning → initial review registration，以及最小 CLI 工程闭环已实现。现在的路线是 Issue #16 真实 dogfood / 产品验证；只有真实摩擦才决定下一实现 Slice。完整 Phase 5 policy、Rolling 计划、Curriculum Backbone、30 天计划实例化均由 Issue #27 deferred；UI 不自动开工，若有证据再评估 Single Dashboard。`mastered` 只表示达到当前 Review Policy 阈值，不是对真实掌握程度的绝对断言。
+Taxonomy / Progress / Review replay、Mastery / Review Policy、Today-only Planner、task execution → replay → next-day replan、new learning → initial review registration，以及最小 CLI 工程闭环已实现。最小 Browser Cockpit 提供 #16 暴露出的 CLI friction 修复入口；#16 仍保持 OPEN，继续真实 dogfood，后续 Slice 只由新证据决定。完整 Phase 5 policy、Rolling 计划、Curriculum Backbone、30 天计划实例化均由 Issue #27 deferred。`mastered` 只表示达到当前 Review Policy 阈值，不是对真实掌握程度的绝对断言。
