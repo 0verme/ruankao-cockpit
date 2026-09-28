@@ -1,6 +1,6 @@
 # ruankao-cockpit
 
-> ruankao-cockpit 是个人软考备考工作台（Control Plane），不是课程、题库或学习内容平台。推荐使用本地 Browser Cockpit；CLI 保留为 Advanced / Debug 入口。
+> ruankao-cockpit 是个人软考备考工作台（Control Plane），不是课程、题库或学习内容平台。当前长期 Browser Presentation 主路径为 Astro + React + FastAPI；Streamlit 保留为可回退 fallback（仅修 blocker，不新增 Feature），CLI 保留为 Advanced / Debug 入口。
 
 ## 当前能做什么
 
@@ -22,12 +22,12 @@ Progress / Review facts
 
 - 工程闭环已具备：`init → today → record → replay → next-day today`（PR #26 merged）。
 - 当前产品验证仍未完成：Issue #16 保持 OPEN；Browser Cockpit 提供本地日常入口后，下一步是继续真实 dogfood、记录明确摩擦；工程 PASS 不等于产品验证 PASS。
-- 当前 Browser Cockpit 只提供一个本地 Today 页面。NEW LEARNING 对 `ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS` 有一条版本化、带来源证据的短 Learning Payload；其他 Topic 仍可能显示材料尚未整理。阅读与 attempt 记录分开，验证题只是可选的后续事实记录，不表示所有 Topic 已支持学习卡。
+- 当前 Astro Browser Presentation 覆盖 Today 与 `ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS` 这一条 Topic Learning Experience；Streamlit fallback 仍是 Today 入口。该 Topic 有一条版本化、带来源证据的短 Learning Payload；其他 Topic 仍可能显示材料尚未整理。阅读与 attempt 记录分开，验证题只是可选的后续事实记录，不表示所有 Topic 已支持学习卡。
 - Rolling 7-Day、完整 Curriculum Backbone、30-Day Plan 与长期阶段规划已由 Issue #27 deferred，不是默认下一阶段。
 
-## 推荐：启动 Browser Cockpit
+## Streamlit fallback：运行现有 Browser Cockpit
 
-需要 Python 3.10+。在仓库根目录安装项目运行依赖并启动：
+Astro + React + FastAPI 已通过 Slice 1 部署态 UAT，是当前长期 Browser Presentation 主路径。仓库尚未提交正式生产 reverse-proxy 配置；需要立即启动既有可用入口时，可使用 Streamlit fallback。需要 Python 3.10+，在仓库根目录安装项目运行依赖并启动：
 
 ```bash
 python3 -m pip install -r requirements.txt
@@ -36,15 +36,15 @@ streamlit run streamlit_app.py
 
 首次打开浏览器页面后点击「初始化」，再查看 Today；有学习卡时先阅读目标、核心知识和考试关注点，再决定是否记录真实验证题结果。用户事实保存在本机 `.local/`，这是本地单用户 MVP：无登录、无账号、无数据库、无云同步。仓库只附带一条项目整理的短摘要与出处索引，不复制教材或题库正文；未整理的 Topic 明确显示材料缺失，不实时调用 LLM 补写。
 
-## Astro + React Frontend Migration（Slice 1 Preview）
+## Astro + React Frontend Migration（Slice 1 — 部署态 PASS）
 
-Astro + React 浏览器壳只覆盖 `/` Today 与 `ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS` Topic 页面，通过 HTTP API 获取状态，不替代 Streamlit，也不复制 Python Domain Truth。前端消费的 FastAPI contract 已随 PR #40 合并；TypeScript HTTP client 已在临时本地目录对接 Uvicorn，验证 attempt 持久化、replay 与重新读取。Playwright E2E 仍使用醒目标记的 `DEV FIXTURE / CONTRACT FIXTURE`，尚未验证部署态同源浏览器集成。
+Astro static + React islands → same-origin `/api/*` → FastAPI → `cockpit_service` / 现有 Planner、Progress、Review、TopicExperience 已通过真实 Chromium 部署态 UAT。当前切片只覆盖 `/` Today 与 `ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS` Topic；Browser 消费服务端状态，不复制 Python Domain Truth。FastAPI 在验证拓扑中仅绑定 loopback，事实目录由显式绝对路径 `COCKPIT_LOCAL_DIR` 指定。
 
-路由、API contract reconcile、COPY / ADAPT / REJECT、测试和集成限制见 [Frontend Migration Slice 1](docs/frontend/FRONTEND_MIGRATION_SLICE_1.md)。
+UAT 使用临时本地 reverse proxy 将已构建 `dist/` 与 FastAPI 托管在同一 origin；临时代理配置未提交，正式部署仍需提供受控的 static-server / reverse-proxy 配置。Streamlit 不删除，保留为 fallback，停止新增 Feature 投资，只修阻挡现有可用性的 blocker。真实浏览器持久化、刷新/服务重启 replay、API/domain 一致性及测试证据见 [Frontend Migration Slice 1](docs/frontend/FRONTEND_MIGRATION_SLICE_1.md)。
 
 ## FastAPI Transport（Frontend API v0.1）
 
-FastAPI 是现有 Python service/domain 的 HTTP adapter，不替代 Streamlit，也不在 route 中重算 Planner / Progress / Review。用绝对路径 `COCKPIT_LOCAL_DIR` 固定本地事实目录；未设置时固定使用仓库根目录下 `.local/`，不随启动 cwd 变化。GET 不会执行初始化。
+FastAPI 是 Astro Browser Presentation 的 HTTP adapter；Streamlit fallback 与 API 均复用现有 Python service/domain，不在 route 中重算 Planner / Progress / Review。用绝对路径 `COCKPIT_LOCAL_DIR` 固定本地事实目录；未设置时固定使用仓库根目录下 `.local/`，不随启动 cwd 变化。GET 不会执行初始化。
 
 ```bash
 # requirements.txt 同时安装 Streamlit 与 FastAPI transport 所需依赖

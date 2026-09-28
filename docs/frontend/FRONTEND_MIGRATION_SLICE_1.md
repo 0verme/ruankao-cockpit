@@ -1,6 +1,6 @@
 # Frontend Migration Slice 1 — Astro + React Topic Shell
 
-**Status: `BACKEND_CONTRACT_RECONCILED`; TypeScript HTTP client ↔ live FastAPI round-trip PASS in an isolated local directory. Playwright remains fixture-backed; deployed same-origin browser serving is not tested.**
+**Status: `DEPLOYED_UAT_PASS` (2026-09-28, after PR #41). Real Chromium verified the production Astro static build → same-origin `/api/*` proxy → loopback FastAPI → `cockpit_service` → immutable facts / deterministic replay chain.**
 
 This slice owns Browser Presentation only. Astro emits two static routes and shell; React islands fetch the merged FastAPI contract. Python `cockpit_service` and domain replay remain the only business truth source.
 
@@ -48,7 +48,7 @@ The fixture wire responses mirror PR #40; its Topic content imports the one chec
 
 Unit/component/E2E tests use the marked fixture adapter. Separately, the real TypeScript `createHttpApiClient` was loaded through Vite and run against a loopback Uvicorn server with a newly created temporary `COCKPIT_LOCAL_DIR`: explicit init → Today → Topic/source → POST test attempt → fresh Topic/Today reads. The isolated run confirmed one persisted Progress event and the server replay attempt count in both POST response and reread; its temporary data directory was deleted. This synthetic attempt was test-only and never touched user `.local` data. The Python FastAPI transport suite also passed (8 tests).
 
-This verifies the HTTP client and API persistence/replay contract, but is not a real-browser test against the backend: Playwright still exercises only the visible contract fixture, and a deployed same-origin frontend/API setup has not been validated.
+This earlier client round-trip is superseded by the deployment UAT below. The checked-in Playwright suite still uses explicitly marked contract fixtures for deterministic presentation tests; a separate temporary UAT suite exercised the built frontend against real FastAPI over same-origin HTTP, without a mock API.
 
 ## COPY / ADAPT / REJECT
 
@@ -77,5 +77,24 @@ No Course/Chapter/Lesson model, `completedLessonIds`, localStorage progress, les
 
 - Vitest: exact wire endpoint/request/response contract, error categories, fixture labels, component loading/initialization/unavailable/error, Verification success/failure and reread behavior.
 - Astro check/build: static two-route build.
-- Playwright: Today, Topic, unavailable, not initialized, API/network error, keyboard navigation, mobile overflow, document scroll ownership, refresh, and Verification success/failure using only the marked contract fixture.
-- Those browser tests validate Browser Presentation and fixture behavior only. The separate live TypeScript HTTP client ↔ Uvicorn run and Python transport tests validate API persistence/replay; neither is a deployed-browser/same-origin test. No broader production integration is claimed.
+- Checked-in Playwright: Today, Topic, unavailable, not initialized, API/network error, keyboard navigation, mobile overflow, document scroll ownership, refresh, and Verification success/failure using only the marked contract fixture.
+- Deployment UAT: see the closeout record below; it exercised the built artifact with a live FastAPI backend and no mock API.
+
+## Deployment UAT closeout (2026-09-28; PR #41)
+
+**Topology:** real browser `http://127.0.0.1:<frontend-port>/` and same-origin `/api/*`; an ephemeral Python standard-library reverse proxy served the built Astro `dist/` and forwarded `/api/*` to Uvicorn bound only to `127.0.0.1`. FastAPI used one explicit absolute `COCKPIT_LOCAL_DIR` under `/tmp`; no Streamlit writer shared it. This proxy was UAT-only and removed, not a committed production deployment configuration.
+
+**Real Browser:** Chromium completed explicit init; verified GET-before-init returned `409 not_initialized` without creating the local directory; read Today from the API (server Planner task order/minutes/topic metadata); navigated to `ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS`; rendered the live validated Payload/version, breadcrumb, objectives, core knowledge, exam context, sources/provenance, Progress, Review, and Verification. Production bundle defaulted to the HTTP client and showed no fixture banner.
+
+A test-only attempt submitted through the UI used server task `task-e7eb1a30c93b33d4c4ec765e6a9451a47e1aab8e0820bdd4ae6533f84b2743f1`, occurred at `2026-09-28T10:13:55.000Z`, and indexed source `gs-comp-2024-h1-q65` (`younghong1992`, commit `c467a7cbc16970c52cf6d723badbb22938963ae6`, question `2024-h1-comprehensive-q65`); `correct=true`. The browser request contained no client-owned event/context ID or Progress/Review state flags.
+
+- Facts before attempt: 0 Progress events, 0 Review contexts, 0 Review Items. After: **1 / 1 / 1**.
+- Replay: `attempt_count=1`, `accuracy=1.0`, `mastery=learning`, `review_status=scheduled`, `next_due_local_date=2026-09-29`, `policy_version=review-policy/simple-ladder/v0.1`.
+- UI rereads matched FastAPI; fixed-`as_of` FastAPI planner/progress/review/topic responses matched direct `cockpit_service` replay. Duplicate resubmission returned `409 task_not_scheduled` after the task left Today; invalid source returned `422 forbidden_path`, invalid timestamp `422 invalid_timestamp`, invalid task `409 task_not_scheduled`; all rejection cases left fact-file hashes unchanged.
+- Two browser refreshes and repeated init did not change persisted fact counts or bytes. FastAPI restart with the same explicit local directory restored the same state; restarting the static frontend from the same build artifact also preserved it.
+- Live API distinguished unavailable (`200`, null Payload), unknown Topic (`404 unknown_topic`), and invalid provenance (`422 invalid_source_provenance`). Temporary source-copy-only test variants rendered unavailable and invalid-provenance states distinctly; neither modified repository content or the UAT facts directory.
+- Desktop, 390px, and 320px Chromium smoke passed; Verification input/button remained visible and operable, keyboard skip/focus worked, no horizontal overflow or nested scroll owner. PR #41 fixed the discovered 3px 320px Verification input overflow and added a task-context regression test.
+
+**Post-fix test evidence:** Python unittest **233 passed, 1 skipped**; all five repository validators PASS; frontend Vitest **14 passed**; Astro check **0 errors / 0 warnings / 0 hints**; static build **2 routes**; fixture-backed Playwright **10 passed**; post-merge real-browser UAT **6 scenario runs passed**. GitHub PR #41 CI passed.
+
+**Known limits / non-goals:** only `/` and the one implemented Topic route are shipped; this does not prove broad content value or product direction. The API remains local, single-user, without auth/database/cloud or multi-writer locking. The UAT reverse proxy is not a supported production config; a future deploy still needs a documented same-origin static-server/reverse-proxy setup and must preserve explicit local-data ownership. No Learn Directory, Search, Chat/LLM, CMS, SSR, DB, or Streamlit deletion was added.
