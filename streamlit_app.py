@@ -1,9 +1,11 @@
 """Single-page local Streamlit entry for the ruankao-cockpit MVP."""
 from __future__ import annotations
 
+from datetime import datetime
 import os
 from pathlib import Path
 from typing import Any, Mapping
+from zoneinfo import ZoneInfo
 
 import streamlit as st
 
@@ -15,6 +17,11 @@ from cockpit_service import (
     get_today,
     initialize_cockpit,
     record_browser_attempt,
+)
+from learning_payload import (
+    LearningPayloadError,
+    learning_source_url,
+    load_learning_payload,
 )
 
 
@@ -81,15 +88,62 @@ def _task_target(task: Mapping[str, Any], snapshot: TodaySnapshot) -> tuple[str,
     return target_ref, target_ref
 
 
-def _task_reason(task: Mapping[str, Any], planner_output: Mapping[str, Any]) -> tuple[str, str]:
+def _task_reason(task: Mapping[str, Any], planner_output: Mapping[str, Any]) -> tuple[str, str, str]:
     trace_id = task.get("explain_trace_id")
     trace = next(
         (item for item in planner_output.get("explain_traces", []) if item.get("trace_id") == trace_id),
         None,
     )
     if not isinstance(trace, Mapping):
-        return "原因不可用（Planner 未提供 Explain Trace）", ""
-    return str(trace.get("display_message") or "原因不可用"), str(trace.get("reason_code") or "")
+        return "原因不可用（Planner 未提供安排说明）", "", ""
+    reason_code = str(trace.get("reason_code") or "")
+    display_message = str(trace.get("display_message") or "原因不可用")
+    friendly_messages = {
+        "next_unlearned_topic": "按学习顺序安排下一个尚未形成学习记录的知识点",
+        "overdue_review": "这项内容已超过计划复习时间",
+        "due_today_review": "这项内容今天到期，需要复习",
+    }
+    return friendly_messages.get(reason_code, display_message), reason_code, display_message
+
+
+def _render_learning_payload(payload: Mapping[str, Any]) -> None:
+    references = {item["reference_id"]: item for item in payload["source_references"]}
+
+    st.markdown("**今天学会什么**")
+    for item in payload["objectives"]:
+        st.markdown(f"- {item['text']}")
+
+    st.markdown("**核心知识**")
+    for point in payload["core_points"]:
+        st.markdown(f"**{point['heading']}**\n\n{point['text']}")
+
+    st.markdown("**软考关注点**")
+    for item in payload["exam_focus"]:
+        st.markdown(f"- {item['text']}")
+        evidence_titles = [references[ref_id]["display_title"] for ref_id in item["evidence_refs"]]
+        st.caption("依据：" + "；".join(evidence_titles))
+
+    st.markdown("**学习来源**")
+    for reference in payload["source_references"]:
+        url = learning_source_url(reference)
+        st.markdown(f"- [{reference['display_title']}]({url})")
+    with st.expander("查看来源信息"):
+        st.caption(f"Learning Payload {payload['version']} · schema {payload['schema_version']}")
+        for reference in payload["source_references"]:
+            details = [
+                f"source_id: {reference['source_id']}",
+                f"source_commit: {reference['source_commit']}",
+                f"source_path: {reference['source_path']}",
+                f"confidence: {reference['confidence']}",
+            ]
+            if "source_value" in reference:
+                details.append(f"source_value: {reference['source_value']}")
+                details.append(f"source_anchor: {reference['source_anchor']}")
+            if "source_question_id" in reference:
+                details.append(f"source_question_id: {reference['source_question_id']}")
+                details.append(f"golden_set_record_id: {reference['golden_set_record_id']}")
+            st.markdown(f"**{reference['display_title']}**")
+            st.code("\n".join(details), language=None)
 
 
 def _render_task(task: Mapping[str, Any], snapshot: TodaySnapshot, local_dir: Path) -> bool:
@@ -97,80 +151,115 @@ def _render_task(task: Mapping[str, Any], snapshot: TodaySnapshot, local_dir: Pa
     task_type = task.get("task_type")
     label = {"review": "REVIEW", "new_learning": "NEW LEARNING"}.get(task_type, str(task_type))
     topic_id, topic_name = _task_target(task, snapshot)
-    reason, reason_code = _task_reason(task, planner_output)
+    reason, reason_code, raw_reason = _task_reason(task, planner_output)
 
     with st.container(border=True):
         st.markdown(f"#### {label} · {topic_name}")
-        st.caption(f"目标：`{topic_id}` · 计划 {task['planned_minutes']} 分钟")
+        st.caption(f"计划 {task['planned_minutes']} 分钟")
         st.caption(reason)
-        with st.expander("查看安排原因"):
+        with st.expander("查看安排依据"):
             if reason_code:
+                st.caption(f"原始安排说明：{raw_reason}")
                 st.code(reason_code, language=None)
             else:
                 st.write("Planner 未提供结构化 reason code。")
+            st.caption(f"Topic ID：{topic_id}")
 
         if task_type not in {"review", "new_learning"}:
             return False
+
+        if task_type == "new_learning":
+            try:
+                payload = load_learning_payload(topic_id)
+                if payload is None:
+                    st.info("当前尚未整理该知识点的学习材料。不会自动生成内容；你仍可使用已有外部资料学习。")
+                else:
+                    _render_learning_payload(payload)
+            except LearningPayloadError as exc:
+                st.error("学习材料来源校验未通过，已停止展示该材料。")
+                if _debug_enabled():
+                    with st.expander("学习材料诊断详情"):
+                        st.exception(exc)
+                return False
+            st.divider()
+            st.markdown("##### 学完后验证")
+            st.caption("学习与答题记录是两件事；只有实际作答后才记录 attempt。")
+        else:
+            st.markdown("##### 复习后验证")
 
         prefix = f"record-{task['task_id']}"
         source_records = get_comprehensive_source_references(topic_id)
         source_options: dict[str, Mapping[str, Any]] = {}
         for record in source_records:
-            reference = record["source_reference"]
-            label_text = (
-                f"{reference.get('source_id')} · {reference.get('source_question_id')}"
-                f" ({record.get('record_id')})"
-            )
-            source_options[label_text] = reference
-        choices = ["请选择来源", "手动填写引用", *source_options]
+            label_text = str(record.get("display_title") or "已索引综合题")
+            source_options[label_text] = record["source_reference"]
+        manual_choice = "其他来源（手动填写引用）"
+        choices = ["请选择验证题", *source_options, manual_choice]
         if not source_options:
-            choices = ["手动填写引用"]
+            choices = [manual_choice]
+            st.caption("当前 Topic 没有已索引验证题；如使用了外部题目，可在备用引用中填写来源。")
         source_choice = st.selectbox(
-            "来源引用（仅选择你实际使用的题目）",
+            "验证题来源（只选择你实际使用过的题目）",
             choices,
             key=f"{prefix}-source-choice",
         )
         question: dict[str, Any] | None = dict(source_options[source_choice]) if source_choice in source_options else None
         if question is not None:
-            st.caption(
-                f"已选择索引引用：{question['source_id']} / {question['source_question_id']} · {question['source_path']}"
-            )
+            st.caption(f"已选择：{source_choice}")
+            with st.expander("查看题目来源信息"):
+                st.code(
+                    "\n".join(
+                        f"{key}: {question[key]}"
+                        for key in ("source_id", "source_commit", "source_path", "source_question_id", "golden_set_record_id")
+                        if key in question
+                    ),
+                    language=None,
+                )
 
-        with st.form(key=f"form-{task['task_id']}"):
-            st.markdown("**记录一次真实综合题作答**")
-            st.caption("只记录事实和来源引用；请勿粘贴题干、选项、答案或解析。")
-            if source_choice == "手动填写引用":
+        source_id = source_commit = source_path = source_question_id = ""
+        if source_choice == manual_choice:
+            with st.expander("备用：手动填写未索引题目引用", expanded=not bool(source_options)):
                 source_id = st.text_input("来源 ID", key=f"{prefix}-source-id")
                 source_commit = st.text_input(
                     "来源不可变版本（40 位小写 commit）", key=f"{prefix}-source-commit"
                 )
                 source_path = st.text_input(
-                    "来源相对路径", key=f"{prefix}-source-path", help="必须是来源仓库内的相对路径，不含绝对路径或 ..。"
+                    "来源相对路径", key=f"{prefix}-source-path", help="必须是来源仓库内的相对路径，不含绝对路径或目录跳转。"
                 )
-                source_question_id = st.text_input(
-                    "来源题目 ID", key=f"{prefix}-source-question-id"
-                )
-            occurred_at = st.text_input(
-                "实际作答时间（必填，ISO 8601，含时区）",
-                key=f"{prefix}-occurred-at",
-                help="请填写真实作答时间，例如 2026-09-28T10:15:00+08:00；不会替你推断。",
-            )
-            outcome = st.selectbox(
-                "作答结果（必选）", ["请选择", "答对", "答错"], key=f"{prefix}-outcome"
-            )
+                source_question_id = st.text_input("来源题目 ID", key=f"{prefix}-source-question-id")
+
+        timezone_name = planner_output["timezone"]
+        local_zone = ZoneInfo(timezone_name)
+        occurred_at_key = f"{prefix}-occurred-at"
+        default_occurred_at_key = f"{prefix}-default-occurred-at"
+        if occurred_at_key not in st.session_state:
+            default_occurred_at = datetime.now(local_zone).isoformat(timespec="seconds")
+            st.session_state[occurred_at_key] = default_occurred_at
+            st.session_state[default_occurred_at_key] = default_occurred_at
+        occurred_at = st.text_input(
+            f"实际作答时间（默认 {timezone_name} 当前时间，可修改）",
+            key=occurred_at_key,
+            help="保存为带显式时区的 ISO 8601 时间；默认时区来自本地 User Configuration，不读取服务器时区。未修改时按点击记录的时间写入。",
+        )
+        outcome = st.selectbox(
+            "作答结果（必选）", ["请选择", "答对", "答错"], key=f"{prefix}-outcome"
+        )
+        cause_label = "不填写"
+        if outcome == "答错":
             cause_label = st.selectbox(
-                "错误原因（答错时可选；不确定可不填）",
+                "错误原因（可选；不确定可不填）",
                 ["不填写", *ERROR_CAUSES.values()],
                 key=f"{prefix}-error-cause",
             )
-            submitted = st.form_submit_button("记录结果", type="primary", use_container_width=True)
+        st.caption("只记录事实和来源引用；请勿粘贴题干、选项、答案或解析。")
+        submitted = st.button("记录本次结果", key=f"{prefix}-submit", type="primary", use_container_width=True)
 
         if not submitted:
             return False
         if outcome == "请选择":
             st.error("请明确选择答对或答错。")
             return False
-        if source_choice == "手动填写引用":
+        if source_choice == manual_choice:
             question = {
                 "source_id": source_id.strip(),
                 "source_commit": source_commit.strip(),
@@ -181,26 +270,30 @@ def _render_task(task: Mapping[str, Any], snapshot: TodaySnapshot, local_dir: Pa
             not isinstance(question.get(key), str) or not question[key].strip()
             for key in ("source_id", "source_commit", "source_path", "source_question_id")
         ):
-            st.error("请明确选择已索引来源或填写完整引用；信息不完整时不会写入事实。")
+            st.error("请明确选择已索引来源或填写完整备用引用；信息不完整时不会写入事实。")
             return False
         if not occurred_at.strip():
-            st.error("请填写实际作答时间；页面不会替你推断。")
+            st.error("请填写实际作答时间；信息缺失时不会写入事实。")
             return False
 
         error_cause = None
         if outcome == "答错" and cause_label != "不填写":
             error_cause = next(key for key, value in ERROR_CAUSES.items() if value == cause_label)
+        occurred_at_to_record = occurred_at.strip()
+        if occurred_at_to_record == st.session_state.get(default_occurred_at_key):
+            occurred_at_to_record = datetime.now(local_zone).isoformat(timespec="seconds")
         try:
+            record_as_of = datetime.now(local_zone).isoformat(timespec="seconds")
             result = record_browser_attempt(
                 task["task_id"],
-                occurred_at=occurred_at.strip(),
+                occurred_at=occurred_at_to_record,
                 question=question,
                 correct=outcome == "答对",
                 error_cause=error_cause,
-                as_of=planner_output["as_of"],
+                as_of=record_as_of,
                 local_dir=local_dir,
             )
-        except (CockpitError, OSError, ValueError, KeyError, TypeError) as exc:
+        except (CockpitError, LearningPayloadError, OSError, ValueError, KeyError, TypeError) as exc:
             st.error(_friendly_error(exc))
             if _debug_enabled():
                 with st.expander("诊断详情"):

@@ -258,12 +258,29 @@ def get_comprehensive_source_references(topic_id: str) -> list[dict[str, Any]]:
             and any(isinstance(item, Mapping) and item.get("topic_id") == topic_id for item in topics)
             and isinstance(source, Mapping)
         ):
+            identification = record.get("identification")
+            identification = identification if isinstance(identification, Mapping) else {}
+            term = identification.get("term")
+            question_no = identification.get("question_no")
+            summary = identification.get("summary")
+            title_parts = []
+            if isinstance(term, str) and term:
+                title_parts.append(term)
+            title = "综合知识" + (f" · 第 {question_no} 题" if isinstance(question_no, int) else "")
+            if title_parts:
+                title = f"{title_parts[0]}{title}"
+            if isinstance(summary, str) and summary:
+                title = f"{title}：{summary}"
             results.append({
                 "record_id": record.get("id"),
+                "display_title": title,
                 "source_reference": {
-                    key: source[key]
-                    for key in ("source_id", "source_commit", "source_path", "source_question_id")
-                    if key in source
+                    **{
+                        key: source[key]
+                        for key in ("source_id", "source_commit", "source_path", "source_question_id")
+                        if key in source
+                    },
+                    "golden_set_record_id": record.get("id"),
                 },
             })
     return results
