@@ -1,0 +1,121 @@
+import { describe, expect, it, vi } from 'vitest';
+import { CockpitApiError } from './errors';
+import { createFixtureApiClient } from './fixtureClient';
+import { createHttpApiClient } from './httpClient';
+import type { AttemptRequest, AttemptResponse, TodayResponse, TopicResponse } from './types';
+
+const topicId = 'ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS';
+const replay = {
+  planner: { schema_version: 'planner-output/v0.1', as_of: '2026-09-28T01:00:00Z', timezone: 'Asia/Shanghai', days: [] },
+  progress: {},
+  review: { state: {}, items: [] },
+};
+
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json' },
+  });
+}
+
+function topicResponse(): TopicResponse {
+  return {
+    topic: {
+      topic_id: topicId,
+      name: '容器与 Serverless',
+      taxonomy_version: '0.1',
+      breadcrumb: [{ topic_id: topicId, name: '容器与 Serverless' }],
+    },
+    learning_payload_status: 'unavailable',
+    learning_payload_version: null,
+    learning_payload: null,
+    progress: { attempt_count: 0, accuracy: null },
+    review: { mastery_state: null, status: null, next_due_local_date: null, policy_version: null },
+    verification_sources: [],
+  };
+}
+
+describe('HTTP API client — merged FastAPI v0.1 contract', () => {
+  it('uses the frozen endpoints and sends only attempt facts in the server request shape', async () => {
+    const today: TodayResponse = {
+      ...replay,
+      planner: {
+        ...replay.planner,
+        days: [{ local_date: '2026-09-28', capacity_minutes: 60, planned_minutes: 25, remaining_minutes: 35, tasks: [] }],
+      },
+      task_topics: {},
+    };
+    const topic = topicResponse();
+    const recorded: AttemptResponse = {
+      recorded: { progress_event_count: 1, review_item_count: 1, review_context_count: 1 },
+      today: replay,
+    };
+    const fetcher = vi.fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ state: 'created' }))
+      .mockResolvedValueOnce(jsonResponse(today))
+      .mockResolvedValueOnce(jsonResponse(topic))
+      .mockResolvedValueOnce(jsonResponse(recorded));
+    const client = createHttpApiClient('', fetcher);
+    const request: AttemptRequest = {
+      task_id: 'task-from-today',
+      occurred_at: '2026-09-28T01:00:00.000Z',
+      question: {
+        source_id: 'source',
+        source_commit: 'a'.repeat(40),
+        source_path: 'questions/q1.md',
+        source_question_id: 'q1',
+      },
+      correct: false,
+      error_cause: 'knowledge_gap',
+    };
+
+    await expect(client.initialize()).resolves.toEqual({ state: 'created' });
+    await expect(client.getToday()).resolves.toEqual(today);
+    await expect(client.getTopic(topicId)).resolves.toEqual(topic);
+    await expect(client.recordAttempt(request)).resolves.toEqual(recorded);
+
+    expect(fetcher.mock.calls.map(([url, init]) => [url, init?.method ?? 'GET'])).toEqual([
+      ['/api/init', 'POST'],
+      ['/api/today', 'GET'],
+      [`/api/topics/${topicId}`, 'GET'],
+      ['/api/attempts', 'POST'],
+    ]);
+    const body = JSON.parse(String(fetcher.mock.calls[3]?.[1]?.body)) as Record<string, unknown>;
+    expect(body).toEqual(request);
+    for (const forbidden of ['event_id', 'review_context_id', 'mastery', 'review_due', 'topic_progress', 'as_of']) {
+      expect(body).not.toHaveProperty(forbidden);
+    }
+  });
+
+  it('reads error.category and distinguishes an unreachable API', async () => {
+    const client = createHttpApiClient('', vi.fn<typeof fetch>().mockResolvedValueOnce(
+      jsonResponse({ error: { category: 'not_initialized', message: 'not initialized' } }, 409),
+    ));
+    await expect(client.getToday()).rejects.toMatchObject({ code: 'not_initialized', status: 409 });
+
+    const offline = createHttpApiClient('', vi.fn<typeof fetch>().mockRejectedValueOnce(new TypeError('offline')));
+    await expect(offline.getToday()).rejects.toMatchObject({ code: 'network_error' });
+    expect(() => { throw new CockpitApiError('invalid_input', 'bad input'); }).toThrow('bad input');
+  });
+});
+
+describe('DEV FIXTURE / CONTRACT FIXTURE adapter', () => {
+  it('is explicitly labeled and distinguishes unavailable payload from invalid provenance', async () => {
+    const unavailable = createFixtureApiClient('payload-unavailable');
+    expect(unavailable.kind).toBe('contract-fixture');
+    await expect(unavailable.getTopic(topicId)).resolves.toMatchObject({
+      learning_payload_status: 'unavailable',
+      learning_payload: null,
+    });
+
+    const invalid = createFixtureApiClient('invalid-provenance');
+    await expect(invalid.getTopic(topicId)).rejects.toMatchObject({ code: 'invalid_source_provenance' });
+  });
+
+  it('models initialization as an explicit POST-like action', async () => {
+    const client = createFixtureApiClient('not-initialized');
+    await expect(client.getToday()).rejects.toMatchObject({ code: 'not_initialized' });
+    await expect(client.initialize()).resolves.toEqual({ state: 'created' });
+    await expect(client.getToday()).resolves.toHaveProperty('planner.days.0.tasks.length', 1);
+  });
+});

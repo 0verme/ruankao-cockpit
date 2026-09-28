@@ -36,6 +36,12 @@ streamlit run streamlit_app.py
 
 首次打开浏览器页面后点击「初始化」，再查看 Today；有学习卡时先阅读目标、核心知识和考试关注点，再决定是否记录真实验证题结果。用户事实保存在本机 `.local/`，这是本地单用户 MVP：无登录、无账号、无数据库、无云同步。仓库只附带一条项目整理的短摘要与出处索引，不复制教材或题库正文；未整理的 Topic 明确显示材料缺失，不实时调用 LLM 补写。
 
+## Astro + React Frontend Migration（Slice 1 Preview）
+
+Astro + React 浏览器壳只覆盖 `/` Today 与 `ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS` Topic 页面，通过 HTTP API 获取状态，不替代 Streamlit，也不复制 Python Domain Truth。前端消费的 FastAPI contract 已随 PR #40 合并；TypeScript HTTP client 已在临时本地目录对接 Uvicorn，验证 attempt 持久化、replay 与重新读取。Playwright E2E 仍使用醒目标记的 `DEV FIXTURE / CONTRACT FIXTURE`，尚未验证部署态同源浏览器集成。
+
+路由、API contract reconcile、COPY / ADAPT / REJECT、测试和集成限制见 [Frontend Migration Slice 1](docs/frontend/FRONTEND_MIGRATION_SLICE_1.md)。
+
 ## FastAPI Transport（Frontend API v0.1）
 
 FastAPI 是现有 Python service/domain 的 HTTP adapter，不替代 Streamlit，也不在 route 中重算 Planner / Progress / Review。用绝对路径 `COCKPIT_LOCAL_DIR` 固定本地事实目录；未设置时固定使用仓库根目录下 `.local/`，不随启动 cwd 变化。GET 不会执行初始化。
