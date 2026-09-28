@@ -65,8 +65,10 @@ test('keyboard can skip to main content and activate the Today Topic link', asyn
 test('320px and 390px mobile layouts do not overflow horizontally', async ({ page }) => {
   for (const width of [320, 390]) {
     await page.setViewportSize({ width, height: 844 });
-    await page.goto(topicPath);
+    await page.goto(`${topicPath}?task_id=contract-fixture-task-001`);
     await expect(page.getByRole('heading', { name: '容器与 Serverless' })).toBeVisible();
+    await expect(page.getByLabel('实际作答时间（必填；浏览器本地时间）')).toBeVisible();
+    await expect(page.getByRole('button', { name: '提交真实 attempt' })).toBeVisible();
     const dimensions = await page.evaluate(() => ({
       viewport: document.documentElement.clientWidth,
       content: document.documentElement.scrollWidth,
