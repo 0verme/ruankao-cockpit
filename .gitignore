@@ -22,6 +22,9 @@ node_modules/
 dist/
 build/
 coverage/
+.astro/
+playwright-report/
+test-results/
 
 # Python
 __pycache__/

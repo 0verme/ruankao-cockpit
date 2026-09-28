@@ -36,6 +36,12 @@ streamlit run streamlit_app.py
 
 首次打开浏览器页面后点击「初始化」，再查看 Today；有学习卡时先阅读目标、核心知识和考试关注点，再决定是否记录真实验证题结果。用户事实保存在本机 `.local/`，这是本地单用户 MVP：无登录、无账号、无数据库、无云同步。仓库只附带一条项目整理的短摘要与出处索引，不复制教材或题库正文；未整理的 Topic 明确显示材料缺失，不实时调用 LLM 补写。
 
+## Astro + React Frontend Migration（Slice 1 Preview）
+
+当前新增的 Astro + React 浏览器壳只覆盖 `/` Today 与 `ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS` Topic 页面；它通过 HTTP API 获取状态，不替代 Streamlit，也不复制 Python Domain Truth。FastAPI contract 尚待并行实现合并，前端目前仅可用带固定醒目标识的 `DEV FIXTURE / CONTRACT FIXTURE` 开发数据验证呈现，不代表完整 vertical slice 已通过。
+
+详细路由、API contract assumptions、COPY / ADAPT / REJECT、运行和测试方式见 [Frontend Migration Slice 1](docs/frontend/FRONTEND_MIGRATION_SLICE_1.md)。
+
 ## CLI（Advanced / Debug）
 
 CLI 可用于脚本、工程验证和诊断；CLI 本身使用 Python 标准库。先在仓库根目录运行：

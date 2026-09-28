@@ -1,0 +1,14 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { TopicApp } from '../../components/TopicApp';
+import { IMPLEMENTED_TOPIC_ID } from '../../api/types';
+
+export function getStaticPaths() {
+  return [{ params: { topic_id: IMPLEMENTED_TOPIC_ID } }];
+}
+
+const { topic_id: topicId } = Astro.params;
+---
+<BaseLayout title="Topic · ruankao-cockpit">
+  <TopicApp client:load topicId={topicId!} />
+</BaseLayout>
