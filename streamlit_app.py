@@ -13,16 +13,13 @@ from cockpit_service import (
     PROJECT_ROOT,
     CockpitError,
     TodaySnapshot,
-    get_comprehensive_source_references,
     get_today,
+    get_topic_experience,
     initialize_cockpit,
     record_browser_attempt,
 )
-from learning_payload import (
-    LearningPayloadError,
-    learning_source_url,
-    load_learning_payload,
-)
+from learning_payload import LearningPayloadError, learning_source_url
+from topic_experience import TopicExperience, TopicExperienceError
 
 
 ERROR_CAUSES = {
@@ -70,22 +67,16 @@ def _friendly_error(exc: BaseException) -> str:
     return "未能完成记录；事实未通过现有校验。请检查必填来源、作答时间及输入格式。"
 
 
-def _task_target(task: Mapping[str, Any], snapshot: TodaySnapshot) -> tuple[str, str]:
+def _task_target(task: Mapping[str, Any], snapshot: TodaySnapshot) -> str:
     review_catalog = {item["review_item_id"]: item for item in snapshot.review_items}
     if task.get("task_type") == "review":
         item = review_catalog.get(task.get("target_ref"), {})
         topic_id = item.get("canonical_ref", {}).get("topic_id")
     else:
         topic_id = task.get("target_ref")
-    names = {
-        node["id"]: node["name"]
-        for node in snapshot.taxonomy.get("nodes", [])
-        if isinstance(node, Mapping) and isinstance(node.get("id"), str)
-    }
     if isinstance(topic_id, str):
-        return topic_id, names.get(topic_id, topic_id)
-    target_ref = str(task.get("target_ref", "未知目标"))
-    return target_ref, target_ref
+        return topic_id
+    return str(task.get("target_ref", "未知目标"))
 
 
 def _task_reason(task: Mapping[str, Any], planner_output: Mapping[str, Any]) -> tuple[str, str, str]:
@@ -106,9 +97,50 @@ def _task_reason(task: Mapping[str, Any], planner_output: Mapping[str, Any]) -> 
     return friendly_messages.get(reason_code, display_message), reason_code, display_message
 
 
-def _render_learning_payload(payload: Mapping[str, Any]) -> None:
-    references = {item["reference_id"]: item for item in payload["source_references"]}
+def _render_topic_experience(experience: TopicExperience) -> None:
+    payload = experience.learning_payload
+    st.markdown(f"### {experience.topic_name}")
+    st.caption(" › ".join(item.name for item in experience.breadcrumb))
+    if experience.has_learning_payload:
+        st.caption(f"学习材料：已整理 · Learning Payload {experience.learning_payload_version}")
+    else:
+        st.caption("学习材料：材料尚未整理")
 
+    progress_label = f"验证 attempt：{experience.progress_attempt_count} 次"
+    if experience.progress_accuracy is not None:
+        progress_label += f" · accuracy {experience.progress_accuracy:.0%}"
+    st.caption(progress_label)
+    if experience.review_status is not None:
+        mastery_labels = {
+            "new": "新建",
+            "learning": "学习中",
+            "mastered": "达到当前 Review Policy 阈值",
+        }
+        review_labels = {
+            "not_scheduled": "尚未排期",
+            "scheduled": "已安排",
+            "due": "今日到期",
+            "overdue": "已逾期",
+        }
+        review_text = (
+            f"复习：{mastery_labels.get(experience.review_mastery_state, experience.review_mastery_state)}"
+            f" · {review_labels.get(experience.review_status, experience.review_status)}"
+        )
+        if experience.review_next_due_local_date:
+            review_text += f" · 下次复习 {experience.review_next_due_local_date}"
+        if experience.review_policy_version:
+            review_text += f" · {experience.review_policy_version}"
+        st.caption(review_text)
+
+    with st.expander("Topic 详情"):
+        st.caption(f"Canonical Topic ID：{experience.topic_id}")
+        st.caption(f"Taxonomy version：{experience.taxonomy_version}")
+
+    if payload is None:
+        st.info("材料尚未整理。不会自动生成内容；你仍可使用已有外部资料学习。")
+        return
+
+    references = {item["reference_id"]: item for item in payload["source_references"]}
     st.markdown("**今天学会什么**")
     for item in payload["objectives"]:
         st.markdown(f"- {item['text']}")
@@ -146,15 +178,154 @@ def _render_learning_payload(payload: Mapping[str, Any]) -> None:
             st.code("\n".join(details), language=None)
 
 
+def _render_verification(
+    task: Mapping[str, Any],
+    snapshot: TodaySnapshot,
+    local_dir: Path,
+    verification_sources: tuple[Mapping[str, Any], ...],
+) -> bool:
+    """Render the existing optional attempt form for a Today task."""
+    planner_output = snapshot.planner_output
+    task_type = task.get("task_type")
+    prefix = f"record-{task['task_id']}"
+    if task_type == "new_learning":
+        st.markdown("##### 学完后验证")
+        st.caption("学习与答题记录是两件事；只有实际作答后才记录 attempt。")
+    else:
+        st.markdown("##### 复习后验证")
+
+    source_options: dict[str, Mapping[str, Any]] = {}
+    for record in verification_sources:
+        label_text = str(record.get("display_title") or "已索引综合题")
+        source_reference = record.get("source_reference")
+        if isinstance(source_reference, Mapping):
+            source_options[label_text] = source_reference
+    manual_choice = "其他来源（手动填写引用）"
+    choices = ["请选择验证题", *source_options, manual_choice]
+    if not source_options:
+        choices = [manual_choice]
+        st.caption("当前 Topic 没有已索引验证题；如使用了外部题目，可在备用引用中填写来源。")
+    source_choice = st.selectbox(
+        "验证题来源（只选择你实际使用过的题目）",
+        choices,
+        key=f"{prefix}-source-choice",
+    )
+    question: dict[str, Any] | None = dict(source_options[source_choice]) if source_choice in source_options else None
+    if question is not None:
+        st.caption(f"已选择：{source_choice}")
+        with st.expander("查看题目来源信息"):
+            st.code(
+                "\n".join(
+                    f"{key}: {question[key]}"
+                    for key in ("source_id", "source_commit", "source_path", "source_question_id", "golden_set_record_id")
+                    if key in question
+                ),
+                language=None,
+            )
+
+    source_id = source_commit = source_path = source_question_id = ""
+    if source_choice == manual_choice:
+        with st.expander("备用：手动填写未索引题目引用", expanded=not bool(source_options)):
+            source_id = st.text_input("来源 ID", key=f"{prefix}-source-id")
+            source_commit = st.text_input(
+                "来源不可变版本（40 位小写 commit）", key=f"{prefix}-source-commit"
+            )
+            source_path = st.text_input(
+                "来源相对路径", key=f"{prefix}-source-path", help="必须是来源仓库内的相对路径，不含绝对路径或目录跳转。"
+            )
+            source_question_id = st.text_input("来源题目 ID", key=f"{prefix}-source-question-id")
+
+    timezone_name = planner_output["timezone"]
+    local_zone = ZoneInfo(timezone_name)
+    occurred_at_key = f"{prefix}-occurred-at"
+    default_occurred_at_key = f"{prefix}-default-occurred-at"
+    if occurred_at_key not in st.session_state:
+        default_occurred_at = datetime.now(local_zone).isoformat(timespec="seconds")
+        st.session_state[occurred_at_key] = default_occurred_at
+        st.session_state[default_occurred_at_key] = default_occurred_at
+    occurred_at = st.text_input(
+        f"实际作答时间（默认 {timezone_name} 当前时间，可修改）",
+        key=occurred_at_key,
+        help="保存为带显式时区的 ISO 8601 时间；默认时区来自本地 User Configuration，不读取服务器时区。未修改时按点击记录的时间写入。",
+    )
+    outcome = st.selectbox(
+        "作答结果（必选）", ["请选择", "答对", "答错"], key=f"{prefix}-outcome"
+    )
+    cause_label = "不填写"
+    if outcome == "答错":
+        cause_label = st.selectbox(
+            "错误原因（可选；不确定可不填）",
+            ["不填写", *ERROR_CAUSES.values()],
+            key=f"{prefix}-error-cause",
+        )
+    st.caption("只记录事实和来源引用；请勿粘贴题干、选项、答案或解析。")
+    submitted = st.button("记录本次结果", key=f"{prefix}-submit", type="primary", use_container_width=True)
+
+    if not submitted:
+        return False
+    if outcome == "请选择":
+        st.error("请明确选择答对或答错。")
+        return False
+    if source_choice == manual_choice:
+        question = {
+            "source_id": source_id.strip(),
+            "source_commit": source_commit.strip(),
+            "source_path": source_path.strip(),
+            "source_question_id": source_question_id.strip(),
+        }
+    if question is None or any(
+        not isinstance(question.get(key), str) or not question[key].strip()
+        for key in ("source_id", "source_commit", "source_path", "source_question_id")
+    ):
+        st.error("请明确选择已索引来源或填写完整备用引用；信息不完整时不会写入事实。")
+        return False
+    if not occurred_at.strip():
+        st.error("请填写实际作答时间；信息缺失时不会写入事实。")
+        return False
+
+    error_cause = None
+    if outcome == "答错" and cause_label != "不填写":
+        error_cause = next(key for key, value in ERROR_CAUSES.items() if value == cause_label)
+    occurred_at_to_record = occurred_at.strip()
+    if occurred_at_to_record == st.session_state.get(default_occurred_at_key):
+        occurred_at_to_record = datetime.now(local_zone).isoformat(timespec="seconds")
+    try:
+        record_as_of = datetime.now(local_zone).isoformat(timespec="seconds")
+        result = record_browser_attempt(
+            task["task_id"],
+            occurred_at=occurred_at_to_record,
+            question=question,
+            correct=outcome == "答对",
+            error_cause=error_cause,
+            as_of=record_as_of,
+            local_dir=local_dir,
+        )
+    except (CockpitError, LearningPayloadError, OSError, ValueError, KeyError, TypeError) as exc:
+        st.error(_friendly_error(exc))
+        if _debug_enabled():
+            with st.expander("诊断详情"):
+                st.exception(exc)
+        return False
+
+    # Flash metadata only; every rerun reloads domain state from .local via get_today().
+    st.session_state["cockpit_record_notice"] = {
+        "progress": result.progress_event_count,
+        "review_items": result.review_item_count,
+        "review_contexts": result.review_context_count,
+    }
+    st.rerun()
+    return True
+
+
 def _render_task(task: Mapping[str, Any], snapshot: TodaySnapshot, local_dir: Path) -> bool:
     planner_output = snapshot.planner_output
     task_type = task.get("task_type")
     label = {"review": "REVIEW", "new_learning": "NEW LEARNING"}.get(task_type, str(task_type))
-    topic_id, topic_name = _task_target(task, snapshot)
+    topic_id = _task_target(task, snapshot)
     reason, reason_code, raw_reason = _task_reason(task, planner_output)
 
     with st.container(border=True):
-        st.markdown(f"#### {label} · {topic_name}")
+        st.markdown(f"#### {label}")
         st.caption(f"计划 {task['planned_minutes']} 分钟")
         st.caption(reason)
         with st.expander("查看安排依据"):
@@ -168,146 +339,29 @@ def _render_task(task: Mapping[str, Any], snapshot: TodaySnapshot, local_dir: Pa
         if task_type not in {"review", "new_learning"}:
             return False
 
-        if task_type == "new_learning":
-            try:
-                payload = load_learning_payload(topic_id)
-                if payload is None:
-                    st.info("当前尚未整理该知识点的学习材料。不会自动生成内容；你仍可使用已有外部资料学习。")
-                else:
-                    _render_learning_payload(payload)
-            except LearningPayloadError as exc:
-                st.error("学习材料来源校验未通过，已停止展示该材料。")
-                if _debug_enabled():
-                    with st.expander("学习材料诊断详情"):
-                        st.exception(exc)
-                return False
-            st.divider()
-            st.markdown("##### 学完后验证")
-            st.caption("学习与答题记录是两件事；只有实际作答后才记录 attempt。")
-        else:
-            st.markdown("##### 复习后验证")
-
-        prefix = f"record-{task['task_id']}"
-        source_records = get_comprehensive_source_references(topic_id)
-        source_options: dict[str, Mapping[str, Any]] = {}
-        for record in source_records:
-            label_text = str(record.get("display_title") or "已索引综合题")
-            source_options[label_text] = record["source_reference"]
-        manual_choice = "其他来源（手动填写引用）"
-        choices = ["请选择验证题", *source_options, manual_choice]
-        if not source_options:
-            choices = [manual_choice]
-            st.caption("当前 Topic 没有已索引验证题；如使用了外部题目，可在备用引用中填写来源。")
-        source_choice = st.selectbox(
-            "验证题来源（只选择你实际使用过的题目）",
-            choices,
-            key=f"{prefix}-source-choice",
-        )
-        question: dict[str, Any] | None = dict(source_options[source_choice]) if source_choice in source_options else None
-        if question is not None:
-            st.caption(f"已选择：{source_choice}")
-            with st.expander("查看题目来源信息"):
-                st.code(
-                    "\n".join(
-                        f"{key}: {question[key]}"
-                        for key in ("source_id", "source_commit", "source_path", "source_question_id", "golden_set_record_id")
-                        if key in question
-                    ),
-                    language=None,
-                )
-
-        source_id = source_commit = source_path = source_question_id = ""
-        if source_choice == manual_choice:
-            with st.expander("备用：手动填写未索引题目引用", expanded=not bool(source_options)):
-                source_id = st.text_input("来源 ID", key=f"{prefix}-source-id")
-                source_commit = st.text_input(
-                    "来源不可变版本（40 位小写 commit）", key=f"{prefix}-source-commit"
-                )
-                source_path = st.text_input(
-                    "来源相对路径", key=f"{prefix}-source-path", help="必须是来源仓库内的相对路径，不含绝对路径或目录跳转。"
-                )
-                source_question_id = st.text_input("来源题目 ID", key=f"{prefix}-source-question-id")
-
-        timezone_name = planner_output["timezone"]
-        local_zone = ZoneInfo(timezone_name)
-        occurred_at_key = f"{prefix}-occurred-at"
-        default_occurred_at_key = f"{prefix}-default-occurred-at"
-        if occurred_at_key not in st.session_state:
-            default_occurred_at = datetime.now(local_zone).isoformat(timespec="seconds")
-            st.session_state[occurred_at_key] = default_occurred_at
-            st.session_state[default_occurred_at_key] = default_occurred_at
-        occurred_at = st.text_input(
-            f"实际作答时间（默认 {timezone_name} 当前时间，可修改）",
-            key=occurred_at_key,
-            help="保存为带显式时区的 ISO 8601 时间；默认时区来自本地 User Configuration，不读取服务器时区。未修改时按点击记录的时间写入。",
-        )
-        outcome = st.selectbox(
-            "作答结果（必选）", ["请选择", "答对", "答错"], key=f"{prefix}-outcome"
-        )
-        cause_label = "不填写"
-        if outcome == "答错":
-            cause_label = st.selectbox(
-                "错误原因（可选；不确定可不填）",
-                ["不填写", *ERROR_CAUSES.values()],
-                key=f"{prefix}-error-cause",
-            )
-        st.caption("只记录事实和来源引用；请勿粘贴题干、选项、答案或解析。")
-        submitted = st.button("记录本次结果", key=f"{prefix}-submit", type="primary", use_container_width=True)
-
-        if not submitted:
-            return False
-        if outcome == "请选择":
-            st.error("请明确选择答对或答错。")
-            return False
-        if source_choice == manual_choice:
-            question = {
-                "source_id": source_id.strip(),
-                "source_commit": source_commit.strip(),
-                "source_path": source_path.strip(),
-                "source_question_id": source_question_id.strip(),
-            }
-        if question is None or any(
-            not isinstance(question.get(key), str) or not question[key].strip()
-            for key in ("source_id", "source_commit", "source_path", "source_question_id")
-        ):
-            st.error("请明确选择已索引来源或填写完整备用引用；信息不完整时不会写入事实。")
-            return False
-        if not occurred_at.strip():
-            st.error("请填写实际作答时间；信息缺失时不会写入事实。")
-            return False
-
-        error_cause = None
-        if outcome == "答错" and cause_label != "不填写":
-            error_cause = next(key for key, value in ERROR_CAUSES.items() if value == cause_label)
-        occurred_at_to_record = occurred_at.strip()
-        if occurred_at_to_record == st.session_state.get(default_occurred_at_key):
-            occurred_at_to_record = datetime.now(local_zone).isoformat(timespec="seconds")
         try:
-            record_as_of = datetime.now(local_zone).isoformat(timespec="seconds")
-            result = record_browser_attempt(
-                task["task_id"],
-                occurred_at=occurred_at_to_record,
-                question=question,
-                correct=outcome == "答对",
-                error_cause=error_cause,
-                as_of=record_as_of,
-                local_dir=local_dir,
-            )
-        except (CockpitError, LearningPayloadError, OSError, ValueError, KeyError, TypeError) as exc:
-            st.error(_friendly_error(exc))
+            experience = get_topic_experience(topic_id, snapshot)
+        except LearningPayloadError as exc:
+            st.error("学习材料来源校验未通过，已停止展示该材料。")
             if _debug_enabled():
-                with st.expander("诊断详情"):
+                with st.expander("学习材料诊断详情"):
+                    st.exception(exc)
+            return False
+        except TopicExperienceError as exc:
+            st.error("无法从现有 Taxonomy / Progress / Review 状态构建 Topic Experience。")
+            if _debug_enabled():
+                with st.expander("Topic Experience 诊断详情"):
                     st.exception(exc)
             return False
 
-        # Flash metadata only; every rerun reloads domain state from .local via get_today().
-        st.session_state["cockpit_record_notice"] = {
-            "progress": result.progress_event_count,
-            "review_items": result.review_item_count,
-            "review_contexts": result.review_context_count,
-        }
-        st.rerun()
-        return True
+        _render_topic_experience(experience)
+        st.divider()
+        return _render_verification(
+            task,
+            snapshot,
+            local_dir,
+            experience.verification_sources,
+        )
 
 
 def _render_today(snapshot: TodaySnapshot, local_dir: Path) -> None:

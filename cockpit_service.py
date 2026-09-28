@@ -19,6 +19,8 @@ from engine.planner import plan_today
 from engine.progress import replay as progress_replay
 from engine.review.replay import replay as review_replay
 from engine.rules.review_policy_v01 import resolve_timezone
+from learning_payload import load_learning_payload
+from topic_experience import TopicExperience, build_topic_experience
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent
@@ -439,6 +441,20 @@ def initialize_cockpit(local_dir: str | Path | None = None) -> bool:
     return True
 
 
+def get_topic_experience(topic_id: str, snapshot: TodaySnapshot) -> TopicExperience:
+    """Build the shared Topic read model from an existing deterministic snapshot."""
+    payload = load_learning_payload(topic_id)
+    verification_sources = get_comprehensive_source_references(topic_id)
+    return build_topic_experience(
+        topic_id,
+        taxonomy=snapshot.taxonomy,
+        progress_state=snapshot.progress_state,
+        review_state=snapshot.review_state,
+        learning_payload=payload,
+        verification_sources=verification_sources,
+    )
+
+
 def get_today(as_of: str | None = None, *, local_dir: str | Path | None = None) -> TodaySnapshot:
     """Replay local facts and return the existing deterministic Today Plan."""
     local = _resolve_local_dir(local_dir)
@@ -605,6 +621,7 @@ __all__ = [
     "TodaySnapshot",
     "get_comprehensive_source_references",
     "get_today",
+    "get_topic_experience",
     "initialize_cockpit",
     "record_browser_attempt",
     "record_result",
