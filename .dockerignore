@@ -28,7 +28,9 @@ venv
 playwright-report
 test-results
 coverage
-tests
+tests/*
+!tests/planner_contract_fixtures.py
+!tests/planner_output_fixtures.py
 e2e
 *.log
 
