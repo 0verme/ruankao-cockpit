@@ -20,8 +20,44 @@ test('Today loads and opens the unified Topic page', async ({ page }) => {
   await expect(page.getByRole('heading', { name: '核心知识' })).toBeVisible();
   await expect(page.getByText('Sources / Provenance')).toBeVisible();
   await expect(page.getByRole('heading', { name: '来源与证据' })).toBeVisible();
-  await expect(page.locator('.source-card').first()).toContainText('Source commit');
-  await expect(page.locator('.source-card').first()).toContainText('Source path');
+  const readableSources = page.locator('.source-list:not(.provenance-details__list)');
+  await expect(readableSources.getByRole('heading', { name: /第 14 章 14\.3\.1 容器技术/ })).toBeVisible();
+  await expect(readableSources.getByText('相关章节：第 4 类：云原生架构设计理论与实践')).toBeVisible();
+  const disclosure = page.locator('.provenance-details');
+  await expect(disclosure).not.toHaveAttribute('open', '');
+  await expect(disclosure.getByText('Source commit').first()).toBeHidden();
+});
+
+test('Topic provenance stays collapsed by default, works by keyboard, and fits desktop/mobile widths', async ({ page }) => {
+  for (const width of [1280, 390, 320]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto(topicPath);
+    await expect(page.getByRole('heading', { name: '来源与证据' })).toBeVisible();
+    const readableSources = page.locator('.source-list:not(.provenance-details__list)');
+    await expect(readableSources.getByRole('heading', { name: /第 14 章 14\.3\.1 容器技术/ })).toBeVisible();
+    await expect(readableSources.getByText('相关章节：第 4 类：云原生架构设计理论与实践')).toBeVisible();
+
+    const disclosure = page.locator('.provenance-details');
+    const summary = disclosure.locator('summary');
+    await expect(disclosure).not.toHaveAttribute('open', '');
+    await expect(disclosure.getByText('Source path').first()).toBeHidden();
+    await summary.focus();
+    await page.keyboard.press('Enter');
+    await expect(disclosure).toHaveAttribute('open', '');
+    for (const field of ['Source ID', 'Source commit', 'Source path', 'Source value', 'Source anchor', 'Confidence', 'Question ID', 'Golden Set record']) {
+      await expect(disclosure.getByText(field).first()).toBeVisible();
+    }
+
+    const dimensions = await page.evaluate(() => ({
+      viewport: document.documentElement.clientWidth,
+      content: document.documentElement.scrollWidth,
+    }));
+    expect(dimensions.content).toBeLessThanOrEqual(dimensions.viewport);
+
+    await page.keyboard.press('Enter');
+    await expect(disclosure).not.toHaveAttribute('open', '');
+    await expect(disclosure.getByText('Source path').first()).toBeHidden();
+  }
 });
 
 test('unavailable payload is explicit and does not invent learning content', async ({ page }) => {

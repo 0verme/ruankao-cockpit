@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ApiProvider } from '../api/context';
 import { createFixtureApiClient } from '../api/fixtureClient';
@@ -69,6 +69,29 @@ describe('Topic island and Verification', () => {
     renderWithApi(<TopicApp topicId={topicId} />, createFixtureApiClient('invalid-provenance'));
     expect(await screen.findByRole('heading', { name: '材料来源校验未通过' })).toBeInTheDocument();
     expect(screen.getByRole('alert')).toHaveTextContent('材料已隐藏');
+  });
+
+  it('keeps readable source titles and sections visible while technical provenance starts collapsed', async () => {
+    renderWithApi(<TopicApp topicId={topicId} />);
+    expect(await screen.findByRole('heading', { name: '来源与证据' })).toBeVisible();
+    const readableSources = document.querySelector<HTMLElement>('.source-list:not(.provenance-details__list)');
+    expect(readableSources).toBeInTheDocument();
+    expect(within(readableSources!).getByRole('heading', { name: /第 14 章 14\.3\.1 容器技术/ })).toBeVisible();
+    expect(within(readableSources!).getByText('相关章节：第 4 类：云原生架构设计理论与实践')).toBeVisible();
+
+    const summary = screen.getByText('查看技术来源详情');
+    const disclosure = summary.closest('details');
+    expect(disclosure).not.toHaveAttribute('open');
+    const hiddenCommit = within(disclosure!).getAllByText('Source commit')[0];
+    expect(hiddenCommit).not.toBeVisible();
+
+    fireEvent.click(summary);
+    expect(disclosure).toHaveAttribute('open');
+    for (const field of ['Source ID', 'Source commit', 'Source path', 'Source value', 'Source anchor', 'Confidence']) {
+      expect(within(disclosure!).getAllByText(field)[0]).toBeVisible();
+    }
+    fireEvent.click(summary);
+    expect(disclosure).not.toHaveAttribute('open');
   });
 
   it('posts only user facts and rereads Topic and Today after API success', async () => {
