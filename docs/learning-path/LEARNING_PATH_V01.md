@@ -3,7 +3,7 @@
 - Contract: `learning-path/v0.1`
 - Status: contract frozen for static audit/draft data; the check-in path itself remains `draft` / `MAPPING_REVIEW_REQUIRED`.
 - Related: Issue #44; product boundaries #33 and #27.
-- Runtime integration: **DEFERRED**. This document does not authorize a Planner, Today, Progress, Review, or browser behavior change.
+- Runtime integration: **DEFERRED** for Planner / Today / Progress / Review. Read-only Browser Directory and Path navigation are implemented by Issue #55; they do not promote or schedule this draft Path.
 
 ## 1. Domain boundary
 
@@ -104,6 +104,14 @@ It must not:
 
 `PARTIAL`, `SPLIT`, and `MERGE` mappings need an explicit future runtime interpretation before an approved path can drive tasks. This Phase 1 audit does not define that behavior. Reviews continue to be scheduled from Review Truth, regardless of a path's new-learning order.
 
+### 4.1 Read-only Browser navigation (Issue #55)
+
+The Browser Directory at `/learn` reads this manifest as its only ordering source. It displays each item at its existing one-based `order`, including `NON_LEARNING`; a rest item is visible but is not a Learning Unit and cannot be opened as one. `UNMAPPED` remains a readable Learning Unit without a fabricated Topic association.
+
+A Learning Unit page's previous/next links select the nearest preceding/following learnable item by manifest `order`, skipping `NON_LEARNING`. This does not remove or renumber rest items in the Directory. Directory, open, refresh, reading, scrolling and navigation are read-only presentation; none are completion, Progress, Review or Mastery facts.
+
+The current Path remains `draft` / `MAPPING_REVIEW_REQUIRED` (including the outstanding order review). Browser faithfully exposes the current manifest order for user-directed browsing only; this is not an assertion that the order has been approved for Planner use. No manual directory or alternate sequence is maintained.
+
 ## 5. Prompt and generated-content boundary
 
 Source items may contain `wh-plain-explainer` or similar authoring instructions. They are eligible only as a future **Learning Payload authoring / offline content generation aid**. They are not runtime domain truth:
@@ -133,4 +141,4 @@ For the current check-in draft:
 - Coverage is 60/110 active L3; uncovered and duplicate-covered ID lists are in `SYSTEM_ARCHITECT_CHECKIN_MAPPING_AUDIT.md`.
 - 40 source items map to multiple Topic IDs; merge/partial relations remain reviewable metadata, not runtime decisions.
 
-The audit verdict is `MAPPING_REVIEW_REQUIRED`. The static Draft and contract may be reviewed/versioned without promoting the path to `approved`. Planner integration, Today integration, Learn Directory, and batch Learning Payload authoring remain deferred.
+The audit verdict is `MAPPING_REVIEW_REQUIRED`. The static Draft and contract may be reviewed/versioned without promoting the path to `approved`. Planner integration, Today integration, and batch Learning Payload authoring remain deferred. The read-only Learn Directory / Path navigation is implemented by Issue #55 and does not change the audit verdict or Planner eligibility.

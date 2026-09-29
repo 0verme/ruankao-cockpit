@@ -53,7 +53,7 @@ export function LearningUnitApp({ pathId, itemId }: { pathId: string; itemId: st
       )}
       {state.kind === 'error' && (
         <section className="empty-state">
-          <a className="back-link" href="/">← 返回 Cockpit</a>
+          <a className="back-link" href="/learn">← 返回学习目录</a>
           <h1>{errorTitle(errorCode(state.error))}</h1>
           <ApiNotice code={errorCode(state.error)} />
           {errorCode(state.error) !== 'not_a_learning_unit'
@@ -105,7 +105,7 @@ function LearningUnitContent({ unit }: { unit: LearningUnitResponse }) {
   const markdown = splitMarkdownSources(unit.content_markdown);
   return (
     <article className="learning-unit-page">
-      <a className="back-link" href="/">← 返回 Cockpit</a>
+      <a className="back-link" href="/learn">← 返回学习目录</a>
       <header className="learning-unit-header">
         <p className="eyebrow">{unit.path_title}</p>
         <p className="learning-unit-order">第 {unit.order} 节</p>
@@ -151,6 +151,33 @@ function LearningUnitContent({ unit }: { unit: LearningUnitResponse }) {
           )}
         </details>
       </section>
+
+      <UnitNavigation unit={unit} />
     </article>
+  );
+}
+
+function UnitNavigation({ unit }: { unit: LearningUnitResponse }) {
+  const unitHref = (itemId: string) =>
+    `/learning-units/${encodeURIComponent(unit.path_id)}/${encodeURIComponent(itemId)}`;
+
+  return (
+    <nav className="learning-unit-navigation" aria-label="学习单元导航">
+      {unit.navigation.previous_item_id ? (
+        <a className="learning-unit-navigation__link" href={unitHref(unit.navigation.previous_item_id)}>
+          ← 上一节
+        </a>
+      ) : (
+        <span className="learning-unit-navigation__disabled" aria-disabled="true">← 上一节</span>
+      )}
+      <a className="learning-unit-navigation__directory" href="/learn">返回目录</a>
+      {unit.navigation.next_item_id ? (
+        <a className="learning-unit-navigation__link" href={unitHref(unit.navigation.next_item_id)}>
+          下一节 →
+        </a>
+      ) : (
+        <span className="learning-unit-navigation__disabled" aria-disabled="true">下一节 →</span>
+      )}
+    </nav>
   );
 }

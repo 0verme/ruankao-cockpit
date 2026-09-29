@@ -2,7 +2,7 @@
 
 **Status: `DEPLOYED_UAT_PASS` (2026-09-28, after PR #41). Real Chromium verified the production Astro static build → same-origin `/api/*` proxy → loopback FastAPI → `cockpit_service` → immutable facts / deterministic replay chain.**
 
-This slice owns Browser Presentation only. Astro emits two static routes and shell; React islands fetch the merged FastAPI contract. Python `cockpit_service` and domain replay remain the only business truth source.
+This document records the earlier Slice 1 Browser Presentation/UAT only. Astro emitted two routes in that slice; later PR #54 added static Learning Unit routes and Issue #55 adds `/learn` plus manifest-derived previous/next navigation. The current endpoint/read-model semantics are documented in [`FRONTEND_API_V01.md`](../api/FRONTEND_API_V01.md) and [`LEARNING_PATH_V01.md`](../learning-path/LEARNING_PATH_V01.md). Python domain loaders remain the source for Path/Unit identity and order; browser navigation remains read-only.
 
 ```text
 Browser
@@ -97,4 +97,4 @@ A test-only attempt submitted through the UI used server task `task-e7eb1a30c93b
 
 **Post-fix test evidence:** Python unittest **233 passed, 1 skipped**; all five repository validators PASS; frontend Vitest **14 passed**; Astro check **0 errors / 0 warnings / 0 hints**; static build **2 routes**; fixture-backed Playwright **10 passed**; post-merge real-browser UAT **6 scenario runs passed**. GitHub PR #41 CI passed.
 
-**Known limits / non-goals:** only `/` and the one implemented Topic route are shipped; this does not prove broad content value or product direction. The API remains local, single-user, without auth/database/cloud or multi-writer locking. The UAT reverse proxy is not a supported production config; a future deploy still needs a documented same-origin static-server/reverse-proxy setup and must preserve explicit local-data ownership. No Learn Directory, Search, Chat/LLM, CMS, SSR, DB, or Streamlit deletion was added.
+**Known limits / non-goals at the time of PR #41:** only `/` and the one implemented Topic route were shipped; this did not prove broad content value or product direction. The API remains local, single-user, without auth/database/cloud or multi-writer locking. The UAT reverse proxy is not a supported production config; a future deploy still needs a documented same-origin static-server/reverse-proxy setup and must preserve explicit local-data ownership. No Learn Directory, Search, Chat/LLM, CMS, SSR, DB, or Streamlit deletion was added in Slice 1. The read-only Learn Directory and Unit navigation added later do not change those retained boundaries.

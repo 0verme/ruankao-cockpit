@@ -7,8 +7,9 @@ Completion facts.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import date
 import json
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import re
 from typing import Any, Mapping
 
@@ -18,11 +19,24 @@ from yaml.resolver import BaseResolver
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent
-ITEM_ID_RE = re.compile(r"^checkin-[0-9]{3}$")
+ITEM_ID_RE = re.compile(r"^checkin-([0-9]{3})$")
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 MAPPING_STATUSES = {"exact", "partial", "split", "merge", "unmapped"}
 CONFIDENCE_VALUES = {"high", "medium", "low"}
 REVIEW_STATUSES = {"source_gap", "unreviewed"}
+PATH_STATUSES = {"draft", "approved", "deprecated"}
+PATH_ITEM_STATUSES = {"exact", "partial", "split", "merge", "unmapped", "non_learning"}
+TOPIC_ID_RE = re.compile(r"^[A-Z0-9_]+(?:\.[A-Z0-9_]+){2}$")
+VERSION_RE = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+$")
+PATH_TOP_LEVEL_KEYS = {
+    "schema_version", "path_id", "version", "status", "title", "taxonomy_version",
+    "source", "ordering", "items",
+}
+PATH_ITEM_REQUIRED_KEYS = {
+    "item_id", "order", "source_date", "source_file", "source_title", "topic_ids",
+    "mapping_status", "mapping_confidence", "mapping_notes", "knowledge_point_titles",
+}
+PATH_ITEM_OPTIONAL_KEYS = {"original_topic_title", "mapping_group_id"}
 
 # Allowlisted static data locations. Request values are only used to look up
 # manifest entries; they never become filesystem path components.
@@ -67,6 +81,26 @@ class LearningUnitExperience:
     source_date: str
     source_file: str
     source_prompt_sha256: str
+    previous_item_id: str | None
+    next_item_id: str | None
+
+
+@dataclass(frozen=True)
+class LearningPathDirectoryItem:
+    item_id: str
+    order: int
+    title: str
+    kind: str
+    mapping_status: str
+
+
+@dataclass(frozen=True)
+class LearningPathDirectory:
+    path_id: str
+    version: str
+    title: str
+    path_status: str
+    items: tuple[LearningPathDirectoryItem, ...]
 
 
 class _UniqueKeySafeLoader(yaml.SafeLoader):
@@ -98,9 +132,17 @@ def _fail(message: str, category: str = "invalid_learning_unit") -> None:
 
 
 def _read_json(path: Path, label: str, category: str) -> Any:
+    def unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+        result: dict[str, Any] = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError(f"duplicate JSON key {key!r}")
+            result[key] = value
+        return result
+
     try:
-        return json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        return json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=unique_object)
+    except (OSError, UnicodeError, ValueError) as exc:
         _fail(f"{label} static data is unavailable or malformed", category)
 
 
@@ -132,6 +174,165 @@ def _split_frontmatter(text: str, item_id: str) -> tuple[Mapping[str, Any], str]
     if not body.strip():
         _fail(f"Markdown body is empty for {item_id!r}")
     return frontmatter, body
+
+
+def _load_path_manifest(
+    path_id: str,
+    root: Path,
+) -> tuple[Mapping[str, Any], list[Mapping[str, Any]]]:
+    location = PATH_LOCATIONS.get(path_id) if isinstance(path_id, str) else None
+    if location is None:
+        _fail("Learning Path was not found", "unknown_learning_path")
+
+    manifest_relative, _content_relative = location
+    manifest = _read_json(root / manifest_relative, "Learning Path", "invalid_learning_path")
+    if (
+        not isinstance(manifest, Mapping)
+        or set(manifest) != PATH_TOP_LEVEL_KEYS
+        or manifest.get("schema_version") != "learning-path/v0.1"
+        or manifest.get("path_id") != path_id
+        or not isinstance(manifest.get("version"), str)
+        or not VERSION_RE.fullmatch(manifest["version"])
+        or not isinstance(manifest.get("status"), str)
+        or manifest["status"] not in PATH_STATUSES
+    ):
+        _fail("Learning Path identity or contract is malformed", "invalid_learning_path")
+    _require_string(manifest.get("title"), "Learning Path title", "invalid_learning_path")
+    taxonomy_version = _require_string(
+        manifest.get("taxonomy_version"), "Taxonomy version", "invalid_learning_path"
+    )
+
+    source = manifest.get("source")
+    if (
+        not isinstance(source, Mapping)
+        or set(source) != {"type", "archive_name", "archive_size_bytes", "archive_sha256", "description"}
+        or source.get("type") != "user_provided_checkin_archive"
+        or not isinstance(source.get("archive_size_bytes"), int)
+        or isinstance(source.get("archive_size_bytes"), bool)
+        or source["archive_size_bytes"] < 1
+        or not isinstance(source.get("archive_sha256"), str)
+        or not SHA256_RE.fullmatch(source["archive_sha256"])
+    ):
+        _fail("Learning Path source metadata is malformed", "invalid_learning_path")
+    for field in ("archive_name", "description"):
+        _require_string(source.get(field), f"Learning Path source {field}", "invalid_learning_path")
+
+    ordering = manifest.get("ordering")
+    if (
+        not isinstance(ordering, Mapping)
+        or set(ordering) != {"basis", "date_semantics", "order_semantics"}
+        or any(not isinstance(ordering.get(field), str) or not ordering[field].strip()
+               for field in ("basis", "date_semantics", "order_semantics"))
+        or "provenance_only" not in ordering["date_semantics"]
+        or "NON_LEARNING" not in ordering["order_semantics"]
+    ):
+        _fail("Learning Path ordering contract is malformed", "invalid_learning_path")
+
+    items = manifest.get("items")
+    if not isinstance(items, list) or not items:
+        _fail("Learning Path items are malformed", "invalid_learning_path")
+    item_ids: set[str] = set()
+    source_files: set[str] = set()
+    mapping_groups: dict[str, list[Mapping[str, Any]]] = {}
+    previous_key: tuple[str, str] | None = None
+    for index, item in enumerate(items, start=1):
+        if not isinstance(item, Mapping):
+            _fail("Learning Path item is malformed", "invalid_learning_path")
+        keys = set(item)
+        if not PATH_ITEM_REQUIRED_KEYS <= keys or not keys <= PATH_ITEM_REQUIRED_KEYS | PATH_ITEM_OPTIONAL_KEYS:
+            _fail("Learning Path item fields are malformed", "invalid_learning_path")
+        item_id = item.get("item_id")
+        order = item.get("order")
+        match = ITEM_ID_RE.fullmatch(item_id) if isinstance(item_id, str) else None
+        if (
+            match is None
+            or isinstance(order, bool)
+            or not isinstance(order, int)
+            or order != index
+            or int(match.group(1)) != order
+            or item_id in item_ids
+        ):
+            _fail("Learning Path item identity or order is malformed", "invalid_learning_path")
+        item_ids.add(item_id)
+
+        source_date = item.get("source_date")
+        if not isinstance(source_date, str):
+            _fail("Learning Path source date is malformed", "invalid_learning_path")
+        try:
+            parsed_date = date.fromisoformat(source_date)
+        except ValueError:
+            _fail("Learning Path source date is malformed", "invalid_learning_path")
+        source_file = item.get("source_file")
+        if (
+            parsed_date.isoformat() != source_date
+            or not isinstance(source_file, str)
+            or not source_file.strip()
+            or source_file.startswith("/")
+            or "\\" in source_file
+            or ".." in PurePosixPath(source_file).parts
+            or "." in PurePosixPath(source_file).parts
+            or source_file in source_files
+        ):
+            _fail("Learning Path source provenance is malformed", "invalid_learning_path")
+        source_files.add(source_file)
+        ordering_key = (source_date, source_file)
+        if previous_key is not None and previous_key > ordering_key:
+            _fail("Learning Path source order is malformed", "invalid_learning_path")
+        previous_key = ordering_key
+
+        _require_string(item.get("source_title"), "Learning Path source title", "invalid_learning_path")
+        _require_string(item.get("mapping_notes"), "Learning Path mapping notes", "invalid_learning_path")
+        if "original_topic_title" in item:
+            _require_string(item.get("original_topic_title"), "Learning Path original title", "invalid_learning_path")
+        if "mapping_group_id" in item and (
+            not isinstance(item["mapping_group_id"], str)
+            or not re.fullmatch(r"[a-z0-9][a-z0-9-]*", item["mapping_group_id"])
+        ):
+            _fail("Learning Path mapping group is malformed", "invalid_learning_path")
+        outline = item.get("knowledge_point_titles")
+        if not isinstance(outline, list) or any(
+            not isinstance(title, str) or not title.strip() or len(title) > 120 for title in outline
+        ):
+            _fail("Learning Path outline is malformed", "invalid_learning_path")
+
+        mapping_status = item.get("mapping_status")
+        mapping_confidence = item.get("mapping_confidence")
+        topic_ids = item.get("topic_ids")
+        if (
+            not isinstance(mapping_status, str)
+            or mapping_status not in PATH_ITEM_STATUSES
+            or not isinstance(topic_ids, list)
+            or any(not isinstance(topic_id, str) or not TOPIC_ID_RE.fullmatch(topic_id) for topic_id in topic_ids)
+            or len(topic_ids) != len(set(topic_ids))
+        ):
+            _fail("Learning Path mapping is malformed", "invalid_learning_path")
+        if mapping_status == "non_learning":
+            valid_mapping = mapping_confidence is None and not topic_ids and not outline
+        elif mapping_status == "unmapped":
+            valid_mapping = mapping_confidence == "low" and not topic_ids
+        elif mapping_status == "split":
+            valid_mapping = isinstance(mapping_confidence, str) and mapping_confidence in CONFIDENCE_VALUES and len(topic_ids) >= 2
+        else:
+            valid_mapping = isinstance(mapping_confidence, str) and mapping_confidence in CONFIDENCE_VALUES and len(topic_ids) == 1
+        if not valid_mapping:
+            _fail("Learning Path mapping cardinality is malformed", "invalid_learning_path")
+        if mapping_status == "merge" and "mapping_group_id" not in item:
+            _fail("MERGE Learning Path item has no mapping group", "invalid_learning_path")
+        if "mapping_group_id" in item:
+            mapping_groups.setdefault(item["mapping_group_id"], []).append(item)
+
+    for group_items in mapping_groups.values():
+        if len(group_items) < 2:
+            _fail("Learning Path mapping group is incomplete", "invalid_learning_path")
+        shared_topics = set(group_items[0]["topic_ids"])
+        for group_item in group_items[1:]:
+            shared_topics.intersection_update(group_item["topic_ids"])
+        if not shared_topics:
+            _fail("Learning Path mapping group has no shared Topic", "invalid_learning_path")
+
+    if items[-1].get("order") != len(items):
+        _fail("Learning Path order is not contiguous", "invalid_learning_path")
+    return manifest, items
 
 
 def _read_topic_names(root: Path, topic_ids: list[str], taxonomy_version: str) -> tuple[LearningUnitTopic, ...]:
@@ -178,17 +379,12 @@ def load_learning_unit(
         _fail("Learning Path was not found", "unknown_learning_path")
 
     root = Path(project_root).resolve()
-    manifest_relative, content_relative = location
-    manifest = _read_json(root / manifest_relative, "Learning Path", "invalid_learning_path")
-    if not isinstance(manifest, Mapping) or manifest.get("path_id") != path_id:
-        _fail("Learning Path identity is malformed", "invalid_learning_path")
-    path_version = _require_string(manifest.get("version"), "Learning Path version", "invalid_learning_path")
-    path_title = _require_string(manifest.get("title"), "Learning Path title", "invalid_learning_path")
-    path_status = _require_string(manifest.get("status"), "Learning Path status", "invalid_learning_path")
-    taxonomy_version = _require_string(manifest.get("taxonomy_version"), "Taxonomy version", "invalid_learning_path")
-    items = manifest.get("items")
-    if not isinstance(items, list):
-        _fail("Learning Path items are malformed", "invalid_learning_path")
+    manifest, items = _load_path_manifest(path_id, root)
+    _manifest_relative, content_relative = location
+    path_version = manifest["version"]
+    path_title = manifest["title"]
+    path_status = manifest["status"]
+    taxonomy_version = manifest["taxonomy_version"]
     if not isinstance(item_id, str):
         _fail("Learning Unit identity is malformed", "unknown_learning_unit")
     matches = [item for item in items if isinstance(item, Mapping) and item.get("item_id") == item_id]
@@ -202,6 +398,15 @@ def load_learning_unit(
 
     if item.get("mapping_status") == "non_learning":
         _fail("This Path Item is not a Learning Unit", "not_a_learning_unit")
+
+    learnable_items = [entry for entry in items if entry.get("mapping_status") != "non_learning"]
+    current_index = next(index for index, entry in enumerate(learnable_items) if entry["item_id"] == item_id)
+    previous_item_id = learnable_items[current_index - 1]["item_id"] if current_index > 0 else None
+    next_item_id = (
+        learnable_items[current_index + 1]["item_id"]
+        if current_index + 1 < len(learnable_items)
+        else None
+    )
 
     order = item.get("order")
     if isinstance(order, bool) or not isinstance(order, int) or order < 1:
@@ -321,12 +526,53 @@ def load_learning_unit(
         source_date=source_date,
         source_file=source_file,
         source_prompt_sha256=source_prompt_sha256,
+        previous_item_id=previous_item_id,
+        next_item_id=next_item_id,
+    )
+
+
+def load_learning_path_directory(
+    path_id: str,
+    *,
+    project_root: Path = PROJECT_ROOT,
+) -> LearningPathDirectory:
+    """Load a minimal Browser directory from manifest order, without study state."""
+    root = Path(project_root).resolve()
+    manifest, items = _load_path_manifest(path_id, root)
+    directory_items: list[LearningPathDirectoryItem] = []
+    for item in items:
+        item_id = item["item_id"]
+        mapping_status = item["mapping_status"]
+        is_learning_unit = mapping_status != "non_learning"
+        if is_learning_unit:
+            unit = load_learning_unit(path_id, item_id, project_root=root)
+            title = unit.title
+        else:
+            title = _require_string(
+                item.get("source_title"), "NON_LEARNING source title", "invalid_learning_path"
+            )
+        directory_items.append(LearningPathDirectoryItem(
+            item_id=item_id,
+            order=item["order"],
+            title=title,
+            kind="learning_unit" if is_learning_unit else "non_learning",
+            mapping_status=mapping_status,
+        ))
+    return LearningPathDirectory(
+        path_id=path_id,
+        version=manifest["version"],
+        title=manifest["title"],
+        path_status=manifest["status"],
+        items=tuple(directory_items),
     )
 
 
 __all__ = [
+    "LearningPathDirectory",
+    "LearningPathDirectoryItem",
     "LearningUnitExperience",
     "LearningUnitExperienceError",
     "LearningUnitTopic",
+    "load_learning_path_directory",
     "load_learning_unit",
 ]

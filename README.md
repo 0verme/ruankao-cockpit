@@ -22,7 +22,7 @@ Progress / Review facts
 
 - 工程闭环已具备：`init → today → record → replay → next-day today`（PR #26 merged）。
 - 当前产品验证仍未完成：Issue #16 保持 OPEN；Browser Cockpit 提供本地日常入口后，下一步是继续真实 dogfood、记录明确摩擦；工程 PASS 不等于产品验证 PASS。
-- 当前 Astro Browser Presentation 覆盖 Today 与 `ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS` 这一条 Topic Learning Experience；Streamlit fallback 仍是 Today 入口。该 Topic 有一条版本化、带来源证据的短 Learning Payload；其他 Topic 仍可能显示材料尚未整理。阅读与 attempt 记录分开，验证题只是可选的后续事实记录，不表示所有 Topic 已支持学习卡。
+- 当前 Astro Browser Presentation 覆盖 Today、`ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS` Topic Learning Experience，以及 `/learn` 的 Learning Path 只读目录和 `/learning-units/{path_id}/{item_id}` 单节浏览。目录顺序来自当前版本化 Learning Path manifest；用户可自主选择并连续浏览，不经 Planner 决定。阅读和上一节/下一节导航不写 Progress、Review、Mastery 或 Completion。Streamlit fallback 仍是 Today 入口。
 - Rolling 7-Day、完整 Curriculum Backbone、30-Day Plan 与长期阶段规划已由 Issue #27 deferred，不是默认下一阶段。
 
 ## Streamlit fallback：运行现有 Browser Cockpit
@@ -38,7 +38,7 @@ streamlit run streamlit_app.py
 
 ## Astro + React Frontend Migration（Slice 1 — 部署态 PASS）
 
-Astro static + React islands → same-origin `/api/*` → FastAPI → `cockpit_service` / 现有 Planner、Progress、Review、TopicExperience 已通过真实 Chromium 部署态 UAT。当前切片只覆盖 `/` Today 与 `ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS` Topic；Browser 消费服务端状态，不复制 Python Domain Truth。FastAPI 在验证拓扑中仅绑定 loopback，事实目录由显式绝对路径 `COCKPIT_LOCAL_DIR` 指定。
+Astro static + React islands → same-origin `/api/*` → FastAPI → 现有 service/domain。Today 与 Topic 页面消费 Planner、Progress、Review read model；`/learn` 与 `/learning-units/{path_id}/{item_id}` 通过只读 Learning Path / Learning Unit loader 浏览版本化 manifest 和静态 Markdown。目录/翻页不读取或写入 Progress / Review，也不实现 Completion。Browser 不复制 Python Domain Truth。FastAPI 在验证拓扑中仅绑定 loopback，事实目录由显式绝对路径 `COCKPIT_LOCAL_DIR` 指定。
 
 UAT 使用临时本地 reverse proxy 将已构建 `dist/` 与 FastAPI 托管在同一 origin；临时代理配置未提交，正式部署仍需提供受控的 static-server / reverse-proxy 配置。Streamlit 不删除，保留为 fallback，停止新增 Feature 投资，只修阻挡现有可用性的 blocker。真实浏览器持久化、刷新/服务重启 replay、API/domain 一致性及测试证据见 [Frontend Migration Slice 1](docs/frontend/FRONTEND_MIGRATION_SLICE_1.md)。
 

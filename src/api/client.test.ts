@@ -119,6 +119,7 @@ describe('Learning Unit API client', () => {
       source_date: '2026-06-08',
       source_file: '2026年06月/2026-06-08.md',
       source_prompt_sha256: 'a'.repeat(64),
+      navigation: { previous_item_id: null, next_item_id: 'checkin-002' },
     };
     const fetcher = vi.fn<typeof fetch>()
       .mockResolvedValueOnce(jsonResponse(unit))
@@ -133,6 +134,34 @@ describe('Learning Unit API client', () => {
     expect(fetcher.mock.calls.map(([url]) => url)).toEqual([
       '/api/learning-units/system-architect-checkin/checkin-001',
       '/api/learning-units/system-architect-checkin/checkin-020',
+    ]);
+  });
+});
+
+describe('Learning Path Directory API client', () => {
+  it('uses the read-only directory endpoint and handles unknown paths', async () => {
+    const directory = {
+      path_id: 'system-architect-checkin',
+      version: '1.0.0',
+      title: '系统架构设计师打卡学习路径',
+      path_status: 'draft',
+      items: [
+        { item_id: 'checkin-001', order: 1, title: '软件工程：生命周期与基本要素', kind: 'learning_unit', mapping_status: 'merge' },
+        { item_id: 'checkin-020', order: 20, title: '休息', kind: 'non_learning', mapping_status: 'non_learning' },
+      ],
+    };
+    const fetcher = vi.fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse(directory))
+      .mockResolvedValueOnce(jsonResponse({ error: { category: 'unknown_learning_path', message: 'missing' } }, 404));
+    const client = createHttpApiClient('', fetcher);
+
+    await expect(client.getLearningPath('system-architect-checkin')).resolves.toEqual(directory);
+    await expect(client.getLearningPath('unknown-path')).rejects.toMatchObject({
+      code: 'unknown_learning_path', status: 404,
+    });
+    expect(fetcher.mock.calls.map(([url, init]) => [url, init?.method ?? 'GET'])).toEqual([
+      ['/api/learning-paths/system-architect-checkin', 'GET'],
+      ['/api/learning-paths/unknown-path', 'GET'],
     ]);
   });
 });

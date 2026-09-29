@@ -19,7 +19,12 @@ from cockpit_service import (
     initialize_cockpit,
     record_browser_attempt,
 )
-from learning_unit_experience import LearningUnitExperience, load_learning_unit
+from learning_unit_experience import (
+    LearningPathDirectory,
+    LearningUnitExperience,
+    load_learning_path_directory,
+    load_learning_unit,
+)
 from topic_experience import TopicExperience
 
 
@@ -193,6 +198,29 @@ def _learning_unit_response(unit: LearningUnitExperience) -> dict[str, Any]:
         "source_date": unit.source_date,
         "source_file": unit.source_file,
         "source_prompt_sha256": unit.source_prompt_sha256,
+        "navigation": {
+            "previous_item_id": unit.previous_item_id,
+            "next_item_id": unit.next_item_id,
+        },
+    }
+
+
+def _learning_path_directory_response(directory: LearningPathDirectory) -> dict[str, Any]:
+    return {
+        "path_id": directory.path_id,
+        "version": directory.version,
+        "title": directory.title,
+        "path_status": directory.path_status,
+        "items": [
+            {
+                "item_id": item.item_id,
+                "order": item.order,
+                "title": item.title,
+                "kind": item.kind,
+                "mapping_status": item.mapping_status,
+            }
+            for item in directory.items
+        ],
     }
 
 
@@ -234,6 +262,11 @@ def get_api_topic(
     snapshot = get_today(as_of=as_of, local_dir=local_dir)
     experience = get_topic_experience(topic_id, snapshot)
     return _topic_experience_response(experience)
+
+
+@app.get("/api/learning-paths/{path_id}")
+def get_api_learning_path(path_id: str) -> dict[str, Any]:
+    return _learning_path_directory_response(load_learning_path_directory(path_id))
 
 
 @app.get("/api/learning-units/{path_id}/{item_id}")

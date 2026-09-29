@@ -43,6 +43,50 @@ class LearningUnitAPITests(unittest.TestCase):
         for forbidden in ("progress", "completed", "mastery", "review_due"):
             self.assertNotIn(forbidden, body)
 
+    def test_path_directory_is_manifest_ordered_and_exposes_only_browser_fields(self) -> None:
+        response = self.client.get("/api/learning-paths/system-architect-checkin")
+        self.assertEqual(response.status_code, 200, response.text)
+        body = response.json()
+        self.assertEqual(body["path_id"], "system-architect-checkin")
+        self.assertEqual(body["version"], "1.0.0")
+        self.assertEqual(body["path_status"], "draft")
+        self.assertEqual(len(body["items"]), 112)
+        self.assertEqual([item["order"] for item in body["items"]], list(range(1, 113)))
+        self.assertEqual(body["items"][0]["title"], "软件工程：生命周期与基本要素")
+        self.assertEqual(body["items"][19]["kind"], "non_learning")
+        self.assertEqual(body["items"][19]["mapping_status"], "non_learning")
+        self.assertEqual(body["items"][31]["mapping_status"], "unmapped")
+        self.assertEqual(set(body["items"][0]), {"item_id", "order", "title", "kind", "mapping_status"})
+        for forbidden in ("progress", "review", "mastery", "completion", "completed", "review_due"):
+            self.assertNotIn(forbidden, body)
+            for item in body["items"]:
+                self.assertNotIn(forbidden, item)
+
+    def test_unknown_directory_path_is_404(self) -> None:
+        response = self.client.get("/api/learning-paths/unknown-path")
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json()["error"]["category"], "unknown_learning_path")
+
+    def test_learning_unit_navigation_uses_path_order_and_skips_non_learning(self) -> None:
+        cases = (
+            ("checkin-001", None, "checkin-002"),
+            ("checkin-019", "checkin-018", "checkin-021"),
+            ("checkin-021", "checkin-019", "checkin-022"),
+            ("checkin-032", "checkin-031", "checkin-033"),
+            ("checkin-005", "checkin-004", "checkin-006"),
+            ("checkin-112", "checkin-111", None),
+        )
+        for item_id, previous, following in cases:
+            with self.subTest(item_id=item_id):
+                response = self.client.get(
+                    f"/api/learning-units/system-architect-checkin/{item_id}"
+                )
+                self.assertEqual(response.status_code, 200, response.text)
+                self.assertEqual(response.json()["navigation"], {
+                    "previous_item_id": previous,
+                    "next_item_id": following,
+                })
+
     def test_split_and_unmapped_units_are_valid_single_read_responses(self) -> None:
         split = self.client.get("/api/learning-units/system-architect-checkin/checkin-005")
         unmapped = self.client.get("/api/learning-units/system-architect-checkin/checkin-032")

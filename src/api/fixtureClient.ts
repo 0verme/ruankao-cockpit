@@ -146,6 +146,7 @@ export function createFixtureApiClient(scenario: FixtureScenario = 'ready'): Coc
       initialized = true;
       return { state: 'created' };
     },
+    getLearningPath: (pathId) => learningUnitApi.getLearningPath(pathId),
     getLearningUnit: (pathId, itemId) => learningUnitApi.getLearningUnit(pathId, itemId),
     async getTopic(topicId) {
       if (scenario === 'invalid-provenance') {

@@ -6,6 +6,7 @@ import type {
   AttemptRequest,
   AttemptResponse,
   InitializeResponse,
+  LearningPathDirectoryResponse,
   LearningUnitResponse,
   TodayResponse,
   TopicResponse,
@@ -77,6 +78,9 @@ export function createHttpApiClient(
     getToday: () => request<TodayResponse>('/api/today'),
     initialize: () => request<InitializeResponse>('/api/init', { method: 'POST' }),
     getTopic: (topicId) => request<TopicResponse>(`/api/topics/${encodeURIComponent(topicId)}`),
+    getLearningPath: (pathId) => request<LearningPathDirectoryResponse>(
+      `/api/learning-paths/${encodeURIComponent(pathId)}`,
+    ),
     getLearningUnit: (pathId, itemId) => request<LearningUnitResponse>(
       `/api/learning-units/${encodeURIComponent(pathId)}/${encodeURIComponent(itemId)}`,
     ),

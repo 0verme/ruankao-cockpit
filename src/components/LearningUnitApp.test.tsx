@@ -47,6 +47,7 @@ const unitFixture: LearningUnitResponse = {
   source_date: '2026-06-12',
   source_file: '2026年06月/2026-06-12.md',
   source_prompt_sha256: 'a'.repeat(64),
+  navigation: { previous_item_id: 'checkin-004', next_item_id: 'checkin-006' },
 };
 
 function renderUnit(
@@ -89,10 +90,46 @@ describe('Learning Unit Experience', () => {
     expect(screen.getByText(/问题\s*├─ 验证/)).toBeVisible();
     expect(container.querySelector('.learning-unit-markdown script')).toBeNull();
     expect(screen.getByRole('heading', { name: '来源' })).toBeVisible();
+    expect(screen.getByRole('link', { name: '← 上一节' })).toHaveAttribute(
+      'href', '/learning-units/system-architect-checkin/checkin-004',
+    );
+    expect(screen.getByRole('link', { name: '下一节 →' })).toHaveAttribute(
+      'href', '/learning-units/system-architect-checkin/checkin-006',
+    );
+    expect(screen.getByRole('link', { name: '返回目录' })).toHaveAttribute('href', '/learn');
     expect(getLearningUnit).toHaveBeenCalledWith(
       'system-architect-checkin', 'checkin-005',
     );
     expect(screen.queryByRole('button', { name: /完成|已学会|打卡/ })).not.toBeInTheDocument();
+  });
+
+  it('disables navigation at the first and last learnable units', async () => {
+    const { unmount } = renderUnit({
+      ...unitFixture,
+      item_id: 'checkin-001',
+      order: 1,
+      navigation: { previous_item_id: null, next_item_id: 'checkin-002' },
+    });
+    expect(await screen.findByRole('heading', { level: 1, name: unitFixture.title })).toBeVisible();
+    let navigation = screen.getByRole('navigation', { name: '学习单元导航' });
+    expect(within(navigation).getByText('← 上一节')).toHaveAttribute('aria-disabled', 'true');
+    expect(within(navigation).getByRole('link', { name: '下一节 →' })).toHaveAttribute(
+      'href', '/learning-units/system-architect-checkin/checkin-002',
+    );
+
+    unmount();
+    renderUnit({
+      ...unitFixture,
+      item_id: 'checkin-112',
+      order: 112,
+      navigation: { previous_item_id: 'checkin-111', next_item_id: null },
+    });
+    expect(await screen.findByRole('heading', { level: 1, name: unitFixture.title })).toBeVisible();
+    navigation = screen.getByRole('navigation', { name: '学习单元导航' });
+    expect(within(navigation).getByRole('link', { name: '← 上一节' })).toHaveAttribute(
+      'href', '/learning-units/system-architect-checkin/checkin-111',
+    );
+    expect(within(navigation).getByText('下一节 →')).toHaveAttribute('aria-disabled', 'true');
   });
 
   it('keeps technical provenance collapsed by default', async () => {
@@ -128,7 +165,7 @@ describe('Learning Unit Experience', () => {
     renderUnit(null, new CockpitApiError('not_a_learning_unit', 'not a unit', 404));
     expect(await screen.findByRole('heading', { name: '这不是一个学习单元' })).toBeVisible();
     expect(screen.getByRole('alert')).toHaveTextContent('不是学习单元');
-    expect(screen.getByRole('link', { name: '← 返回 Cockpit' })).toHaveAttribute('href', '/');
+    expect(screen.getByRole('link', { name: '← 返回学习目录' })).toHaveAttribute('href', '/learn');
     expect(screen.queryByRole('heading', { name: unitFixture.title })).not.toBeInTheDocument();
   });
 });
