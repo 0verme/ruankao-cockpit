@@ -24,6 +24,16 @@ base_url="http://127.0.0.1:$COCKPIT_PORT"
 
 cleanup() {
   "${compose[@]}" down --remove-orphans >/dev/null 2>&1 || true
+  if [[ -d "$COCKPIT_DATA_DIR" ]]; then
+    "${compose[@]}" run --rm --no-deps --entrypoint python backend -c '
+import os, sys
+uid, gid = map(int, sys.argv[1:3])
+for current, dirs, files in os.walk("/data", topdown=False):
+    for name in files + dirs:
+        os.chown(os.path.join(current, name), uid, gid)
+os.chown("/data", uid, gid)
+' "$(id -u)" "$(id -g)" >/dev/null 2>&1 || true
+  fi
   rm -rf "$test_root"
 }
 
@@ -101,7 +111,7 @@ curl --fail --silent --show-error --request POST "$base_url/api/init" \
 for filename in config.json progress-events.jsonl review-events.jsonl review-items.json; do
   test -f "$COCKPIT_DATA_DIR/$filename"
 done
-config_hash="$(sha256sum "$COCKPIT_DATA_DIR/config.json" | cut -d ' ' -f 1)"
+config_hash="$("${compose[@]}" exec --no-TTY backend python -c 'import hashlib; print(hashlib.sha256(open("/data/config.json", "rb").read()).hexdigest())')"
 
 "${compose[@]}" down
 "${compose[@]}" up -d
@@ -109,7 +119,8 @@ wait_for_healthy
 "${compose[@]}" ps
 
 test -f "$COCKPIT_DATA_DIR/config.json"
-test "$(sha256sum "$COCKPIT_DATA_DIR/config.json" | cut -d ' ' -f 1)" = "$config_hash"
+persisted_hash="$("${compose[@]}" exec --no-TTY backend python -c 'import hashlib; print(hashlib.sha256(open("/data/config.json", "rb").read()).hexdigest())')"
+test "$persisted_hash" = "$config_hash"
 curl --fail --silent --show-error "$base_url/api/today" \
   | python3 -c 'import json,sys; assert "planner" in json.load(sys.stdin)'
 
