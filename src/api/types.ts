@@ -146,6 +146,23 @@ export interface LearningUnitTopic {
 
 export type LearningUnitMappingStatus = 'exact' | 'partial' | 'split' | 'merge' | 'unmapped';
 
+export interface LearningPathDirectoryItem {
+  item_id: string;
+  order: number;
+  title: string;
+  kind: 'learning_unit' | 'non_learning';
+  mapping_status: LearningUnitMappingStatus | 'non_learning';
+}
+
+/** Minimal Browser read model from GET /api/learning-paths/{path_id}. */
+export interface LearningPathDirectoryResponse {
+  path_id: string;
+  version: string;
+  title: string;
+  path_status: 'draft' | 'approved' | 'deprecated';
+  items: LearningPathDirectoryItem[];
+}
+
 /** Exact wire response from GET /api/learning-units/{path_id}/{item_id}. */
 export interface LearningUnitResponse {
   path_id: string;
@@ -165,6 +182,10 @@ export interface LearningUnitResponse {
   source_date: string;
   source_file: string;
   source_prompt_sha256: string;
+  navigation: {
+    previous_item_id: string | null;
+    next_item_id: string | null;
+  };
 }
 
 export interface InitializeResponse {

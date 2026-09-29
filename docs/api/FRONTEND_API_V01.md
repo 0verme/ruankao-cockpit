@@ -145,13 +145,48 @@ GET 不初始化、不创建缺失的本地状态。若本地目录已有 servic
 
 `progress` 与 `review` 的 nullable 值表示现有 read model 没有该派生状态，不表示前端可以自行估算。`verification_sources` 是现有 source index 中不含题干正文的引用元数据。
 
+## `GET /api/learning-paths/{path_id}`
+
+返回只供 Browser Directory 使用的最小只读 read model。它从 allowlisted、版本化 Learning Path manifest 读取路径身份及全部 item 顺序，不读取 `.local`、Planner、Progress、Review 或 Completion，也不透传完整 manifest 的 provenance / authoring 字段。
+
+### Response `200`
+
+```json
+{
+  "path_id": "system-architect-checkin",
+  "version": "1.0.0",
+  "title": "系统架构设计师打卡学习路径",
+  "path_status": "draft",
+  "items": [
+    {
+      "item_id": "checkin-001",
+      "order": 1,
+      "title": "软件工程：生命周期与基本要素",
+      "kind": "learning_unit",
+      "mapping_status": "merge"
+    },
+    {
+      "item_id": "checkin-020",
+      "order": 20,
+      "title": "休息",
+      "kind": "non_learning",
+      "mapping_status": "non_learning"
+    }
+  ]
+}
+```
+
+`items` 按 manifest 的连续 one-based `order` 返回；`title` 对可学习项目取已校验 Learning Unit title，对 `NON_LEARNING` 取其来源标题。`UNMAPPED` 仍返回 `kind="learning_unit"` 和 `mapping_status="unmapped"`，不是不可用或错误。`NON_LEARNING` 保留原 order，但 `kind="non_learning"`，前端不得链接到空 Unit。
+
+未知 Path 返回 `404 unknown_learning_path`；manifest 缺失、畸形或 order/mapping 不一致时 fail closed（`500 invalid_learning_path` / `invalid_learning_unit`），不得返回空目录或重排替代。`path_status` 只供 UI 诚实提示 draft 状态，不表示 Planner eligibility。响应没有 Progress、Review、Mastery、Completion、完成百分比或学习状态字段。
+
 ## `GET /api/learning-units/{path_id}/{item_id}`
 
 读取一个版本化 Learning Path Item 对应的静态 Markdown authoring artifact。此 endpoint 不读取 `.local`，不调用 Planner，也不写入任何状态或事实。
 
 Loader 先从固定 allowlist 中选择 Learning Path manifest，再按 `item_id` 查找 item；请求参数不会直接拼成文件系统路径。Markdown frontmatter 的 `path_id`、`path_version`、`item_id`、`order`、`mapping.status`、`mapping.confidence` 和 `mapping.topic_ids` 必须与 manifest 一致。缺失/畸形 frontmatter、identity/mapping 不一致或 taxonomy Topic 不可验证时 fail closed，不返回正文。
 
-成功响应包含 `path_id`、`path_version`、`item_id`、`order`、`title`、`content_markdown`、generation/review/mapping 状态、Topic labels/IDs 和 source provenance。`content_markdown` 只含 Markdown body，不包含 frontmatter。该静态 read model 不包含 Progress、Review due、mastery 或 completion 字段。
+成功响应包含 `path_id`、`path_version`、`item_id`、`order`、`title`、`content_markdown`、generation/review/mapping 状态、Topic labels/IDs 和 source provenance。`content_markdown` 只含 Markdown body，不包含 frontmatter。`navigation.previous_item_id` / `next_item_id` 由相同 manifest 的 `order` 推导，指向前后最近的 learnable item，跳过 `NON_LEARNING`；目录本身仍保留休息项。该静态 read model 不包含 Progress、Review due、mastery 或 completion 字段。
 
 ### Response `200`（节选）
 
@@ -174,7 +209,11 @@ Loader 先从固定 allowlist 中选择 Learning Path manifest，再按 `item_id
   ],
   "source_date": "2026-06-12",
   "source_file": "2026年06月/2026-06-12.md",
-  "source_prompt_sha256": "<64 lowercase hex characters>"
+  "source_prompt_sha256": "<64 lowercase hex characters>",
+  "navigation": {
+    "previous_item_id": "checkin-004",
+    "next_item_id": "checkin-006"
+  }
 }
 ```
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict
+import json
 from pathlib import Path
 import shutil
 import tempfile
@@ -8,6 +9,7 @@ import unittest
 
 from learning_unit_experience import (
     LearningUnitExperienceError,
+    load_learning_path_directory,
     load_learning_unit,
 )
 
@@ -15,7 +17,6 @@ ROOT = Path(__file__).resolve().parents[1]
 PATH_ID = "system-architect-checkin"
 MANIFEST_RELATIVE = Path("data/learning-paths/system-architect-checkin-v1.json")
 CONTENT_RELATIVE = Path("content/learning-units/system-architect-checkin")
-SAMPLE_ITEMS = ("checkin-001", "checkin-002", "checkin-005", "checkin-006", "checkin-032")
 
 
 class LearningUnitExperienceTests(unittest.TestCase):
@@ -24,14 +25,9 @@ class LearningUnitExperienceTests(unittest.TestCase):
         self.root = Path(self.temporary.name)
         (self.root / MANIFEST_RELATIVE.parent).mkdir(parents=True)
         (self.root / "taxonomy").mkdir()
-        (self.root / CONTENT_RELATIVE).mkdir(parents=True)
         shutil.copyfile(ROOT / MANIFEST_RELATIVE, self.root / MANIFEST_RELATIVE)
         shutil.copyfile(ROOT / "taxonomy/taxonomy.json", self.root / "taxonomy/taxonomy.json")
-        for item_id in SAMPLE_ITEMS:
-            shutil.copyfile(
-                ROOT / CONTENT_RELATIVE / f"{item_id}.md",
-                self.root / CONTENT_RELATIVE / f"{item_id}.md",
-            )
+        shutil.copytree(ROOT / CONTENT_RELATIVE, self.root / CONTENT_RELATIVE)
 
     def tearDown(self) -> None:
         self.temporary.cleanup()
@@ -126,11 +122,78 @@ class LearningUnitExperienceTests(unittest.TestCase):
         with self.assertRaises(LearningUnitExperienceError):
             load_learning_unit(PATH_ID, "checkin-001", project_root=self.root)
 
-    def test_read_model_contains_no_progress_or_completion_facts(self) -> None:
-        unit = load_learning_unit(PATH_ID, "checkin-001", project_root=self.root)
-        model = asdict(unit)
-        for forbidden in ("progress", "completed", "mastery", "review_due", "study_session"):
+    def test_manifest_order_drives_directory_and_non_learning_is_preserved(self) -> None:
+        directory = load_learning_path_directory(PATH_ID, project_root=self.root)
+        self.assertEqual(directory.path_id, PATH_ID)
+        self.assertEqual(directory.version, "1.0.0")
+        self.assertEqual(directory.path_status, "draft")
+        self.assertEqual(len(directory.items), 112)
+        self.assertEqual([item.order for item in directory.items], list(range(1, 113)))
+        self.assertEqual(directory.items[0].title, "软件工程：生命周期与基本要素")
+        self.assertEqual(directory.items[19].kind, "non_learning")
+        self.assertEqual(directory.items[19].title, "休息")
+        self.assertEqual(directory.items[31].mapping_status, "unmapped")
+        self.assertEqual(directory.items[31].kind, "learning_unit")
+        self.assertFalse((self.root / CONTENT_RELATIVE / "checkin-020.md").exists())
+        model = asdict(directory)
+        for forbidden in ("progress", "completed", "mastery", "review_due", "completion"):
             self.assertNotIn(forbidden, model)
+        for item in model["items"]:
+            for forbidden in ("progress", "completed", "mastery", "review_due", "completion"):
+                self.assertNotIn(forbidden, item)
+
+    def test_previous_and_next_follow_manifest_order_and_skip_non_learning(self) -> None:
+        cases = (
+            ("checkin-001", None, "checkin-002"),
+            ("checkin-050", "checkin-049", "checkin-051"),
+            ("checkin-019", "checkin-018", "checkin-021"),
+            ("checkin-021", "checkin-019", "checkin-022"),
+            ("checkin-025", "checkin-024", "checkin-027"),
+            ("checkin-027", "checkin-025", "checkin-028"),
+            ("checkin-032", "checkin-031", "checkin-033"),
+            ("checkin-005", "checkin-004", "checkin-006"),
+            ("checkin-112", "checkin-111", None),
+        )
+        for item_id, previous, following in cases:
+            with self.subTest(item_id=item_id):
+                unit = load_learning_unit(PATH_ID, item_id, project_root=self.root)
+                self.assertEqual(unit.previous_item_id, previous)
+                self.assertEqual(unit.next_item_id, following)
+
+    def test_unknown_path_and_malformed_manifest_fail_closed_for_directory(self) -> None:
+        with self.assertRaises(LearningUnitExperienceError) as caught:
+            load_learning_path_directory("unknown-path", project_root=self.root)
+        self.assertEqual(caught.exception.category, "unknown_learning_path")
+
+        path = self.root / MANIFEST_RELATIVE
+        original_text = path.read_text(encoding="utf-8")
+        original = json.loads(original_text)
+        malformed = json.loads(json.dumps(original))
+        malformed["items"][1]["order"] = 1
+        path.write_text(json.dumps(malformed), encoding="utf-8")
+        with self.assertRaises(LearningUnitExperienceError) as caught:
+            load_learning_path_directory(PATH_ID, project_root=self.root)
+        self.assertEqual(caught.exception.category, "invalid_learning_path")
+
+        path.write_text("{ malformed", encoding="utf-8")
+        with self.assertRaises(LearningUnitExperienceError) as caught:
+            load_learning_path_directory(PATH_ID, project_root=self.root)
+        self.assertEqual(caught.exception.category, "invalid_learning_path")
+
+        duplicate_key = original_text.replace(
+            '"version": "1.0.0",', '"version": "1.0.0", "version": "2.0.0",', 1
+        )
+        path.write_text(duplicate_key, encoding="utf-8")
+        with self.assertRaises(LearningUnitExperienceError) as caught:
+            load_learning_path_directory(PATH_ID, project_root=self.root)
+        self.assertEqual(caught.exception.category, "invalid_learning_path")
+
+    def test_read_models_contain_no_progress_or_completion_facts(self) -> None:
+        unit = load_learning_unit(PATH_ID, "checkin-001", project_root=self.root)
+        directory = load_learning_path_directory(PATH_ID, project_root=self.root)
+        for model in (asdict(unit), asdict(directory)):
+            for forbidden in ("progress", "completed", "mastery", "review_due", "completion", "study_session"):
+                self.assertNotIn(forbidden, model)
 
     def test_symlinked_content_directory_cannot_redirect_the_allowlisted_path(self) -> None:
         content = self.root / CONTENT_RELATIVE

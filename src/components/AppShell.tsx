@@ -6,7 +6,7 @@ export function AppShell({
   activePage = 'topic',
   footerText = '页面只呈现 API 返回的 Planner、Progress 与 Review 状态；浏览器不保存学习事实。',
 }: PropsWithChildren<{
-  activePage?: 'today' | 'topic' | 'learning-unit';
+  activePage?: 'today' | 'learn' | 'topic' | 'learning-unit';
   footerText?: string;
 }>) {
   const api = useCockpitApi();
@@ -22,6 +22,7 @@ export function AppShell({
         </a>
         <nav className="primary-nav" aria-label="主导航">
           <a href="/" aria-current={activePage === 'today' ? 'page' : undefined}>Today</a>
+          <a href="/learn" aria-current={activePage === 'learn' || activePage === 'learning-unit' ? 'page' : undefined}>学习目录</a>
         </nav>
       </header>
       {isFixture && (
