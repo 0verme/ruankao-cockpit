@@ -19,7 +19,6 @@ with socket.socket() as sock:
     print(sock.getsockname()[1])
 PY
 )"
-mkdir -p "$COCKPIT_DATA_DIR"
 compose=(docker compose --project-name "$project" --file compose.yaml)
 base_url="http://127.0.0.1:$COCKPIT_PORT"
 
