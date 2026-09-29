@@ -11,6 +11,8 @@
 - Mapping：EXACT 15, PARTIAL 27, SPLIT 40, MERGE 16, UNMAPPED 12.
 - 内容缺证标记：`source_gap` 75；未标记已知缺口：35。所有文件仍为 `generation.status: draft`，生成/校验通过不等于人工内容审核通过。
 - `UNMAPPED` 项保持空 `topic_ids`；SPLIT/MERGE 不合并成 Topic 文件，文件仍按 Path Item 身份生成。
+- 依 Issue #50 范围，这些 Markdown 是离线 authoring artifacts，不是 runtime Learning Unit、Learning Payload 或 completion facts。
+- [Learning Unit v0.1 合同](../../../docs/learning-path/LEARNING_UNIT_V01.md)保持冻结；[#51 Pilot 报告](../../../docs/content/CONTENT_AUTHORING_PILOT_01.md)中的 `CONTENT_MODEL_GAP` 仍未解决。
 
 ## 学习单元（按原始 order）
 
@@ -131,5 +133,7 @@
 
 - 学习路径日期/order 是来源追踪与排列信息，不是学习完成事实或学习日程。
 - `source_gap` 表示来源未支持的知识部分已显式留缺，不表示已完成内容审校。
+- `content_version: offline-learning-unit/v0.1` 只标识这些静态 Markdown 文件格式；按 Issue #50，它们不是 runtime Learning Unit、Topic-scoped Learning Payload、Progress/Review evidence 或 completion facts。
+- Learning Unit v0.1 语义保持冻结；[#51 Pilot 报告](../../../docs/content/CONTENT_AUTHORING_PILOT_01.md)中的 `CONTENT_MODEL_GAP` 仍未解决。本批仅校准了静态 Markdown 模板，不声称解决 Unit-specific Payload / Topic Experience 选择。
 - Golden Set 仅做主题级索引，不推断本学习日细目的考试频率。
-- 参见 [`SYSTEM_ARCHITECT_CHECKIN_CONTENT_BUILD_REPORT.md`](../../../docs/learning-path/SYSTEM_ARCHITECT_CHECKIN_CONTENT_BUILD_REPORT.md) 与 [`SYSTEM_ARCHITECT_CHECKIN_MAPPING_AUDIT.md`](../../../docs/learning-path/SYSTEM_ARCHITECT_CHECKIN_MAPPING_AUDIT.md)。
+- 参见 [`SYSTEM_ARCHITECT_CHECKIN_CONTENT_BUILD_REPORT.md`](../../../docs/learning-path/SYSTEM_ARCHITECT_CHECKIN_CONTENT_BUILD_REPORT.md)、[`SYSTEM_ARCHITECT_CHECKIN_MAPPING_AUDIT.md`](../../../docs/learning-path/SYSTEM_ARCHITECT_CHECKIN_MAPPING_AUDIT.md) 与 [`LEARNING_UNIT_V01.md`](../../../docs/learning-path/LEARNING_UNIT_V01.md)。
