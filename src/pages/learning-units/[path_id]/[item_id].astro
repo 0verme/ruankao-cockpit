@@ -1,0 +1,20 @@
+---
+import pathDocument from '../../../../data/learning-paths/system-architect-checkin-v1.json';
+import { LearningUnitApp } from '../../../components/LearningUnitApp';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+
+export function getStaticPaths() {
+  const path = pathDocument as {
+    path_id: string;
+    items: Array<{ item_id: string }>;
+  };
+  return path.items.map((item) => ({
+    params: { path_id: path.path_id, item_id: item.item_id },
+  }));
+}
+
+const { path_id: pathId, item_id: itemId } = Astro.params;
+---
+<BaseLayout title="Learning Unit · ruankao-cockpit">
+  <LearningUnitApp client:load pathId={pathId!} itemId={itemId!} />
+</BaseLayout>

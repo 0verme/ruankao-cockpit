@@ -4,7 +4,11 @@ import { useCockpitApi } from '../api/context';
 export function AppShell({
   children,
   activePage = 'topic',
-}: PropsWithChildren<{ activePage?: 'today' | 'topic' }>) {
+  footerText = '页面只呈现 API 返回的 Planner、Progress 与 Review 状态；浏览器不保存学习事实。',
+}: PropsWithChildren<{
+  activePage?: 'today' | 'topic' | 'learning-unit';
+  footerText?: string;
+}>) {
   const api = useCockpitApi();
   const isFixture = api.kind === 'contract-fixture';
 
@@ -28,9 +32,7 @@ export function AppShell({
       <main id="main-content" className="page-content" tabIndex={-1}>
         {children}
       </main>
-      <footer className="site-footer">
-        页面只呈现 API 返回的 Planner、Progress 与 Review 状态；浏览器不保存学习事实。
-      </footer>
+      <footer className="site-footer">{footerText}</footer>
     </div>
   );
 }

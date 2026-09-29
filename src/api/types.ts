@@ -139,6 +139,34 @@ export interface TopicResponse {
   verification_sources: VerificationSource[];
 }
 
+export interface LearningUnitTopic {
+  topic_id: string;
+  name: string;
+}
+
+export type LearningUnitMappingStatus = 'exact' | 'partial' | 'split' | 'merge' | 'unmapped';
+
+/** Exact wire response from GET /api/learning-units/{path_id}/{item_id}. */
+export interface LearningUnitResponse {
+  path_id: string;
+  path_version: string;
+  path_title: string;
+  path_status: string;
+  item_id: string;
+  order: number;
+  title: string;
+  content_markdown: string;
+  generation_status: string;
+  review_status: 'source_gap' | 'unreviewed';
+  mapping_status: LearningUnitMappingStatus;
+  mapping_confidence: 'high' | 'medium' | 'low';
+  topic_ids: string[];
+  topics: LearningUnitTopic[];
+  source_date: string;
+  source_file: string;
+  source_prompt_sha256: string;
+}
+
 export interface InitializeResponse {
   state: 'created' | 'already_exists';
 }
@@ -185,6 +213,11 @@ export type ApiErrorCode =
   | 'invalid_catalog'
   | 'invalid_learning_catalog'
   | 'invalid_topic_experience'
+  | 'invalid_learning_path'
+  | 'invalid_learning_unit'
+  | 'unknown_learning_path'
+  | 'unknown_learning_unit'
+  | 'not_a_learning_unit'
   | 'invalid_planner_output'
   | 'domain_error'
   | 'network_error'

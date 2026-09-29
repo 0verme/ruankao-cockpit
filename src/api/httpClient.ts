@@ -6,6 +6,7 @@ import type {
   AttemptRequest,
   AttemptResponse,
   InitializeResponse,
+  LearningUnitResponse,
   TodayResponse,
   TopicResponse,
 } from './types';
@@ -16,8 +17,9 @@ const knownErrorCodes = new Set<ApiErrorCode>([
   'invalid_source_reference', 'invalid_source_provenance', 'invalid_learning_payload',
   'forbidden_path', 'future_evidence', 'target_mismatch', 'task_not_scheduled',
   'duplicate_event', 'pending_transaction', 'conflicting_transaction', 'storage_error',
-  'invalid_local_data', 'invalid_catalog', 'invalid_learning_catalog',
-  'invalid_topic_experience', 'invalid_planner_output', 'domain_error', 'api_error',
+  'invalid_local_data', 'invalid_catalog', 'invalid_learning_catalog', 'invalid_topic_experience',
+  'invalid_learning_path', 'invalid_learning_unit', 'unknown_learning_path', 'unknown_learning_unit',
+  'not_a_learning_unit', 'invalid_planner_output', 'domain_error', 'api_error',
 ]);
 
 function responseError(body: unknown, status: number): CockpitApiError {
@@ -75,6 +77,9 @@ export function createHttpApiClient(
     getToday: () => request<TodayResponse>('/api/today'),
     initialize: () => request<InitializeResponse>('/api/init', { method: 'POST' }),
     getTopic: (topicId) => request<TopicResponse>(`/api/topics/${encodeURIComponent(topicId)}`),
+    getLearningUnit: (pathId, itemId) => request<LearningUnitResponse>(
+      `/api/learning-units/${encodeURIComponent(pathId)}/${encodeURIComponent(itemId)}`,
+    ),
     recordAttempt: (input: AttemptRequest) => request<AttemptResponse>('/api/attempts', {
       method: 'POST',
       body: JSON.stringify(input),

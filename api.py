@@ -19,6 +19,7 @@ from cockpit_service import (
     initialize_cockpit,
     record_browser_attempt,
 )
+from learning_unit_experience import LearningUnitExperience, load_learning_unit
 from topic_experience import TopicExperience
 
 
@@ -79,13 +80,18 @@ _CONFLICT_CATEGORIES = {
     "pending_transaction",
     "conflicting_transaction",
 }
-_NOT_FOUND_CATEGORIES = {"unknown_topic", "unknown_task"}
+_NOT_FOUND_CATEGORIES = {
+    "unknown_topic", "unknown_task", "unknown_learning_path", "unknown_learning_unit",
+    "not_a_learning_unit",
+}
 _SERVER_ERROR_CATEGORIES = {
     "invalid_local_data",
     "invalid_catalog",
     "invalid_source_catalog",
     "invalid_learning_catalog",
     "invalid_topic_experience",
+    "invalid_learning_path",
+    "invalid_learning_unit",
     "invalid_planner_output",
     "storage_error",
     "invalid_configuration",
@@ -165,6 +171,31 @@ def _topic_experience_response(experience: TopicExperience) -> dict[str, Any]:
     }
 
 
+def _learning_unit_response(unit: LearningUnitExperience) -> dict[str, Any]:
+    return {
+        "path_id": unit.path_id,
+        "path_version": unit.path_version,
+        "path_title": unit.path_title,
+        "path_status": unit.path_status,
+        "item_id": unit.item_id,
+        "order": unit.order,
+        "title": unit.title,
+        "content_markdown": unit.content_markdown,
+        "generation_status": unit.generation_status,
+        "review_status": unit.review_status,
+        "mapping_status": unit.mapping_status,
+        "mapping_confidence": unit.mapping_confidence,
+        "topic_ids": list(unit.topic_ids),
+        "topics": [
+            {"topic_id": topic.topic_id, "name": topic.name}
+            for topic in unit.topics
+        ],
+        "source_date": unit.source_date,
+        "source_file": unit.source_file,
+        "source_prompt_sha256": unit.source_prompt_sha256,
+    }
+
+
 def _snapshot_read_model(snapshot: TodaySnapshot) -> dict[str, Any]:
     return {
         "planner": snapshot.planner_output,
@@ -203,6 +234,11 @@ def get_api_topic(
     snapshot = get_today(as_of=as_of, local_dir=local_dir)
     experience = get_topic_experience(topic_id, snapshot)
     return _topic_experience_response(experience)
+
+
+@app.get("/api/learning-units/{path_id}/{item_id}")
+def get_api_learning_unit(path_id: str, item_id: str) -> dict[str, Any]:
+    return _learning_unit_response(load_learning_unit(path_id, item_id))
 
 
 @app.post("/api/attempts")

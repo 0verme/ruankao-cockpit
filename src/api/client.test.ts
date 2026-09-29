@@ -99,6 +99,44 @@ describe('HTTP API client — merged FastAPI v0.1 contract', () => {
   });
 });
 
+describe('Learning Unit API client', () => {
+  it('uses the deterministic path/item endpoint and recognizes explicit NON_LEARNING errors', async () => {
+    const unit = {
+      path_id: 'system-architect-checkin',
+      path_version: '1.0.0',
+      path_title: '系统架构设计师打卡学习路径',
+      path_status: 'draft',
+      item_id: 'checkin-001',
+      order: 1,
+      title: '软件工程：生命周期与基本要素',
+      content_markdown: '# 软件工程',
+      generation_status: 'draft',
+      review_status: 'source_gap',
+      mapping_status: 'merge',
+      mapping_confidence: 'high',
+      topic_ids: ['SOFTWARE.ENGINEERING.PROCESS'],
+      topics: [{ topic_id: 'SOFTWARE.ENGINEERING.PROCESS', name: '软件过程与开发方法' }],
+      source_date: '2026-06-08',
+      source_file: '2026年06月/2026-06-08.md',
+      source_prompt_sha256: 'a'.repeat(64),
+    };
+    const fetcher = vi.fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse(unit))
+      .mockResolvedValueOnce(jsonResponse({ error: { category: 'not_a_learning_unit', message: '休息日' } }, 404));
+    const client = createHttpApiClient('', fetcher);
+
+    await expect(client.getLearningUnit('system-architect-checkin', 'checkin-001')).resolves.toEqual(unit);
+    await expect(client.getLearningUnit('system-architect-checkin', 'checkin-020')).rejects.toMatchObject({
+      code: 'not_a_learning_unit',
+      status: 404,
+    });
+    expect(fetcher.mock.calls.map(([url]) => url)).toEqual([
+      '/api/learning-units/system-architect-checkin/checkin-001',
+      '/api/learning-units/system-architect-checkin/checkin-020',
+    ]);
+  });
+});
+
 describe('DEV FIXTURE / CONTRACT FIXTURE adapter', () => {
   it('is explicitly labeled and distinguishes unavailable payload from invalid provenance', async () => {
     const unavailable = createFixtureApiClient('payload-unavailable');
