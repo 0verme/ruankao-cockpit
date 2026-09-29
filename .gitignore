@@ -1,5 +1,17 @@
 # Local user study data
 .local/
+/logs/
+/.run/
+
+# Docker Compose defaults to ./data, which also contains tracked project assets.
+# Ignore only generated local facts; do not ignore the tracked data/ source tree.
+/data/config.json
+/data/progress-events.jsonl
+/data/review-events.jsonl
+/data/review-items.json
+/data/pending/
+/data/.config.json.*.tmp
+/data/.review-items.json.*.tmp
 
 # Local research evidence
 research/
@@ -16,6 +28,7 @@ research/
 # Environment
 .env
 .env.*
+!.env.example
 
 # Node
 node_modules/
