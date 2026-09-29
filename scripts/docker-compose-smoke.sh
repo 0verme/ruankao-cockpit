@@ -27,7 +27,17 @@ cleanup() {
   "${compose[@]}" down --remove-orphans >/dev/null 2>&1 || true
   rm -rf "$test_root"
 }
+
+show_failure_diagnostics() {
+  local status=$?
+  trap - ERR
+  "${compose[@]}" ps >&2 || true
+  "${compose[@]}" logs --no-color >&2 || true
+  return "$status"
+}
+
 trap cleanup EXIT
+trap show_failure_diagnostics ERR
 
 wait_for_healthy() {
   local backend_id frontend_id backend_health frontend_health
