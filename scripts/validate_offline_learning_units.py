@@ -143,6 +143,8 @@ def main() -> int:
             fail(f"{filename}: missing frontmatter fields {sorted(required_top-set(top))}")
         if scalar(top["content_version"]) != "offline-learning-unit/v0.1":
             fail(f"{filename}: wrong content_version")
+        if top.get("generation.mode") != "offline-agent" or top.get("generation.status") != "draft":
+            fail(f"{filename}: static generation metadata must remain offline-agent/draft")
         if scalar(top["path_id"]) != path["path_id"] or scalar(top["path_version"]) != path["version"]:
             fail(f"{filename}: path identity does not match manifest")
         if scalar(top["item_id"]) != item_id or scalar(top["order"]) != str(item["order"]):

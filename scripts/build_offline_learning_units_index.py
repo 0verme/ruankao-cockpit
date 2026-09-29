@@ -138,7 +138,7 @@ def main() -> int:
         "- 前 7 项完成的是 Issue #50 范围内的**静态 Markdown 模板校准**（PASS）：包含 MERGE、SPLIT、EXACT；缺证处保留 `SOURCE_GAP`，并检查 Prompt authoring 指令泄漏与无证据考试频率断言。",
         "- 该格式校准不推翻 PR #51 Pilot 的 `CONTENT_MODEL_GAP` 结论，也不代表 Topic-scoped Payload / Topic Experience 已能表达 sequential Learning Units 的差异化内容；本批文件不接入运行时。",
         "- 质量抽查：批量生成后定向复核 `checkin-065`、`073`–`075`、`110`、`112`，对照来源提纲检查主题边界、`SOURCE_GAP` 标记及 UNMAPPED/多 Topic 身份；这是抽样，不代替 110 项逐条人工事实审校。",
-        "- 静态 validator 校验文件集合/数量、Learning Path 身份和顺序、来源路径/日期、mapping 与 topic_ids、Prompt hash 格式、必需内容章节、Prompt 指令泄漏和 SOURCE_GAP 标记。带 `--archive` 时额外核对 ZIP 指纹、CRC 和每项 Prompt 区块 hash。",
+        "- 静态 validator 校验文件集合/数量、Learning Path 身份和顺序、来源路径/日期、mapping 与 topic_ids、offline-agent/draft 元数据、Prompt hash 格式、必需内容章节、Prompt 指令泄漏和 SOURCE_GAP 标记。带 `--archive` 时额外核对 ZIP 指纹、CRC 和每项 Prompt 区块 hash。",
         "- `UNMAPPED` 项不创建 Topic、不注入候选 ID；休息项身份仍保留在 manifest 中但没有对应 Markdown。",
         "",
         "## 边界与未完成事项",
