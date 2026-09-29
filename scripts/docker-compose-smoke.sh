@@ -89,10 +89,13 @@ curl --fail --silent --show-error \
   | python3 -c 'import json,sys; assert json.load(sys.stdin)["item_id"] == "checkin-001"'
 
 published_backend_port="$("${compose[@]}" port backend 8000 2>/dev/null || true)"
-if [[ -n "$published_backend_port" ]]; then
-  echo "Backend unexpectedly published a host port: $published_backend_port" >&2
-  exit 1
-fi
+case "$published_backend_port" in
+  ''|:0) ;;
+  *)
+    echo "Backend unexpectedly published a host port: $published_backend_port" >&2
+    exit 1
+    ;;
+esac
 
 curl --fail --silent --show-error --request POST "$base_url/api/init" \
   | python3 -c 'import json,sys; assert json.load(sys.stdin)["state"] == "created"'
