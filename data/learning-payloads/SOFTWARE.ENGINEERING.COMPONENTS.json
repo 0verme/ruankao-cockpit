@@ -1,0 +1,61 @@
+{
+  "schema_version": "learning-payload/v0.1",
+  "version": "1.0.0",
+  "topic_id": "SOFTWARE.ENGINEERING.COMPONENTS",
+  "objectives": [
+    {
+      "text": "说明基于构件的软件开发如何通过识别、适配和组装可复用构件来构造系统。",
+      "evidence_refs": ["textbook-components"]
+    },
+    {
+      "text": "解释构件通过明确接口进行交互，以及提供接口与请求接口兼容对组装的影响。",
+      "evidence_refs": ["textbook-components"]
+    },
+    {
+      "text": "按需求概览、候选构件识别、需求调整、架构设计、构件适配和组装的顺序概述 CBSE 过程。",
+      "evidence_refs": ["textbook-components"]
+    }
+  ],
+  "core_points": [
+    {
+      "heading": "复用不是直接拼接",
+      "text": "基于构件的软件工程把复用构件纳入开发过程：先理解系统需求，再识别可用构件；发现现有构件后，可能需要调整需求并完成架构设计、定制或适配，最后才组装成系统。选到相似构件并不等于需求已经满足，适配结果仍须与系统要求核对。",
+      "evidence_refs": ["textbook-components"]
+    },
+    {
+      "heading": "组装前核对接口",
+      "text": "构件可以直接集成，也可以借助胶水代码连接。调用方的请求接口必须能与被调用构件的提供接口协作；参数不兼容、操作名称不匹配或接口操作不完备，都可能使组装失败。软考场景中应指出不匹配发生在哪里，再说明适配或连接方式，而不是只写“采用构件复用”。",
+      "evidence_refs": ["textbook-components"]
+    }
+  ],
+  "exam_focus": [
+    {
+      "text": "考试大纲将软件工程基础知识列为科目一内容；教材第 5 章含基于构件的软件工程。该证据说明大纲/教材覆盖，不表示题目频率。场景分析可聚焦候选构件与需求的取舍、接口兼容和适配。",
+      "evidence_refs": ["outline-software-engineering", "textbook-components"]
+    }
+  ],
+  "source_references": [
+    {
+      "reference_id": "textbook-components",
+      "kind": "textbook_section",
+      "display_title": "系统架构设计师教程（第 2 版）· 第 5 章 5.6 基于构件的软件工程",
+      "source_id": "younghong1992",
+      "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+      "source_path": "01.系统架构设计师教材-清洗版/第05章-软件工程基础知识.md",
+      "source_value": "第5章 软件工程基础知识",
+      "source_anchor": "5.6.1–5.6.3 构件模型、CBSE 过程与构件组装",
+      "confidence": "high"
+    },
+    {
+      "reference_id": "outline-software-engineering",
+      "kind": "exam_outline",
+      "display_title": "系统架构设计师考试大纲 · 科目一：软件工程基础知识",
+      "source_id": "younghong1992",
+      "source_commit": "c467a7cbc16970c52cf6d723badbb22938963ae6",
+      "source_path": "00.系统架构设计师考试大纲-清洗版/第03章-考试科目1-综合知识.md",
+      "source_value": "软件工程基础知识",
+      "source_anchor": "科目一第 4 类：软件工程基础知识",
+      "confidence": "high"
+    }
+  ]
+}

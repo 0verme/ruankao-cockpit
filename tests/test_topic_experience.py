@@ -59,6 +59,16 @@ class TopicExperienceTests(unittest.TestCase):
             },
         )
 
+    def test_component_payload_is_available_for_its_canonical_topic(self) -> None:
+        snapshot = get_today(DAY_1, local_dir=self.local)
+        experience = get_topic_experience("SOFTWARE.ENGINEERING.COMPONENTS", snapshot)
+
+        self.assertEqual(experience.topic_name, "构件与组件技术")
+        self.assertTrue(experience.has_learning_payload)
+        self.assertEqual(experience.learning_payload_version, "1.0.0")
+        assert experience.learning_payload is not None
+        self.assertEqual(experience.learning_payload["topic_id"], "SOFTWARE.ENGINEERING.COMPONENTS")
+
     def test_missing_payload_is_explicit_in_read_model(self) -> None:
         snapshot = get_today(DAY_1, local_dir=self.local)
         experience = get_topic_experience("ARCH.CLOUD_NATIVE.MICROSERVICES", snapshot)

@@ -17,7 +17,9 @@ from learning_payload import (
 
 
 TOPIC_ID = "ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS"
+COMPONENTS_TOPIC_ID = "SOFTWARE.ENGINEERING.COMPONENTS"
 PAYLOAD_FILE = f"data/learning-payloads/{TOPIC_ID}.json"
+COMPONENTS_PAYLOAD_FILE = f"data/learning-payloads/{COMPONENTS_TOPIC_ID}.json"
 
 
 class LearningPayloadTests(unittest.TestCase):
@@ -51,6 +53,21 @@ class LearningPayloadTests(unittest.TestCase):
         payload = json.loads((PROJECT_ROOT / PAYLOAD_FILE).read_text(encoding="utf-8"))
         Draft202012Validator.check_schema(schema)
         self.assertEqual(list(Draft202012Validator(schema).iter_errors(payload)), [])
+
+    def test_component_payload_is_static_and_source_backed(self) -> None:
+        payload = load_learning_payload(COMPONENTS_TOPIC_ID)
+        self.assertIsNotNone(payload)
+        assert payload is not None
+        self.assertEqual(payload["topic_id"], COMPONENTS_TOPIC_ID)
+        self.assertEqual(payload["version"], "1.0.0")
+        self.assertEqual(len(payload["objectives"]), 3)
+        self.assertEqual(
+            {reference["reference_id"] for reference in payload["source_references"]},
+            {"textbook-components", "outline-software-engineering"},
+        )
+        schema = json.loads((PROJECT_ROOT / "data/learning-payloads/schema.json").read_text(encoding="utf-8"))
+        document = json.loads((PROJECT_ROOT / COMPONENTS_PAYLOAD_FILE).read_text(encoding="utf-8"))
+        self.assertEqual(list(Draft202012Validator(schema).iter_errors(document)), [])
 
     def test_missing_payload_returns_explicit_absence(self) -> None:
         self.assertIsNone(load_learning_payload("ARCH.CLOUD_NATIVE.EVENT_DRIVEN"))

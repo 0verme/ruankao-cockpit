@@ -1,8 +1,10 @@
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import componentPayloadDocument from '../../data/learning-payloads/SOFTWARE.ENGINEERING.COMPONENTS.json';
 import { ApiProvider } from '../api/context';
 import { createFixtureApiClient } from '../api/fixtureClient';
 import type { CockpitApiClient } from '../api/contracts';
+import type { LearningPayload } from '../api/types';
 import { TodayApp } from './TodayApp';
 import { TopicApp } from './TopicApp';
 
@@ -63,6 +65,33 @@ describe('Topic island and Verification', () => {
     expect(await screen.findByRole('heading', { name: '材料尚未整理' })).toBeInTheDocument();
     expect(screen.getByText(/不会运行时生成或补写学习材料/)).toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: '核心知识' })).not.toBeInTheDocument();
+  });
+
+  it('renders the source-backed component Topic payload in the shared experience', async () => {
+    const api = createFixtureApiClient();
+    const cloudTopic = await api.getTopic(topicId);
+    const payload = componentPayloadDocument as LearningPayload;
+    vi.spyOn(api, 'getTopic').mockResolvedValue({
+      ...cloudTopic,
+      topic: {
+        ...cloudTopic.topic,
+        topic_id: payload.topic_id,
+        name: '构件与组件技术',
+        breadcrumb: [
+          { topic_id: 'SOFTWARE', name: '软件' },
+          { topic_id: 'SOFTWARE.ENGINEERING', name: '软件工程' },
+          { topic_id: payload.topic_id, name: '构件与组件技术' },
+        ],
+      },
+      learning_payload_status: 'available',
+      learning_payload_version: payload.version,
+      learning_payload: payload,
+    });
+
+    renderWithApi(<TopicApp topicId={payload.topic_id} />, api);
+    expect(await screen.findByRole('heading', { name: '构件与组件技术' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '复用不是直接拼接' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '来源与证据' })).toBeInTheDocument();
   });
 
   it('shows invalid provenance as a separate fail-closed state', async () => {
