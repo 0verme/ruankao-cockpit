@@ -417,12 +417,26 @@ def initialize_cockpit(local_dir: str | Path | None = None) -> bool:
     """Initialize local files without replacing existing data; return True if created."""
     local = _resolve_local_dir(local_dir)
     if local.exists():
-        if local.is_dir():
+        if not local.is_dir():
+            raise CockpitError(f"{local} exists but is not a directory", "invalid_local_data")
+        existing_facts = (
+            "config.json",
+            "progress-events.jsonl",
+            "review-events.jsonl",
+            "review-items.json",
+        )
+        if any((local / name).exists() for name in existing_facts) or (local / "pending").exists():
             return False
-        raise CockpitError(f"{local} exists but is not a directory", "invalid_local_data")
+    else:
+        try:
+            local.mkdir(parents=True)
+        except FileExistsError:
+            return False
 
+    # A bind mount (or a caller-created empty data directory) already exists.
+    # Claim its pending directory before writing so concurrent init stays idempotent.
     try:
-        local.mkdir(parents=True)
+        (local / "pending").mkdir()
     except FileExistsError:
         return False
 
@@ -435,7 +449,6 @@ def initialize_cockpit(local_dir: str | Path | None = None) -> bool:
     (local / "progress-events.jsonl").touch(exist_ok=False)
     (local / "review-events.jsonl").touch(exist_ok=False)
     _atomic_write_json(local / "review-items.json", [])
-    (local / "pending").mkdir()
     # Partial creation remains visible rather than deleting files recursively;
     # subsequent reads fail closed with the exact missing path.
     return True

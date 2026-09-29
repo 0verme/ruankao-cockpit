@@ -134,6 +134,23 @@ class FastAPITransportTests(unittest.TestCase):
         self.assertEqual(existing.json(), {"state": "already_exists"})
         self.assertEqual(self.fact_bytes(), before)
 
+    def test_explicit_init_supports_existing_bind_mount_directory_without_touching_other_files(self) -> None:
+        self.local.mkdir()
+        source_data = self.local / "learning-paths"
+        source_data.mkdir()
+        marker = source_data / "manifest.json"
+        marker.write_text('{"source":"kept"}', encoding="utf-8")
+
+        response = self.client.post("/api/init")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {"state": "created"})
+        self.assertEqual(marker.read_text(encoding="utf-8"), '{"source":"kept"}')
+        self.assertTrue((self.local / "config.json").is_file())
+        self.assertTrue((self.local / "progress-events.jsonl").is_file())
+        self.assertTrue((self.local / "review-events.jsonl").is_file())
+        self.assertTrue((self.local / "review-items.json").is_file())
+
     def test_today_returns_existing_service_outputs_and_is_deterministic_for_fixed_as_of(self) -> None:
         initialize_cockpit(self.local)
         expected = get_today(AS_OF, local_dir=self.local)
