@@ -40,7 +40,42 @@ streamlit run streamlit_app.py
 
 Astro static + React islands → same-origin `/api/*` → FastAPI → 现有 service/domain。Today 与 Topic 页面消费 Planner、Progress、Review read model；`/learn` 与 `/learning-units/{path_id}/{item_id}` 通过只读 Learning Path / Learning Unit loader 浏览版本化 manifest 和静态 Markdown。目录/翻页不读取或写入 Progress / Review，也不实现 Completion。Browser 不复制 Python Domain Truth。FastAPI 在验证拓扑中仅绑定 loopback，事实目录由显式绝对路径 `COCKPIT_LOCAL_DIR` 指定。
 
-UAT 使用临时本地 reverse proxy 将已构建 `dist/` 与 FastAPI 托管在同一 origin；临时代理配置未提交，正式部署仍需提供受控的 static-server / reverse-proxy 配置。Streamlit 不删除，保留为 fallback，停止新增 Feature 投资，只修阻挡现有可用性的 blocker。真实浏览器持久化、刷新/服务重启 replay、API/domain 一致性及测试证据见 [Frontend Migration Slice 1](docs/frontend/FRONTEND_MIGRATION_SLICE_1.md)。
+UAT 使用临时本地 reverse proxy 将已构建 `dist/` 与 FastAPI 托管在同一 origin；仓库现通过下方 Docker Compose 方案提供 production static server / reverse proxy。Streamlit 不删除，保留为 fallback，停止新增 Feature 投资，只修阻挡现有可用性的 blocker。真实浏览器持久化、刷新/服务重启 replay、API/domain 一致性及测试证据见 [Frontend Migration Slice 1](docs/frontend/FRONTEND_MIGRATION_SLICE_1.md)。
+
+## Docker Compose
+
+适用于 NAS、Linux 或本地服务器。需要安装 Docker Engine 和 Docker Compose plugin；从仓库根目录运行：
+
+```bash
+git clone https://github.com/0verme/ruankao-cockpit.git
+cd ruankao-cockpit
+docker compose up -d --build
+```
+
+打开 <http://localhost:4321>。Compose 使用 Nginx 服务 Astro static build，并将同源 `/api/*` 代理到内部 FastAPI backend；backend 不映射到宿主机端口。
+
+默认用户事实目录为仓库下的 `./data`，容器内固定为 `/data`。备份 `data/` 即可保留默认部署的本地事实；执行 `docker compose down` 不会删除 bind-mounted 数据。
+
+需要更改宿主机数据目录或对外 HTTP 端口时，复制 `.env.example` 并编辑 `.env`：
+
+```bash
+cp .env.example .env
+```
+
+例如：
+
+```env
+COCKPIT_DATA_DIR=./data
+COCKPIT_PORT=8080
+```
+
+再运行：
+
+```bash
+docker compose up -d --build
+```
+
+`COCKPIT_DATA_DIR` 是宿主机目录，`COCKPIT_LOCAL_DIR=/data` 由容器固定配置，不需要放入 `.env`。NAS 用户可在自己的 `.env` 中填写 NAS 上可写的数据目录；此类个人路径不会进入仓库。若自定义了数据目录，应备份该目录而不是默认的 `data/`。
 
 ## FastAPI Transport（Frontend API v0.1）
 

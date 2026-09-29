@@ -1,0 +1,42 @@
+.git
+.github
+node_modules
+**/node_modules
+# Generated Astro output (built in the frontend image).
+dist
+**/dist
+.astro
+**/.astro
+
+# Local state, credentials, caches, and logs.
+.local
+**/.local
+research
+**/research
+*_base
+**/*_base
+.env
+.env.*
+logs
+.run
+__pycache__
+**/__pycache__
+*.pyc
+.pytest_cache
+.venv
+venv
+playwright-report
+test-results
+coverage
+tests
+e2e
+*.log
+
+# Persisted facts can live under the default host ./data directory; do not bake them into images.
+/data/config.json
+/data/progress-events.jsonl
+/data/review-events.jsonl
+/data/review-items.json
+/data/pending
+/data/.config.json.*.tmp
+/data/.review-items.json.*.tmp
