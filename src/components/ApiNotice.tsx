@@ -9,11 +9,20 @@ export function messageForApiError(code: string): string {
     case 'unknown_topic':
     case 'unknown_task':
       return '找不到此 Topic 或任务，或它不在当前可用计划中。';
+    case 'unknown_learning_path':
+    case 'unknown_learning_unit':
+      return '找不到对应的学习路径或学习单元。';
+    case 'not_a_learning_unit':
+      return '该路径项不是学习单元（例如休息日），没有学习正文。';
     case 'non_active_topic':
       return '该 ID 不是可浏览的 active L3 Knowledge Topic。';
     case 'invalid_learning_payload':
     case 'invalid_source_provenance':
       return 'Learning Payload / provenance 校验未通过；材料已隐藏，不会生成替代内容。';
+    case 'invalid_learning_path':
+    case 'invalid_learning_unit':
+    case 'invalid_learning_catalog':
+      return '学习路径或 Markdown 元数据校验未通过；内容已隐藏，不会生成替代内容。';
     case 'invalid_input':
     case 'invalid_request':
     case 'invalid_timestamp':

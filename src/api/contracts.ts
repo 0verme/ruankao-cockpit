@@ -3,6 +3,7 @@ import type {
   AttemptRequest,
   AttemptResponse,
   InitializeResponse,
+  LearningUnitResponse,
   TodayResponse,
   TopicResponse,
 } from './types';
@@ -12,5 +13,6 @@ export interface CockpitApiClient {
   getToday(): Promise<TodayResponse>;
   initialize(): Promise<InitializeResponse>;
   getTopic(topicId: string): Promise<TopicResponse>;
+  getLearningUnit(pathId: string, itemId: string): Promise<LearningUnitResponse>;
   recordAttempt(input: AttemptRequest): Promise<AttemptResponse>;
 }

@@ -1,5 +1,6 @@
 import payloadDocument from '../../data/learning-payloads/ARCH.CLOUD_NATIVE.CONTAINERS_SERVERLESS.json';
 import { CockpitApiError } from './errors';
+import { createHttpApiClient } from './httpClient';
 import type { CockpitApiClient } from './contracts';
 import type {
   AttemptRequest,
@@ -123,6 +124,8 @@ const replayFixture: AttemptResponse['today'] = {
 
 export function createFixtureApiClient(scenario: FixtureScenario = 'ready'): CockpitApiClient {
   let initialized = scenario !== 'not-initialized';
+  // Learning Units are static repository content, not part of the Today fixture.
+  const learningUnitApi = createHttpApiClient(import.meta.env.PUBLIC_API_BASE_URL ?? '');
   let hasRecordedAttempt = false;
 
   return {
@@ -143,6 +146,7 @@ export function createFixtureApiClient(scenario: FixtureScenario = 'ready'): Coc
       initialized = true;
       return { state: 'created' };
     },
+    getLearningUnit: (pathId, itemId) => learningUnitApi.getLearningUnit(pathId, itemId),
     async getTopic(topicId) {
       if (scenario === 'invalid-provenance') {
         throw new CockpitApiError(

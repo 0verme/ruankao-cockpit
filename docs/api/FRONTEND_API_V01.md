@@ -4,6 +4,7 @@
 
 ```text
 Browser → FastAPI transport → cockpit_service → Planner / Progress / Review / TopicExperience
+                                  └→ static Learning Unit loader → Path manifest + Markdown
 ```
 
 FastAPI 仅负责 HTTP、request shape、JSON 序列化和错误映射。它不拥有学习状态，不在 route 计算计划、Topic/Capability 关系、Progress、Review、mastery、到期状态、provenance 或 attempt identities。
@@ -19,7 +20,7 @@ uvicorn api:app --host 127.0.0.1 --port 8000
 
 GET 不初始化、不创建缺失的本地状态。若本地目录已有 service 的 pending transaction，`get_today(...)` 仍按现有 service 行为执行恢复；这不是初始化或新建 `.local`。
 
-该 API 仍是本地单用户服务：没有用户系统、鉴权、云同步或 CORS 配置；默认应只绑定 loopback（例如 `127.0.0.1`），不要直接暴露到不可信网络。
+该 API 仍是本地单用户服务：没有用户系统、鉴权、云同步或 CORS 配置；默认应只绑定 loopback（例如 `127.0.0.1`），不要直接暴露到不可信网络。Astro 开发服务器将同源 `/api` 请求代理到 `127.0.0.1:8000`；部署时也应由同源 reverse proxy 路由 API，跨域访问需另行评估，不在本 Slice 开启 CORS。
 
 所有时间 query/body 值使用 ISO 8601。凡要求 instant 的输入都必须带 `Z` 或显式 UTC offset。planner 的 `as_of` 输出为现有 Planner canonical UTC 表示；`timezone` 来自本地 User Configuration。`review.next_due_local_date` 是配置时区下的日历日期，不是 UTC instant。
 
@@ -39,9 +40,9 @@ GET 不初始化、不创建缺失的本地状态。若本地目录已有 servic
 | HTTP | category（常见） | 含义 |
 |---|---|---|
 | 422 | `invalid_request`, `invalid_timestamp`, `invalid_attempt`, `invalid_source_reference`, `forbidden_path`, `invalid_source_provenance`, `invalid_learning_payload`, `non_active_topic`, `future_evidence`, `target_mismatch` | 请求 shape 或现有领域校验拒绝；没有把不可验证内容转成成功状态 |
-| 404 | `unknown_topic`, `unknown_task` | Topic 不存在，或任务 ID 不在可用计划中 |
+| 404 | `unknown_topic`, `unknown_task`, `unknown_learning_path`, `unknown_learning_unit`, `not_a_learning_unit` | Topic/任务/学习路径/学习单元不存在，或 Path Item 明确不是学习单元 |
 | 409 | `not_initialized`, `incomplete_local_data`, `task_not_scheduled`, `duplicate_event`, `pending_transaction`, `conflicting_transaction` | 本地状态或当前计划冲突；客户端应刷新/显式初始化，不应重试写成新的“完成状态” |
-| 500 | `storage_error`, `invalid_local_data`, `invalid_catalog`, `invalid_learning_catalog`, `invalid_topic_experience` | 本地数据、静态目录或服务 read model 无法安全使用 |
+| 500 | `storage_error`, `invalid_local_data`, `invalid_catalog`, `invalid_learning_catalog`, `invalid_topic_experience`, `invalid_learning_path`, `invalid_learning_unit` | 本地数据、静态目录、Learning Unit integrity 或服务 read model 无法安全使用 |
 
 未知的 request body 字段会返回 `422 invalid_request`。server error 不代表可以用空状态替代失败数据。
 
@@ -143,6 +144,44 @@ GET 不初始化、不创建缺失的本地状态。若本地目录已有 servic
 - Payload/schema/provenance 内容无法验证：返回 `422 invalid_learning_payload` 或 `invalid_source_provenance`；静态 Taxonomy/source catalog 本身不可用则返回 `500 invalid_learning_catalog`。**绝不把校验失败降级为 `unavailable` 或返回未经验证的正文**。
 
 `progress` 与 `review` 的 nullable 值表示现有 read model 没有该派生状态，不表示前端可以自行估算。`verification_sources` 是现有 source index 中不含题干正文的引用元数据。
+
+## `GET /api/learning-units/{path_id}/{item_id}`
+
+读取一个版本化 Learning Path Item 对应的静态 Markdown authoring artifact。此 endpoint 不读取 `.local`，不调用 Planner，也不写入任何状态或事实。
+
+Loader 先从固定 allowlist 中选择 Learning Path manifest，再按 `item_id` 查找 item；请求参数不会直接拼成文件系统路径。Markdown frontmatter 的 `path_id`、`path_version`、`item_id`、`order`、`mapping.status`、`mapping.confidence` 和 `mapping.topic_ids` 必须与 manifest 一致。缺失/畸形 frontmatter、identity/mapping 不一致或 taxonomy Topic 不可验证时 fail closed，不返回正文。
+
+成功响应包含 `path_id`、`path_version`、`item_id`、`order`、`title`、`content_markdown`、generation/review/mapping 状态、Topic labels/IDs 和 source provenance。`content_markdown` 只含 Markdown body，不包含 frontmatter。该静态 read model 不包含 Progress、Review due、mastery 或 completion 字段。
+
+### Response `200`（节选）
+
+```json
+{
+  "path_id": "system-architect-checkin",
+  "path_version": "1.0.0",
+  "item_id": "checkin-005",
+  "order": 5,
+  "title": "V 模型、W 模型与质量左移",
+  "content_markdown": "# V 模型、W 模型与质量左移\n...",
+  "generation_status": "draft",
+  "review_status": "unreviewed",
+  "mapping_status": "split",
+  "mapping_confidence": "high",
+  "topic_ids": ["SOFTWARE.ENGINEERING.PROCESS", "SOFTWARE.ENGINEERING.TESTING"],
+  "topics": [
+    {"topic_id": "SOFTWARE.ENGINEERING.PROCESS", "name": "软件过程与开发方法"},
+    {"topic_id": "SOFTWARE.ENGINEERING.TESTING", "name": "软件测试"}
+  ],
+  "source_date": "2026-06-12",
+  "source_file": "2026年06月/2026-06-12.md",
+  "source_prompt_sha256": "<64 lowercase hex characters>"
+}
+```
+
+- 未知 Path / item 分别返回 `404 unknown_learning_path` / `404 unknown_learning_unit`。
+- `NON_LEARNING` item 返回 `404 not_a_learning_unit`；不会创建空正文、自动跳过或生成内容。
+- `UNMAPPED` 是有效可读 item：返回 `200`、空 `topic_ids` / `topics` 和原 Markdown 内容，不猜测 Topic。
+- Markdown/API 读取不构成 study session、Progress、Review 或 Learning Unit Completion fact。
 
 ## `POST /api/attempts`
 

@@ -143,3 +143,82 @@ test('Verification API failure is visible and does not claim a replay success', 
   await expect(page.getByRole('alert')).toContainText('提交未通过 API 输入或来源校验');
   await expect(page.getByText(/API 已接受 attempt/)).toHaveCount(0);
 });
+
+test('Learning Unit MERGE route renders real Markdown, provenance, refresh, and mobile widths', async ({ page }) => {
+  const unitPath = '/learning-units/system-architect-checkin/checkin-001';
+  for (const width of [1280, 390, 320]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto(unitPath);
+    await expect(page.getByRole('heading', { level: 1, name: '软件工程：生命周期与基本要素' })).toBeVisible();
+    await expect(page.getByText('第 1 节')).toBeVisible();
+    await expect(page.getByText('草稿')).toBeVisible();
+    await expect(page.getByText('来源待补充')).toBeVisible();
+    await expect(page.getByText('软件过程与开发方法')).toBeVisible();
+    await expect(page.getByRole('heading', { name: '今天学会什么' })).toBeVisible();
+    await expect(page.getByText(/三要素：保留证据缺口/)).toBeVisible();
+    await expect(page.getByText(/content_version:/)).toHaveCount(0);
+    await expect(page.getByText(/AI explain|Prompt execution|运行时生成/)).toHaveCount(0);
+
+    const disclosure = page.locator('.provenance-details');
+    await expect(disclosure).not.toHaveAttribute('open', '');
+    await expect(disclosure.getByText('Source file')).toBeHidden();
+    await disclosure.locator('summary').focus();
+    await page.keyboard.press('Enter');
+    await expect(disclosure).toHaveAttribute('open', '');
+    await expect(disclosure.getByText('Source file')).toBeVisible();
+
+    const dimensions = await page.evaluate(() => ({
+      viewport: document.documentElement.clientWidth,
+      content: document.documentElement.scrollWidth,
+    }));
+    expect(dimensions.content).toBeLessThanOrEqual(dimensions.viewport);
+  }
+  await page.reload();
+  await expect(page.getByRole('heading', { level: 1, name: '软件工程：生命周期与基本要素' })).toBeVisible();
+});
+
+test('SPLIT stays one unit and its Topic labels, table, and code fit mobile viewports', async ({ page }) => {
+  for (const width of [1280, 390, 320]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto('/learning-units/system-architect-checkin/checkin-005');
+    await expect(page.getByRole('heading', { level: 1, name: 'V 模型、W 模型与质量左移' })).toBeVisible();
+    const mapping = page.getByRole('region', { name: '关联知识' });
+    await expect(mapping.getByText('软件过程与开发方法')).toBeVisible();
+    await expect(mapping.getByText('软件测试')).toBeVisible();
+    await expect(page.getByRole('table')).toBeVisible();
+    await expect(page.locator('.learning-unit-markdown pre')).toBeVisible();
+    await expect(page.getByRole('button', { name: /完成|已学会|打卡/ })).toHaveCount(0);
+    const dimensions = await page.evaluate(() => ({
+      viewport: document.documentElement.clientWidth,
+      content: document.documentElement.scrollWidth,
+    }));
+    expect(dimensions.content).toBeLessThanOrEqual(dimensions.viewport);
+  }
+});
+
+test('EXACT, unreviewed, and UNMAPPED content render without invented links', async ({ page }) => {
+  await page.goto('/learning-units/system-architect-checkin/checkin-002');
+  await expect(page.getByRole('heading', { level: 1, name: '软件开发模型与方法（一）' })).toBeVisible();
+  await expect(page.getByText('内容待复核')).toBeVisible();
+
+  await page.goto('/learning-units/system-architect-checkin/checkin-006');
+  await expect(page.getByRole('heading', { level: 1, name: '基于构件的软件开发' })).toBeVisible();
+  await expect(page.getByRole('region', { name: '关联知识' }).getByText('构件与组件技术')).toBeVisible();
+
+  await page.goto('/learning-units/system-architect-checkin/checkin-032');
+  await expect(page.getByRole('heading', { level: 1, name: '可观测性：指标、日志与链路追踪' })).toBeVisible();
+  await expect(page.getByText('尚未映射到现有知识 Topic')).toBeVisible();
+  await expect(page.getByText(/三大支柱为指标、日志、链路追踪/)).toBeVisible();
+  await expect(page.getByRole('link', { name: /软件过程|软件测试|构件与组件/ })).toHaveCount(0);
+});
+
+test('NON_LEARNING has an explicit unavailable state and unknown URLs return 404', async ({ page }) => {
+  await page.goto('/learning-units/system-architect-checkin/checkin-020');
+  await expect(page.getByRole('heading', { name: '这不是一个学习单元' })).toBeVisible();
+  await expect(page.getByRole('alert')).toContainText('不是学习单元');
+  await expect(page.getByRole('heading', { name: '软件工程：生命周期与基本要素' })).toHaveCount(0);
+
+  const response = await page.goto('/learning-units/system-architect-checkin/checkin-999');
+  expect(response?.status()).toBe(404);
+  await expect(page.getByRole('heading', { name: '页面不存在或不可用' })).toBeVisible();
+});
