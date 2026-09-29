@@ -189,6 +189,12 @@ function LearningSections({ payload }: { payload: LearningPayload }) {
         <div className="source-list">
           {payload.source_references.map((source) => <SourceCard key={source.reference_id} source={source} />)}
         </div>
+        <details className="provenance-details">
+          <summary>查看技术来源详情</summary>
+          <div className="source-list provenance-details__list">
+            {payload.source_references.map((source) => <SourceProvenance key={source.reference_id} source={source} />)}
+          </div>
+        </details>
       </section>
     </div>
   );
@@ -211,6 +217,18 @@ function EvidenceReferences({
 }
 
 function SourceCard({ source }: { source: LearningSourceReference }) {
+  const hasReadableAnchor = source.source_anchor && !source.display_title.includes(source.source_anchor);
+  return (
+    <article className="source-card">
+      <div className="source-card__heading">
+        <h3>{source.display_title}</h3>
+      </div>
+      {hasReadableAnchor && <p className="source-card__anchor">相关章节：{source.source_anchor}</p>}
+    </article>
+  );
+}
+
+function SourceProvenance({ source }: { source: LearningSourceReference }) {
   return (
     <article className="source-card">
       <div className="source-card__heading">
